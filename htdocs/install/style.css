@@ -1,0 +1,210 @@
+/**
+ * CIOpenReview
+ *
+ * An Open Source Review Site Script based on OpenReviewScript
+ *
+ * Design by OpenReviewScript.org
+ * @license		This file is part of CIOpenReview - free software licensed under the GNU General Public License version 2
+ * @link        http://ciopenreview.com
+ */
+
+/**    This file is part of CIOpenReview.
+ *
+ *    CIOpenReview is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    CIOpenReview is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with CIOpenReview.  If not, see <http://www.gnu.org/licenses/>.
+ */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Palatino", "Verdana";
+    text-align: left;
+    background: #ffffff;
+}
+
+p {
+    margin: 0px;
+}
+
+a {
+    padding: 5px;
+    text-decoration: none;
+    color: #000000;
+}
+
+li {
+    line-height: 200%;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h2 {
+    padding: 20px 0px 20px 0;
+}
+
+#button {
+    background: #404040;
+    float: right;
+    color: #FFFFFF;
+    border: 2px solid #808080;
+    width: 190px;
+    height: 40px;
+    font-weight: bold;
+    padding-bottom: 7px;
+    margin-bottom: 10px;
+}
+
+#button:hover {
+    background: #a0a0a0;
+}
+
+div.formblock {
+    display: block;
+    overflow: auto;
+    margin: 20px 0px 20px 0px;
+}
+
+div.formleft {
+    width: 180px;
+    margin-left: 20px;
+    float: left;
+}
+
+div.formleftwide {
+    width: 360px;
+    margin-left: 20px;
+    float: left;
+}
+
+div.formright {
+    margin-left: 20px;
+    padding: 2px;
+    float: left;
+}
+
+div#header {
+    padding: 5px;
+    background: #f8f8f8;
+    color: #404040;
+    margin: 0px;
+    padding: 0px;
+    background-image: url('images/ciorlogo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 110px;
+}
+
+div#header h1 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 0px;
+    margin: 0px;
+    clear: both;
+}
+
+div#navbar {
+    height: 30px;
+    background-image: url('images/navbar_bg.png');
+    background-repeat: repeat-x;
+}
+
+div#container {
+    margin: 0 auto;
+    min-width: 1024px;
+}
+
+div#main_section {
+    width: 640px;
+    margin: auto;
+    overflow: auto;
+}
+
+div#content p {
+    line-height: 1.4;
+}
+
+div#footer {
+    clear: both;
+    width: 100%;
+}
+
+.myform input {
+    border: 1px solid #a0a0a0;
+    height: 35px;
+    padding: 4px;
+    width: 250px;
+    font-size: 16px;
+    background: #FFFFFF;
+    color: #6d4115;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Palatino", "Verdana";
+}
+
+.myform select {
+    border: 1px solid #a0a0a0;
+    height: 35px;
+    padding: 4px;
+    width: 400px;
+    font-size: 16px;
+    background: #FFFFFF;
+    color: #6d4115;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Palatino", "Verdana";
+}
+
+.myform input[type="checkbox"] {
+    width: 20px;
+}
+
+.myform input.strong {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.myform label {
+    display: block;
+    text-align: right;
+}
+
+.myform span.small {
+    color: #a0a0a0;
+    display: block;
+    font-size: 12px;
+    text-align: right;
+}
+
+.myform h1 {
+    margin: 5px 0px;
+}
+
+.myform input.input_right {
+    height: 27px;
+    width: 320px;
+    padding-top: 2px;
+}
+
+.myform input.short {
+    height: 27px;
+    width: 55px;
+    padding-top: 2px;
+}
+
+.myform select.dropdown_left {
+    height: 35px;
+    width: 320px;
+}
+
+.myform span.right_link {
+    width: 100px;
+}
