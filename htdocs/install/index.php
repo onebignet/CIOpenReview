@@ -111,8 +111,8 @@ $path_to_config_file = '../application/config/database.php';
 									<li>to visit your manager area <b><a href="../manager" target="_blank">click
 												here</a></b></li>
 									<li>and for more help and support visit our <b><a
-												href="http://ciopenreview.com" target="_blank">GitHub
-												Page</a></b></li>
+												href="http://ciopenreview.com" target="_blank">CIOpenReview Page</a></b>
+									</li>
 								</ul>
 								<br/>
 								<p><b><span style="color:#ff0000;">IMPORTANT - You must now delete the /install folder, if you don't your site could be vulnerable to security attacks</span></b>
