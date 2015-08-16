@@ -227,9 +227,9 @@ class Ad extends CI_Controller
 					$name = $this->input->post('name');
 					$text = $this->input->post('text');
 					$link = $this->input->post('link');
-					$visible_in_sidebar = isset($ost['visible_in_sidebar']) ? 1 : 0;
-					$visible_in_lists = isset($ost['visible_in_lists']) ? 1 : 0;
-					$visible_on_review_page = isset($ost['visible_on_review_page']) ? 1 : 0;
+					$visible_in_sidebar = isset($_POST['visible_in_sidebar']) ? 1 : 0;
+					$visible_in_lists = isset($_POST['visible_in_lists']) ? 1 : 0;
+					$visible_on_review_page = isset($_POST['visible_on_review_page']) ? 1 : 0;
 					// add the ad
 					debug('add the ad');
 					$this->Ad_model->add_new_add($name, $orig_file_name, $remote_image_url, $height, $width, $text, $link, $visible_in_sidebar, $visible_in_lists, $visible_on_review_page);
@@ -427,9 +427,9 @@ class Ad extends CI_Controller
 					$name = $this->input->post('name');
 					$text = $this->input->post('text');
 					$link = $this->input->post('link');
-					$visible_in_sidebar = isset($ost['visible_in_sidebar']) ? 1 : 0;
-					$visible_in_lists = isset($ost['visible_in_lists']) ? 1 : 0;
-					$visible_on_review_page = isset($ost['visible_on_review_page']) ? 1 : 0;
+					$visible_in_sidebar = isset($_POST['visible_in_sidebar']) ? 1 : 0;
+					$visible_in_lists = isset($_POST['visible_in_lists']) ? 1 : 0;
+					$visible_on_review_page = isset($_POST['visible_on_review_page']) ? 1 : 0;
 					// update the ad
 					debug('update the ad');
 					$this->Ad_model->update_ad($id, $name, $orig_file_name, $remote_image_url, $height, $width, $text, $link, $visible_in_sidebar, $visible_in_lists, $visible_on_review_page);

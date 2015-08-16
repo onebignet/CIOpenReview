@@ -158,7 +158,7 @@ class Review extends CI_Controller
 				// validation failed - reload page with error message(s)
 				$data['message'] = lang('manager_review_form_fail');
 				$data['selected_category'] = $this->input->post('category_id');
-				$data['featured'] = isset($ost['featured']) ? 1 : 0;
+				$data['featured'] = isset($_POST['featured']) ? 1 : 0;
 				debug('loading "review/add" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review/add', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -281,7 +281,7 @@ class Review extends CI_Controller
 					$seo_title = $this->input->post('seo_title');
 					$description = $this->input->post('description');
 					$category_id = $this->input->post('category_id');
-					$featured = isset($ost['featured']) ? 1 : 0;
+					$featured = isset($_POST['featured']) ? 1 : 0;
 					$tags = $this->input->post('tags');
 					$vendor = $this->input->post('vendor');
 					$link = $this->input->post('link');
@@ -315,7 +315,7 @@ class Review extends CI_Controller
 					// error uploading so reload the form
 					$data['message'] = lang('manager_review_form_fail') . ' - ' . $data['upload_error'];
 					$data['selected_category'] = $this->input->post('category_id');
-					$data['featured'] = isset($ost['featured']) ? 1 : 0;
+					$data['featured'] = isset($_POST['featured']) ? 1 : 0;
 					debug('there was a file uploading error... ' . $this->upload->display_errors());
 					debug('loading "manager/review/add" view');
 					$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review/add', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -405,7 +405,7 @@ class Review extends CI_Controller
 				debug('form validation failed');
 				// validation failed - reload page with error message(s)
 				$data['selected_category'] = $data['review']->category_id;
-				$data['featured'] = isset($ost['featured']) ? 1 : 0;
+				$data['featured'] = isset($_POST['featured']) ? 1 : 0;
 				debug('loading "review/edit" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review/edit', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -556,7 +556,7 @@ class Review extends CI_Controller
 					$seo_title = $this->input->post('seo_title');
 					$description = $this->input->post('description');
 					$category_id = $this->input->post('category_id');
-					$featured = isset($ost['featured']) ? 1 : 0;
+					$featured = isset($_POST['featured']) ? 1 : 0;
 					$vendor = $this->input->post('vendor');
 					$link = $this->input->post('link');
 					$meta_keywords = str_replace('"', '', $this->input->post('meta_keywords'));

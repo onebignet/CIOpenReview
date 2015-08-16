@@ -109,7 +109,7 @@ class Comment extends CI_Controller
 						// prepare data for adding to database
 						$quotation = $this->input->post('quotation');
 						$source = $this->input->post('source');
-						$approved = isset($ost['approved']) ? 1 : 0;
+						$approved = isset($_POST['approved']) ? 1 : 0;
 						// add the comment
 						debug('add the comment');
 						$add_comment = $this->Comment_model->add_comment($review_id, $quotation, $source, '', $approved, 0);
@@ -197,7 +197,7 @@ class Comment extends CI_Controller
 				// prepare data for updating the database
 				$quotation = $this->input->post('quotation');
 				$source = $this->input->post('source');
-				$approved = isset($ost['approved']) ? 1 : 0;
+				$approved = isset($_POST['approved']) ? 1 : 0;
 				// update the comment
 				debug('update the comment');
 				$update_comment = $this->Comment_model->update_comment($id, $quotation, $source, '', $approved);
