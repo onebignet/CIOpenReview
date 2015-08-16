@@ -125,17 +125,17 @@ class Review extends CI_Controller
 				array(
 					'field' => 'image_url',
 					'label' => lang('manager_review_form_validation_image_url'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'vendor',
 					'label' => lang('manager_review_form_validation_vendor'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'link',
 					'label' => lang('manager_review_form_validation_link'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'meta_keywords',
@@ -373,17 +373,17 @@ class Review extends CI_Controller
 				array(
 					'field' => 'image_url',
 					'label' => lang('manager_review_form_validation_image_url'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'vendor',
 					'label' => lang('manager_review_form_validation_vendor'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'link',
 					'label' => lang('manager_review_form_validation_link'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'meta_keywords',

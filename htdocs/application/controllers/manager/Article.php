@@ -95,12 +95,12 @@ class Article extends CI_Controller
 				array(
 					'field' => 'link_text',
 					'label' => lang('manager_article_form_validation_link_text'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'link_url',
 					'label' => lang('manager_article_form_validation_link_url'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'meta_keywords',
@@ -182,12 +182,12 @@ class Article extends CI_Controller
 				array(
 					'field' => 'link_text',
 					'label' => lang('manager_article_form_validation_link_text'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'link_url',
 					'label' => lang('manager_article_form_validation_link_url'),
-					'rules' => 'xss_clean'
+					'rules' => ''
 				),
 				array(
 					'field' => 'meta_keywords',
