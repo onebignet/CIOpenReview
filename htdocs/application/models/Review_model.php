@@ -148,6 +148,15 @@ class Review_model extends CI_Model
 		$this->db->where('id', $id);
 		$this->db->set('clicks', 'clicks+1', FALSE);
 		$this->db->update('review');
+
+		//Add a new record into the hits database
+		$insert = array(
+			'review_id' => $id,
+			'remote_ip' => $this->input->ip_address(),
+
+		);
+		$this->db->set('time', 'NOW()', FALSE);
+		$this->db->insert('hits', $insert);
 	}
 
 	/*

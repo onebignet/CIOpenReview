@@ -267,3 +267,19 @@ ALTER TABLE `logs`
 ADD PRIMARY KEY (`id`);
 ALTER TABLE `logs`
 MODIFY `id` INT(12) NOT NULL AUTO_INCREMENT;
+CREATE TABLE IF NOT EXISTS `hits` (
+  `id`        INT(12)                 NOT NULL,
+  `review_id` INT(12)                 NOT NULL,
+  `time`      TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `remote_ip` VARCHAR(15)
+              COLLATE utf8_unicode_ci NOT NULL
+)
+  ENGINE = MyISAM
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_unicode_ci;
+ALTER TABLE `hits`
+ADD PRIMARY KEY (`id`),
+ADD KEY `review_id` (`review_id`),
+ADD KEY `remote_ip` (`remote_ip`);
+ALTER TABLE `hits`
+MODIFY `id` INT(12) NOT NULL AUTO_INCREMENT;
