@@ -48,14 +48,14 @@ class Page extends CI_Controller
 	 * Page controller class constructor
 	 */
 
-	function Page()
+	function page()
 	{
 		parent::__construct();
 		$this->load->model('Page_model');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -68,7 +68,7 @@ class Page extends CI_Controller
 	{
 		debug('manager/page page | add function');
 // check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// create '$name' variable for use in the view
 		$page->name = '';
 		$page->content = '';
@@ -120,7 +120,7 @@ class Page extends CI_Controller
 				$meta_description = str_replace('"', '', $this->input->post('meta_description'));
 				// add the page
 				debug('add the page');
-				$new_page_id = $this->Page_model->addPage($name, $content, $meta_keywords, $meta_description);
+				$new_page_id = $this->Page_model->add_page($name, $content, $meta_keywords, $meta_description);
 				$data['message'] = lang('manager_page_add_success');
 				// clear form validation data
 				$this->form_validation->clear_fields();
@@ -147,7 +147,7 @@ class Page extends CI_Controller
 	{
 		debug('manager/page page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		$data[] = '';
 		// check form data was submitted
 		if ($this->input->post('page_submit')) {
@@ -182,7 +182,7 @@ class Page extends CI_Controller
 			if ($this->form_validation->run() === FALSE) {
 				debug('form validation failed');
 				// validation failed - reload page with error message(s)
-				$data['page'] = $this->Page_model->getPageById($id);
+				$data['page'] = $this->Page_model->get_page_by_id($id);
 				debug('loading "manager/page/edit" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/page/edit', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -195,7 +195,7 @@ class Page extends CI_Controller
 				$meta_keywords = str_replace('"', '', $this->input->post('meta_keywords'));
 				$meta_description = str_replace('"', '', $this->input->post('meta_description'));
 				// update the page
-				$this->Page_model->updatePage($id, $name, $content, $meta_keywords, $meta_description);
+				$this->Page_model->update_page($id, $name, $content, $meta_keywords, $meta_description);
 				// reload the form
 				debug('loading "manager/page/edited" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/page/edited', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -203,7 +203,7 @@ class Page extends CI_Controller
 			}
 		} else {
 			// form not submitted so load the data and show the form
-			$data['page'] = $this->Page_model->getPageById($id);
+			$data['page'] = $this->Page_model->get_page_by_id($id);
 			if ($data['page']) {
 				debug('form not submitted - loading "manager/page/edit" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/page/edit', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -226,9 +226,9 @@ class Page extends CI_Controller
 	{
 		debug('manager/page page | delete function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the page from the database
-		$data['page'] = $this->Page_model->getPageById($id);
+		$data['page'] = $this->Page_model->get_page_by_id($id);
 		if ($data['page']) {
 			// page exists... show confirmation page
 			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/page/delete', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -249,13 +249,13 @@ class Page extends CI_Controller
 	{
 		debug('manager/page page | deleted function');
 // check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the page from the database
-		$data['page'] = $this->Page_model->getPageById($id);
+		$data['page'] = $this->Page_model->get_page_by_id($id);
 		if ($data['page']) {
 			debug('delete the page');
 			// page exists... show confirmation page
-			$this->Page_model->deletePage($id);
+			$this->Page_model->delete_page($id);
 		}
 		// redirect back to pages list
 		debug('page not found - redirect to manager/pages');

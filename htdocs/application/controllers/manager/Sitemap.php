@@ -48,7 +48,7 @@ class Sitemap extends CI_Controller
 	 * Sitemap controller class constructor
 	 */
 
-	function Sitemap()
+	function sitemap()
 	{
 		parent::__construct();
 		$this->load->model('Review_model');
@@ -57,20 +57,20 @@ class Sitemap extends CI_Controller
 		$this->load->model('Category_model');
 		$this->load->library('sitemaps');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	function index()
 	{
 		debug('sitemap page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		$data[] = '';
 		$approval_required = $this->setting['review_approval'];
-		$reviews = $this->Review_model->getLatestReviews(0, 0, $approval_required);
-		$articles = $this->Article_model->getAllArticles();
-		$pages = $this->Page_model->getAllPages();
-		$categories = $this->Category_model->getAllCategories();
+		$reviews = $this->Review_model->get_latest_reviews(0, 0, $approval_required);
+		$articles = $this->Article_model->get_all_articles();
+		$pages = $this->Page_model->get_all_pages();
+		$categories = $this->Category_model->get_all_categories();
 		if ($reviews OR $articles) {
 			foreach ($reviews AS $review) {
 				$item = array(

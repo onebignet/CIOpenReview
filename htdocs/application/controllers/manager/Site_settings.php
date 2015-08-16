@@ -48,7 +48,7 @@ class Site_settings extends CI_Controller
 	 * Site_settings controller class constructor
 	 */
 
-	function Site_settings()
+	function site_settings()
 	{
 		parent::__construct();
 		$this->load->model('Setting_model');
@@ -57,7 +57,7 @@ class Site_settings extends CI_Controller
 		$this->load->library('upload');
 		$this->load->library('image_lib');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -70,7 +70,7 @@ class Site_settings extends CI_Controller
 	{
 		debug('manager/site_settings page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// prepare data for the view
 		$data['site_name'] = $this->setting['site_name'];
 		$data['site_email'] = $this->setting['site_email'];
@@ -292,55 +292,55 @@ class Site_settings extends CI_Controller
 				// validation successful
 				debug('update settings');
 				// update settings with form values
-				$this->Setting_model->updateSetting('site_name', $this->input->post('site_name'));
-				$this->Setting_model->updateSetting('site_email', $this->input->post('site_email'));
-				$this->Setting_model->updateSetting('site_summary_title', $this->input->post('site_summary_title'));
-				$this->Setting_model->updateSetting('site_summary_text', $this->input->post('site_summary_text'));
-				$this->Setting_model->updateSetting('debug', isset($_POST['debug']) ? 1 : 0);
-				$this->Setting_model->updateSetting('show_visitor_rating', isset($_POST['show_visitor_rating']) ? 1 : 0);
-				$this->Setting_model->updateSetting('captcha_verification', isset($_POST['captcha_verification']) ? 1 : 0);
-				$this->Setting_model->updateSetting('thumbnail_is_link', isset($_POST['thumbnail_is_link']) ? 1 : 0);
-				$this->Setting_model->updateSetting('featured_section_home', isset($_POST['featured_section_home']) ? 1 : 0);
-				$this->Setting_model->updateSetting('featured_section_review', isset($_POST['featured_section_review']) ? 1 : 0);
-				$this->Setting_model->updateSetting('featured_section_article', isset($_POST['featured_section_article']) ? 1 : 0);
-				$this->Setting_model->updateSetting('featured_section_search', isset($_POST['featured_section_search']) ? 1 : 0);
-				$this->Setting_model->updateSetting('featured_count', $this->input->post('featured_count'));
-				$this->Setting_model->updateSetting('featured_minimum', $this->input->post('featured_minimum'));
-				$this->Setting_model->updateSetting('search_sidebar', isset($_POST['search_sidebar']) ? 1 : 0);
-				$this->Setting_model->updateSetting('recent_review_sidebar', isset($_POST['recent_review_sidebar']) ? 1 : 0);
-				$this->Setting_model->updateSetting('number_of_reviews_sidebar', $this->input->post('number_of_reviews_sidebar'));
-				$this->Setting_model->updateSetting('tag_cloud_sidebar', isset($_POST['tag_cloud_sidebar']) ? 1 : 0);
-				$this->Setting_model->updateSetting('categories_sidebar', isset($_POST['categories_sidebar']) ? 1 : 0);
-				$this->Setting_model->updateSetting('max_ads_home_sidebar', $this->input->post('max_ads_home_sidebar'));
-				$this->Setting_model->updateSetting('max_ads_review_sidebar', $this->input->post('max_ads_review_sidebar'));
-				$this->Setting_model->updateSetting('max_ads_article_sidebar', $this->input->post('max_ads_article_sidebar'));
-				$this->Setting_model->updateSetting('max_ads_search_sidebar', $this->input->post('max_ads_search_sidebar'));
-				$this->Setting_model->updateSetting('max_ads_custom_page_sidebar', $this->input->post('max_ads_custom_page_sidebar'));
-				$this->Setting_model->updateSetting('max_ads_home_lists', $this->input->post('max_ads_home_lists'));
-				$this->Setting_model->updateSetting('max_ads_articles_lists', $this->input->post('max_ads_articles_lists'));
-				$this->Setting_model->updateSetting('max_ads_results_lists', $this->input->post('max_ads_results_lists'));
-				$this->Setting_model->updateSetting('review_approval', isset($_POST['review_approval']) ? 1 : 0);
-				$this->Setting_model->updateSetting('review_auto', isset($_POST['review_auto']) ? 1 : 0);
-				$this->Setting_model->updateSetting('comment_approval', isset($_POST['comment_approval']) ? 1 : 0);
-				$this->Setting_model->updateSetting('comment_auto', isset($_POST['comment_auto']) ? 1 : 0);
-				$this->Setting_model->updateSetting('perpage_site_home', $this->input->post('perpage_site_home'));
-				$this->Setting_model->updateSetting('perpage_site_search', $this->input->post('perpage_site_search'));
-				$this->Setting_model->updateSetting('perpage_site_category', $this->input->post('perpage_site_category'));
-				$this->Setting_model->updateSetting('perpage_site_articles', $this->input->post('perpage_site_articles'));
-				$this->Setting_model->updateSetting('perpage_manager_reviews', $this->input->post('perpage_manager_reviews'));
-				$this->Setting_model->updateSetting('perpage_manager_reviews_pending', $this->input->post('perpage_manager_reviews_pending'));
-				$this->Setting_model->updateSetting('perpage_manager_comments', $this->input->post('perpage_manager_comments'));
-				$this->Setting_model->updateSetting('perpage_manager_comments_pending', $this->input->post('perpage_manager_comments_pending'));
-				$this->Setting_model->updateSetting('perpage_manager_categories', $this->input->post('perpage_manager_categories'));
-				$this->Setting_model->updateSetting('perpage_manager_features', $this->input->post('perpage_manager_features'));
-				$this->Setting_model->updateSetting('perpage_manager_ratings', $this->input->post('perpage_manager_ratings'));
-				$this->Setting_model->updateSetting('perpage_manager_articles', $this->input->post('perpage_manager_articles'));
-				$this->Setting_model->updateSetting('perpage_manager_custom_pages', $this->input->post('perpage_manager_custom_pages'));
-				$this->Setting_model->updateSetting('perpage_manager_ads', $this->input->post('perpage_manager_ads'));
-				$this->Setting_model->updateSetting('perpage_manager_users', $this->input->post('perpage_manager_users'));
+				$this->Setting_model->update_setting('site_name', $this->input->post('site_name'));
+				$this->Setting_model->update_setting('site_email', $this->input->post('site_email'));
+				$this->Setting_model->update_setting('site_summary_title', $this->input->post('site_summary_title'));
+				$this->Setting_model->update_setting('site_summary_text', $this->input->post('site_summary_text'));
+				$this->Setting_model->update_setting('debug', isset($ost['debug']) ? 1 : 0);
+				$this->Setting_model->update_setting('show_visitor_rating', isset($ost['show_visitor_rating']) ? 1 : 0);
+				$this->Setting_model->update_setting('captcha_verification', isset($ost['captcha_verification']) ? 1 : 0);
+				$this->Setting_model->update_setting('thumbnail_is_link', isset($ost['thumbnail_is_link']) ? 1 : 0);
+				$this->Setting_model->update_setting('featured_section_home', isset($ost['featured_section_home']) ? 1 : 0);
+				$this->Setting_model->update_setting('featured_section_review', isset($ost['featured_section_review']) ? 1 : 0);
+				$this->Setting_model->update_setting('featured_section_article', isset($ost['featured_section_article']) ? 1 : 0);
+				$this->Setting_model->update_setting('featured_section_search', isset($ost['featured_section_search']) ? 1 : 0);
+				$this->Setting_model->update_setting('featured_count', $this->input->post('featured_count'));
+				$this->Setting_model->update_setting('featured_minimum', $this->input->post('featured_minimum'));
+				$this->Setting_model->update_setting('search_sidebar', isset($ost['search_sidebar']) ? 1 : 0);
+				$this->Setting_model->update_setting('recent_review_sidebar', isset($ost['recent_review_sidebar']) ? 1 : 0);
+				$this->Setting_model->update_setting('number_of_reviews_sidebar', $this->input->post('number_of_reviews_sidebar'));
+				$this->Setting_model->update_setting('tag_cloud_sidebar', isset($ost['tag_cloud_sidebar']) ? 1 : 0);
+				$this->Setting_model->update_setting('categories_sidebar', isset($ost['categories_sidebar']) ? 1 : 0);
+				$this->Setting_model->update_setting('max_ads_home_sidebar', $this->input->post('max_ads_home_sidebar'));
+				$this->Setting_model->update_setting('max_ads_review_sidebar', $this->input->post('max_ads_review_sidebar'));
+				$this->Setting_model->update_setting('max_ads_article_sidebar', $this->input->post('max_ads_article_sidebar'));
+				$this->Setting_model->update_setting('max_ads_search_sidebar', $this->input->post('max_ads_search_sidebar'));
+				$this->Setting_model->update_setting('max_ads_custom_page_sidebar', $this->input->post('max_ads_custom_page_sidebar'));
+				$this->Setting_model->update_setting('max_ads_home_lists', $this->input->post('max_ads_home_lists'));
+				$this->Setting_model->update_setting('max_ads_articles_lists', $this->input->post('max_ads_articles_lists'));
+				$this->Setting_model->update_setting('max_ads_results_lists', $this->input->post('max_ads_results_lists'));
+				$this->Setting_model->update_setting('review_approval', isset($ost['review_approval']) ? 1 : 0);
+				$this->Setting_model->update_setting('review_auto', isset($ost['review_auto']) ? 1 : 0);
+				$this->Setting_model->update_setting('comment_approval', isset($ost['comment_approval']) ? 1 : 0);
+				$this->Setting_model->update_setting('comment_auto', isset($ost['comment_auto']) ? 1 : 0);
+				$this->Setting_model->update_setting('perpage_site_home', $this->input->post('perpage_site_home'));
+				$this->Setting_model->update_setting('perpage_site_search', $this->input->post('perpage_site_search'));
+				$this->Setting_model->update_setting('perpage_site_category', $this->input->post('perpage_site_category'));
+				$this->Setting_model->update_setting('perpage_site_articles', $this->input->post('perpage_site_articles'));
+				$this->Setting_model->update_setting('perpage_manager_reviews', $this->input->post('perpage_manager_reviews'));
+				$this->Setting_model->update_setting('perpage_manager_reviews_pending', $this->input->post('perpage_manager_reviews_pending'));
+				$this->Setting_model->update_setting('perpage_manager_comments', $this->input->post('perpage_manager_comments'));
+				$this->Setting_model->update_setting('perpage_manager_comments_pending', $this->input->post('perpage_manager_comments_pending'));
+				$this->Setting_model->update_setting('perpage_manager_categories', $this->input->post('perpage_manager_categories'));
+				$this->Setting_model->update_setting('perpage_manager_features', $this->input->post('perpage_manager_features'));
+				$this->Setting_model->update_setting('perpage_manager_ratings', $this->input->post('perpage_manager_ratings'));
+				$this->Setting_model->update_setting('perpage_manager_articles', $this->input->post('perpage_manager_articles'));
+				$this->Setting_model->update_setting('perpage_manager_custom_pages', $this->input->post('perpage_manager_custom_pages'));
+				$this->Setting_model->update_setting('perpage_manager_ads', $this->input->post('perpage_manager_ads'));
+				$this->Setting_model->update_setting('perpage_manager_users', $this->input->post('perpage_manager_users'));
 				debug('reload the settings');
 				// update setting array with updated values
-				$this->setting = $this->Setting_model->getEverySetting();
+				$this->setting = $this->Setting_model->get_every_setting();
 				// prepare data to display in the view
 				$data['site_name'] = $this->setting['site_name'];
 				$data['site_email'] = $this->setting['site_email'];
@@ -390,6 +390,7 @@ class Site_settings extends CI_Controller
 				$data['perpage_manager_users'] = $this->setting['perpage_manager_users'];
 				// reload the form
 				$data['message'] = lang('manager_site_settings_edited_message');
+				print_r($data);
 				debug('loading "manager/site_settings/edit" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/site_settings/edit', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);

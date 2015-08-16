@@ -48,12 +48,12 @@ class Ratings extends CI_Controller
 	 * Ratings controller class constructor
 	 */
 
-	function Ratings()
+	function ratings()
 	{
 		parent::__construct();
 		$this->load->model('Rating_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,16 +66,16 @@ class Ratings extends CI_Controller
 	{
 		debug('manager/ratings page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of ratings into an array for displaying in the view
-		$data['allratings'] = $this->Rating_model->getAllratings($this->setting['perpage_manager_ratings'], $this->uri->segment(4));
+		$data['allratings'] = $this->Rating_model->get_all_ratings($this->setting['perpage_manager_ratings'], $this->uri->segment(4));
 		if ($data['allratings']) {
 			debug('loaded ratings');
 			// set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/ratings/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Rating_model->countRatings();
+			$total = $this->Rating_model->count_ratings();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_ratings'];
 			$config['uri_segment'] = 4;

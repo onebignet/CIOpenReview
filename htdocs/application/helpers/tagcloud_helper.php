@@ -29,7 +29,7 @@
  *    You should have received a copy of the GNU General Public License
  *    along with CIOpenReview.  If not, see <http://www.gnu.org/licenses/>.
  */
-function getCloudSize($minsize, $maxsize, $min, $max, $actual)
+function get_cloud_size($minsize, $maxsize, $min, $max, $actual)
 {
 	// given a minimum and maximum font size, a minimum and maximum tag count and the actual tag count, returns font size for use in tag cloud
 	$sizerange = $maxsize - $minsize;

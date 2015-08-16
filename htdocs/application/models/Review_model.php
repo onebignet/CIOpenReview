@@ -46,7 +46,7 @@ class Review_model extends CI_Model
 	 * Review model class constructor
 	 */
 
-	function Review_model()
+	function review_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,7 +56,7 @@ class Review_model extends CI_Model
 	 * addReview function
 	 */
 
-	function addReview($title, $description, $category_id, $featured, $tags, $image_name, $image_extension, $vendor, $link, $meta_keywords, $meta_description, $approved)
+	function add_review($title, $description, $category_id, $featured, $tags, $image_name, $image_extension, $vendor, $link, $meta_keywords, $meta_description, $approved)
 	{
 		// add the review
 		// check the title is unique and append a number if it is not
@@ -64,14 +64,14 @@ class Review_model extends CI_Model
 		$title = trim($title);
 		$seo_title = url_title($title, '-', TRUE);
 		$safe_seo_title = $seo_title;
-		while ($this->_checkSeoTitleExists($safe_seo_title)) {
+		while ($this->check_seo_title_exists($safe_seo_title)) {
 			// keep trying numbers until the title is unique
 			$safe_seo_title = $seo_title . '-' . $title_add;
 			$title_add++;
 		}
 		// prepare tags array
 		$tag_array = explode(',', $tags);
-		$tags = $this->removeSpacesFromTags($tag_array);
+		$tags = $this->remove_spaces_from_tags($tag_array);
 		$data = array(
 			'title' => $title,
 			'seo_title' => $safe_seo_title,
@@ -89,10 +89,10 @@ class Review_model extends CI_Model
 		);
 		// add the review
 		$this->db->insert('review', $data);
-		$review = $this->getReviewBySeoTitle($safe_seo_title);
+		$review = $this->get_review_by_seo_title($safe_seo_title);
 		$id = $review->id;
 		// update the tags for the review
-		$tags = $this->updateTags($id, $tag_array);
+		$tags = $this->update_tags($id, $tag_array);
 		// return the review id
 		return $id;
 	}
@@ -101,7 +101,7 @@ class Review_model extends CI_Model
 	 * updateReview function
 	 */
 
-	function updateReview($id, $title, $description, $category_id, $featured, $tags, $image_name, $image_extension, $vendor, $link, $meta_keywords, $meta_description)
+	function update_review($id, $title, $description, $category_id, $featured, $tags, $image_name, $image_extension, $vendor, $link, $meta_keywords, $meta_description)
 	{
 		// update the review
 		// check the title is unique and append a number if it is not
@@ -109,14 +109,14 @@ class Review_model extends CI_Model
 		$title = trim($title);
 		$seo_title = url_title($title, '-', TRUE);
 		$safe_seo_title = $seo_title;
-		while ($this->_checkSeoTitleExists($safe_seo_title, $id)) {
+		while ($this->check_seo_title_exists($safe_seo_title, $id)) {
 			// keep trying numbers until the title is unique
 			$safe_seo_title = $seo_title . '-' . $title_add;
 			$title_add++;
 		}
 		// prepare tags array
 		$tag_array = explode(',', $tags);
-		$tags = $this->removeSpacesFromTags($tag_array);
+		$tags = $this->remove_spaces_from_tags($tag_array);
 		$data = array(
 			'title' => $title,
 			'seo_title' => $safe_seo_title,
@@ -135,14 +135,14 @@ class Review_model extends CI_Model
 		// update the review
 		$this->db->update('review', $data);
 		// update the tags for the review
-		$tags = $this->updateTags($id, $tag_array);
+		$tags = $this->update_tags($id, $tag_array);
 	}
 
 	/*
 	 * addClick function
 	 */
 
-	function addClick($id)
+	function add_click($id)
 	{
 		// count a click for the review link
 		$this->db->where('id', $id);
@@ -163,7 +163,7 @@ class Review_model extends CI_Model
 	 * addView function
 	 */
 
-	function addView($id)
+	function add_view($id)
 	{
 		// count a page view for the review
 		$this->db->where('id', $id);
@@ -175,7 +175,7 @@ class Review_model extends CI_Model
 	 * mostViewed function
 	 */
 
-	function mostViewed($limit = 10)
+	function most_viewed($limit = 10)
 	{
 		// return a list of reviews in descending page view order
 		// limit the results, default is 10
@@ -194,7 +194,7 @@ class Review_model extends CI_Model
 	 * mostClicks function
 	 */
 
-	function mostClicks($limit = 10)
+	function most_clicks($limit = 10)
 	{
 		// return a list of reviews in descending link clicks order
 		// limit the results, default is 10
@@ -213,7 +213,7 @@ class Review_model extends CI_Model
 	 * changeCategory function
 	 */
 
-	function changeCategory($from_id, $to_id)
+	function change_category($from_id, $to_id)
 	{
 		// change all reviews in one category to another category
 		// 'moves' reviews to a category
@@ -228,19 +228,19 @@ class Review_model extends CI_Model
 	 * deleteReview function
 	 */
 
-	function deleteReview($id)
+	function delete_review($id)
 	{
 		// delete the review
 		$this->db->where('id', $id);
 		$this->db->delete('review');
-		$this->deleteTags($id);
+		$this->delete_tags($id);
 	}
 
 	/*
 	 * _checkSeoTitleExists function
 	 */
 
-	function _checkSeoTitleExists($seo_title, $id = -1)
+	function check_seo_title_exists($seo_title, $id = -1)
 	{
 		// check the title is not already being used
 		$this->db->select('seo_title');
@@ -262,7 +262,7 @@ class Review_model extends CI_Model
 	 * getTagCloudArray function
 	 */
 
-	function getTagCloudArray()
+	function get_tag_cloud_array()
 	{
 		// return the tag cloud
 		$this->db->select('tag,COUNT(*) AS tagcount');
@@ -287,7 +287,7 @@ class Review_model extends CI_Model
 	 * getFeaturedReviews function
 	 */
 
-	function getFeaturedReviews($limit, $offset = 0, $approval_required = 0)
+	function get_featured_reviews($limit, $offset = 0, $approval_required = 0)
 	{
 		// return all featured reviews
 		// offset is used in pagination
@@ -328,7 +328,7 @@ class Review_model extends CI_Model
 	 * getLatestReviews function
 	 */
 
-	function getLatestReviews($limit = 0, $offset = 0, $approval_required = 0)
+	function get_latest_reviews($limit = 0, $offset = 0, $approval_required = 0)
 	{
 		// return latest reviews
 		// offset is used in pagination
@@ -370,7 +370,7 @@ class Review_model extends CI_Model
 	 * countReviews function
 	 */
 
-	function countReviews()
+	function count_reviews()
 	{
 		// return the total number of all reviews
 		return $this->db->count_all_results('review');
@@ -380,7 +380,7 @@ class Review_model extends CI_Model
 	 * countCategoryReviews function
 	 */
 
-	function countCategoryReviews($category_seo_name, $approval_required = 0)
+	function count_category_reviews($category_seo_name, $approval_required = 0)
 	{
 		// return the number of reviews in the category
 		$this->db->where('seo_name', $category_seo_name);
@@ -403,7 +403,7 @@ class Review_model extends CI_Model
 	 * getReviewsByCategorySeoName function
 	 */
 
-	function getReviewsByCategorySeoName($category_seo_name, $limit, $offset = 0, $approval_required = 0)
+	function get_reviews_by_category_seo_name($category_seo_name, $limit, $offset = 0, $approval_required = 0)
 	{
 		// return reviews for the category
 		// offset is used in pagination
@@ -452,7 +452,7 @@ class Review_model extends CI_Model
 	 * getReviewsByKeyword function
 	 */
 
-	function getReviewsByKeyword($keyword, $limit, $offset = 0, $approval_required = 0)
+	function get_reviews_by_keyword($keyword, $limit, $offset = 0, $approval_required = 0)
 	{
 		// return reviews that match the keyword(s)
 		// note that some keywords will be ignored as stop words
@@ -497,7 +497,7 @@ class Review_model extends CI_Model
 	 * countKeywordReviews function
 	 */
 
-	function countKeywordReviews($keyword, $approval_required = 0)
+	function count_keyword_reviews($keyword, $approval_required = 0)
 	{
 		// return the number of reviews matching the keyword(s)
 		// note that some keywords will be ignored as stop words
@@ -520,7 +520,7 @@ class Review_model extends CI_Model
 	 * getReviewBySeoTitle function
 	 */
 
-	function getReviewBySeoTitle($param)
+	function get_review_by_seo_title($param)
 	{
 		// return the review
 		$this->db->where('seo_title', $param);
@@ -548,7 +548,7 @@ class Review_model extends CI_Model
 	 * getReviewForCommentId function
 	 */
 
-	function getReviewForCommentId($id)
+	function get_review_for_comment_id($id)
 	{
 		// return the review based on the comment id
 		$this->db->where('id', $id);
@@ -583,7 +583,7 @@ class Review_model extends CI_Model
 	 * getReviewForReviewRatingId function
 	 */
 
-	function getReviewForReviewRatingId($id)
+	function get_review_for_review_rating_id($id)
 	{
 		// return the review based on the review rating id
 		$this->db->where('id', $id);
@@ -618,7 +618,7 @@ class Review_model extends CI_Model
 	 * getReviewForReviewFeatureId function
 	 */
 
-	function getReviewForReviewFeatureId($id)
+	function get_review_for_review_feature_id($id)
 	{
 		// return the review based on the review feature id
 		$this->db->where('id', $id);
@@ -653,7 +653,7 @@ class Review_model extends CI_Model
 	 * getReviewById function
 	 */
 
-	function getReviewById($id)
+	function get_review_by_id($id)
 	{
 		// return the review
 		$this->db->where('id', $id);
@@ -682,7 +682,7 @@ class Review_model extends CI_Model
 	 * getAllReviews function
 	 */
 
-	function getAllReviews($limit, $offset = 0)
+	function get_all_reviews($limit, $offset = 0)
 	{
 		// return all reviews
 		// if a limit more than zero is provided, limit the results
@@ -716,7 +716,7 @@ class Review_model extends CI_Model
 	 * updateTags function
 	 */
 
-	function updateTags($id, $tag_array)
+	function update_tags($id, $tag_array)
 	{
 		// update the tags for the review
 		$this->db->where('review_id', $id);
@@ -741,7 +741,7 @@ class Review_model extends CI_Model
 	 * deleteTags function
 	 */
 
-	function deleteTags($id)
+	function delete_tags($id)
 	{
 		// delete all tags for the review
 		$this->db->where('review_id', $id);
@@ -752,7 +752,7 @@ class Review_model extends CI_Model
 	 * removeSpacesFromTags function
 	 */
 
-	function removeSpacesFromTags($tag_array)
+	function remove_spaces_from_tags($tag_array)
 	{
 		// remove extra spaces from all tags and return as a string
 		$tag_string = '';
@@ -771,7 +771,7 @@ class Review_model extends CI_Model
 	 * getReviewsPending function
 	 */
 
-	function getReviewsPending($limit, $offset = 0)
+	function get_reviews_pending($limit, $offset = 0)
 	{
 		// return all pending reviews
 		// if a limit more than zero is provided, limit the results
@@ -794,7 +794,7 @@ class Review_model extends CI_Model
 	 * countReviewsPending function
 	 */
 
-	function countReviewsPending()
+	function count_reviews_pending()
 	{
 		// return the number of pending reviews
 		$this->db->where('approved', '0');
@@ -805,7 +805,7 @@ class Review_model extends CI_Model
 	 * reviewApproval function
 	 */
 
-	function reviewApproval($review_id, $value)
+	function review_approval($review_id, $value)
 	{
 		// approve or unapprove the review
 		$data = array('approved' => $value);

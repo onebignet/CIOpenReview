@@ -48,12 +48,12 @@ class Articles extends CI_Controller
 	 * Articles controller class constructor
 	 */
 
-	function Articles()
+	function articles()
 	{
 		parent::__construct();
 		$this->load->model('Article_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,16 +66,16 @@ class Articles extends CI_Controller
 	{
 		debug('manager/articles page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of articles into an array for displaying in the view
-		$data['allarticles'] = $this->Article_model->getAllArticles($this->setting['perpage_manager_articles'], $this->uri->segment(4));
+		$data['allarticles'] = $this->Article_model->get_all_articles($this->setting['perpage_manager_articles'], $this->uri->segment(4));
 		if ($data['allarticles']) {
 			debug('loaded articles');
 			// set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/articles/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Article_model->countArticles();
+			$total = $this->Article_model->count_articles();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_articles'];
 			$config['uri_segment'] = 4;

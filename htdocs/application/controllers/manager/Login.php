@@ -48,13 +48,12 @@ class Login extends CI_Controller
 	 * Login controller class constructor
 	 */
 
-	function Login()
+	function login()
 	{
 		parent::__construct();
 		$this->load->library('form_validation');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
-		$this->output->enable_profiler(TRUE);
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -68,7 +67,7 @@ class Login extends CI_Controller
 		debug('manager/login page | index function');
 		$data['message'] = '';
 		// check manager is not already logged in
-		if (!$this->secure->isManagerLoggedIn($this->session)) {
+		if (!$this->secure->is_manager_logged_in($this->session)) {
 			debug('manager is not already logged in');
 			// check form was submitted
 			if ($this->input->post('login_submit') != null) {

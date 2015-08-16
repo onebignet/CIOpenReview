@@ -46,7 +46,7 @@ class Review_feature_model extends CI_Model
 	 * Review_feature model class constructor
 	 */
 
-	function Review_feature_model()
+	function review_feature_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -57,7 +57,7 @@ class Review_feature_model extends CI_Model
 	 * addReviewFeature function
 	 */
 
-	function addReviewFeature($review_id, $feature_id, $value)
+	function add_review_feature($review_id, $feature_id, $value)
 	{
 		// add the review feature
 		$data = array(
@@ -72,7 +72,7 @@ class Review_feature_model extends CI_Model
 	 * updateReviewFeature function
 	 */
 
-	function updateReviewFeature($id, $feature_id, $value)
+	function update_review_feature($id, $feature_id, $value)
 	{
 		// update the review feature
 		$data = array(
@@ -87,7 +87,7 @@ class Review_feature_model extends CI_Model
 	 * deleteReviewFeaturesByFeatureId function
 	 */
 
-	function deleteReviewFeaturesByFeatureId($feature_id)
+	function delete_review_features_by_feature_id($feature_id)
 	{
 		// delete all review features for the feature
 		$this->db->where('feature_id', $feature_id);
@@ -98,7 +98,7 @@ class Review_feature_model extends CI_Model
 	 * deleteReviewFeaturesByReviewId function
 	 */
 
-	function deleteReviewFeaturesByReviewId($review_id)
+	function delete_review_features_by_review_id($review_id)
 	{
 		// delete all review features for the review
 		$this->db->where('review_id', $review_id);
@@ -109,7 +109,7 @@ class Review_feature_model extends CI_Model
 	 * deleteReviewFeatureById function
 	 */
 
-	function deleteReviewFeatureById($id)
+	function delete_review_feature_by_id($id)
 	{
 		// delete the review feature
 		$this->db->where('id', $id);
@@ -120,7 +120,7 @@ class Review_feature_model extends CI_Model
 	 * getReviewFeatureById function
 	 */
 
-	function getReviewFeatureById($id)
+	function get_review_feature_by_id($id)
 	{
 		// return the review feature
 		$this->db->where('id', $id);
@@ -136,7 +136,7 @@ class Review_feature_model extends CI_Model
 	 * getReviewFeaturesForReviewById function
 	 */
 
-	function getReviewFeaturesForReviewById($review_id, $limit = 0, $offset = 0)
+	function get_review_features_for_review_by_id($review_id, $limit = 0, $offset = 0)
 	{
 		// return review features for the review
 		// offset is used in pagination
@@ -167,7 +167,7 @@ class Review_feature_model extends CI_Model
 	 * countReviewFeaturesForReviewById function
 	 */
 
-	function countReviewFeaturesForReviewById($review_id)
+	function count_review_features_for_review_by_id($review_id)
 	{
 		// return the number of review features for the review
 		$this->db->where('review_id', $review_id);

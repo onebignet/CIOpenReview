@@ -48,12 +48,12 @@ class Categories extends CI_Controller
 	 * Categories controller class constructor
 	 */
 
-	function Categories()
+	function categories()
 	{
 		parent::__construct();
 		$this->load->model('Category_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,16 +66,16 @@ class Categories extends CI_Controller
 	{
 		debug('manager/categories page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of categories into an array for displaying in the view
-		$data['allcategories'] = $this->Category_model->getAllCategories($this->setting['perpage_manager_categories'], $this->uri->segment(4));
+		$data['allcategories'] = $this->Category_model->get_all_categories($this->setting['perpage_manager_categories'], $this->uri->segment(4));
 		if ($data['allcategories']) {
 			debug('loaded categories');
 			// set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/categories/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Category_model->countCategories();
+			$total = $this->Category_model->count_categories();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_categories'];
 			$config['uri_segment'] = 4;

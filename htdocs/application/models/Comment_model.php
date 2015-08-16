@@ -46,7 +46,7 @@ class Comment_model extends CI_Model
 	 * Comment model class constructor
 	 */
 
-	function Comment_model()
+	function comment_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,7 +56,7 @@ class Comment_model extends CI_Model
 	 * addComment function
 	 */
 
-	function addComment($review_id, $quotation, $source, $site_link, $approved, $visitor_rating)
+	function add_comment($review_id, $quotation, $source, $site_link, $approved, $visitor_rating)
 	{
 		$visitor_ip_address = $_SERVER['REMOTE_ADDR'];
 		// the next section checks if the visitor has already posted a rating with a comment for this review.
@@ -89,7 +89,7 @@ class Comment_model extends CI_Model
 	 * GetVisitorRatingForReviewById function
 	 */
 
-	function GetVisitorRatingForReviewById($id)
+	function get_visitor_rating_for_review_by_id($id)
 	{
 		// calculates the average rating given by visitors for a review
 		$this->db->select('visitor_rating');
@@ -136,7 +136,7 @@ class Comment_model extends CI_Model
 	 * UpdateComment function
 	 */
 
-	function UpdateComment($comment_id, $quotation, $source, $site_link, $approved)
+	function update_comment($comment_id, $quotation, $source, $site_link, $approved)
 	{
 		// update the comment
 		$data = array(
@@ -153,7 +153,7 @@ class Comment_model extends CI_Model
 	 * deleteCommentById function
 	 */
 
-	function deleteCommentById($id)
+	function delete_comment_by_id($id)
 	{
 		// delete the comment
 		$this->db->where('id', $id);
@@ -164,7 +164,7 @@ class Comment_model extends CI_Model
 	 * deleteCommentsByReviewId function
 	 */
 
-	function deleteCommentsByReviewId($review_id)
+	function delete_comments_by_review_id($review_id)
 	{
 		// delete all comments for the review
 		$this->db->where('review_id', $review_id);
@@ -175,7 +175,7 @@ class Comment_model extends CI_Model
 	 * commentApproval function
 	 */
 
-	function commentApproval($comment_id, $value)
+	function comment_approval($comment_id, $value)
 	{
 		// approve or unapprove the comment based on the provided value
 		$data = array('approved' => $value);
@@ -187,7 +187,7 @@ class Comment_model extends CI_Model
 	 * getCommentsForReviewBySeoTitle function
 	 */
 
-	function getCommentsForReviewBySeoTitle($seo_title)
+	function get_comments_for_review_by_seo_title($seo_title)
 	{
 		// return all comments for the review with this title
 		$this->db->where('seo_title', $seo_title);
@@ -233,7 +233,7 @@ class Comment_model extends CI_Model
 	 * getApprovedCommentsForReviewById function
 	 */
 
-	function getApprovedCommentsForReviewById($id, $limit = 0, $offset = 0)
+	function get_approved_comments_for_review_by_id($id, $limit = 0, $offset = 0)
 	{
 		// get only approved comments for the review
 		// offset is used in pagination
@@ -282,7 +282,7 @@ class Comment_model extends CI_Model
 	 * getCommentsForReviewById function
 	 */
 
-	function getCommentsForReviewById($id, $limit = 0, $offset = 0)
+	function get_comments_for_review_by_id($id, $limit = 0, $offset = 0)
 	{
 		// get only approved comments for the review
 		// offset is used in pagination
@@ -330,7 +330,7 @@ class Comment_model extends CI_Model
 	 * doesCommentExist function
 	 */
 
-	function doesCommentExist($quotation, $source)
+	function does_comment_exist($quotation, $source)
 	{
 		// check if a comment already exists with the same name and text
 		$this->db->where('quotation', $quotation);
@@ -343,7 +343,7 @@ class Comment_model extends CI_Model
 	 * countCommentsForReviewById function
 	 */
 
-	function countCommentsForReviewById($id)
+	function count_comments_for_review_by_id($id)
 	{
 		// return number of all comments for the review
 		$this->db->where('review_id', $id);
@@ -354,7 +354,7 @@ class Comment_model extends CI_Model
 	 * getCommentById function
 	 */
 
-	function getCommentById($id)
+	function get_comment_by_id($id)
 	{
 		// return the comment
 		$this->db->where('id', $id);
@@ -372,7 +372,7 @@ class Comment_model extends CI_Model
 	 * getCommentsPending function
 	 */
 
-	function getCommentsPending($limit = 0, $offset = 0)
+	function get_comments_pending($limit = 0, $offset = 0)
 	{
 		// get all pending comments
 		// offset is used in pagination
@@ -399,7 +399,7 @@ class Comment_model extends CI_Model
 	 * countCommentsPending function
 	 */
 
-	function countCommentsPending()
+	function count_comments_pending()
 	{
 		// return number of all comments pending
 		$this->db->where('approved', '0');

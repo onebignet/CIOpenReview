@@ -48,13 +48,13 @@ class Reset_password extends CI_Controller
 	 * Forgot_login controller class constructor
 	 */
 
-	function Reset_password()
+	function reset_password()
 	{
 		parent::__construct();
 		$this->load->model('User_model');
 		$this->load->library('email');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -69,16 +69,16 @@ class Reset_password extends CI_Controller
 		// check key was provided
 		if ($key !== '') {
 			// use key to find the user's email address
-			$user_email = $this->User_model->getEmailFromKey($key);
+			$user_email = $this->User_model->get_email_from_key($key);
 			if ($user_email) {
 				debug('found user\'s email address using key');
 				// create a new password for the user
-				$newPassword = $this->User_model->resetPassword($key);
-				if ($newPassword) {
+				$new_password = $this->User_model->reset_password($key);
+				if ($new_password) {
 					debug('created new password');
 					// send email to the user with the new password
 					$email_message = lang('manager_login_forgot_email_message_2a') . "\n\n";
-					$email_message .= $newPassword . "\n\n";
+					$email_message .= $new_password . "\n\n";
 					$email_message .= lang('manager_login_forgot_email_message_2b') . ' ' . base_url() . 'manager/login';
 					$this->email->from($this->setting['site_email']);
 					$this->email->to($user_email);

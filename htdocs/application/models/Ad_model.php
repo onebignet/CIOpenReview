@@ -46,7 +46,7 @@ class Ad_model extends CI_Model
 	 * Ad model class constructor
 	 */
 
-	function Ad_model()
+	function ad_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,7 +56,7 @@ class Ad_model extends CI_Model
 	 * addAd function
 	 */
 
-	function addAd($name, $local_image_name, $remote_image_url, $image_height, $image_width, $text, $link, $visible_in_sidebar, $visible_in_lists, $visible_on_review_page)
+	function add_ad($name, $local_image_name, $remote_image_url, $image_height, $image_width, $text, $link, $visible_in_sidebar, $visible_in_lists, $visible_on_review_page)
 	{
 		// add the ad
 		$seo_name = url_title(trim($name), '-', TRUE);
@@ -79,7 +79,7 @@ class Ad_model extends CI_Model
 	 * updateAd function
 	 */
 
-	function updateAd($id, $name, $local_image_name, $remote_image_url, $image_height, $image_width, $text, $link, $visible_in_sidebar, $visible_in_lists, $visible_on_review_page)
+	function update_ad($id, $name, $local_image_name, $remote_image_url, $image_height, $image_width, $text, $link, $visible_in_sidebar, $visible_in_lists, $visible_on_review_page)
 	{
 		// update the ad
 		$seo_name = url_title(trim($name), '-', TRUE);
@@ -103,7 +103,7 @@ class Ad_model extends CI_Model
 	 * deleteAd function
 	 */
 
-	function deleteAd($id)
+	function delete_ad($id)
 	{
 		// delete the ad
 		$this->db->where('id', $id);
@@ -114,7 +114,7 @@ class Ad_model extends CI_Model
 	 * getManagerAds function
 	 */
 
-	function getManagerAds($limit = 0, $offset = 0)
+	function get_manager_ads($limit = 0, $offset = 0)
 	{
 		// get all ads
 		// offset is used in pagination
@@ -140,7 +140,7 @@ class Ad_model extends CI_Model
 	 * getAds function
 	 */
 
-	function getAds($limit = 0, $type = 0)
+	function get_ads($limit = 0, $type = 0)
 	{//$type can be 0 - all, 1 - list, 2 - review page, 3 - sidebar
 		// return all ads of specified type
 		switch ($type) {
@@ -195,7 +195,7 @@ class Ad_model extends CI_Model
 	 * getAdById function
 	 */
 
-	function getAdById($id)
+	function get_ad_by_id($id)
 	{
 		// return the ad
 		$this->db->where('id', $id);
@@ -214,7 +214,7 @@ class Ad_model extends CI_Model
 	 * countAds function
 	 */
 
-	function countAds()
+	function count_ads()
 	{
 		// return total number of all ads
 		return $this->db->count_all_results('ad');

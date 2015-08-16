@@ -34,7 +34,8 @@ function template_path()
 	// return site template folder path
 	$CI = &get_instance();
 	$CI->load->model('Setting_model');
-	return base_url() . 'themes/site/' . $CI->Setting_model->getSettingByName('current_theme') . '/';
+
+	return base_url() . 'themes/site/' . $CI->Setting_model->get_setting_by_name('current_theme') . '/';
 }
 
 function manager_template_path()
@@ -42,7 +43,8 @@ function manager_template_path()
 	// return manager template folder path
 	$CI = &get_instance();
 	$CI->load->model('Setting_model');
-	return base_url() . 'themes/manager/' . $CI->Setting_model->getSettingByName('current_manager_theme') . '/';
+
+	return base_url() . 'themes/manager/' . $CI->Setting_model->get_setting_by_name('current_manager_theme') . '/';
 }
 
 function site_logo()
@@ -50,7 +52,8 @@ function site_logo()
 	// return the site logo image path
 	$CI = &get_instance();
 	$CI->load->model('Setting_model');
-	return base_url() . 'uploads/site_logo/' . $CI->Setting_model->getSettingByName('site_logo_name') . '.' . $CI->Setting_model->getSettingByName('site_logo_extension');
+
+	return base_url() . 'uploads/site_logo/' . $CI->Setting_model->get_setting_by_name('site_logo_name') . '.' . $CI->Setting_model->get_setting_by_name('site_logo_extension');
 }
 
 /* End of file template_helper.php */

@@ -34,7 +34,7 @@ function debug($message)
 {
 	$CI = &get_instance();
 	$CI->load->model('Setting_model');
-	if ($CI->Setting_model->getSettingByName('debug') == 1) {
+	if ($CI->Setting_model->get_setting_by_name('debug') == 1) {
 		$visitor_ip_address = $_SERVER['REMOTE_ADDR'];
 		add_to_log("DEBUG", $message);
 		log_message("error", $visitor_ip_address . ':' . $message);

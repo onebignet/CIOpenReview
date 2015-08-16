@@ -44,7 +44,7 @@
 class Review_features extends CI_Controller
 {
 
-	function Review_features()
+	function review_features()
 	{
 		parent::__construct();
 		$this->load->model('Feature_model');
@@ -52,7 +52,7 @@ class Review_features extends CI_Controller
 		$this->load->model('Review_feature_model');
 		$this->load->helper('form');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -65,17 +65,17 @@ class Review_features extends CI_Controller
 	{
 		debug('manager/review_features page | show function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		if ($review_id) {
 			// load a page of review features for this review into an array for displaying in the view
-			$review = $this->Review_model->getReviewById($review_id);
+			$review = $this->Review_model->get_review_by_id($review_id);
 			if ($review) {
 				debug('loaded review');
-				$data['allreviewfeatures'] = $this->Review_feature_model->getReviewFeaturesForReviewById($review_id);
+				$data['allreviewfeatures'] = $this->Review_feature_model->get_review_features_for_review_by_id($review_id);
 				if ($data['allreviewfeatures']) {
 					debug('loaded review features');
 					$data['review'] = $review;
-					$data['features'] = $this->Feature_model->getFeaturesDropDown(1);
+					$data['features'] = $this->Feature_model->get_features_drop_down(1);
 					// show the review features page
 					debug('loading "manager/review_features" view');
 					$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_features/review_features', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -107,8 +107,8 @@ class Review_features extends CI_Controller
 	{
 		debug('manager/review_features page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
-		$data['review'] = $this->Review_model->getReviewById($id);
+		$this->secure->allow_managers($this->session);
+		$data['review'] = $this->Review_model->get_review_by_id($id);
 		// check form data was submitted
 		if ($this->input->post('review_features_submit')) {
 			debug('form submitted');
@@ -117,7 +117,7 @@ class Review_features extends CI_Controller
 				$review_feature_id = $this->input->post('review_feature_id' . $index);
 				$feature_id = $this->input->post('feature_id' . $index);
 				$value = $this->input->post('value' . $index);
-				$updateReview_feature = $this->Review_feature_model->updateReviewfeature($review_feature_id, $feature_id, $value);
+				$update_review_feature = $this->Review_feature_model->update_reviewfeature($review_feature_id, $feature_id, $value);
 			}
 			debug('redirecting to "manager/review_features/show/"' . $id);
 			redirect('/manager/review_features/show/' . $id, '301');

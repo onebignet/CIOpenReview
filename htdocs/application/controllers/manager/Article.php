@@ -48,14 +48,14 @@ class Article extends CI_Controller
 	 * Article controller class constructor
 	 */
 
-	function Article()
+	function article()
 	{
 		parent::__construct();
 		$this->load->model('Article_model');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -68,7 +68,7 @@ class Article extends CI_Controller
 	{
 		debug('manager/article page | add function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// create '$article' variable for use in the view
 		$article->title = '';
 		$article->description = '';
@@ -134,7 +134,7 @@ class Article extends CI_Controller
 				$meta_description = str_replace('"', '', $this->input->post('meta_description'));
 				// add the article
 				debug('add the article');
-				$new_article_id = $this->Article_model->addArticle($title, $description, $link_text, $link_url, $meta_keywords, $meta_description);
+				$new_article_id = $this->Article_model->add_article($title, $description, $link_text, $link_url, $meta_keywords, $meta_description);
 				// message displayed when page reloads
 				$data['message'] = lang('manager_article_add_success');
 				// clear form validation data
@@ -162,7 +162,7 @@ class Article extends CI_Controller
 	{
 		debug('manager/article page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		$data[] = '';
 		// check form data was submitted
 		if ($this->input->post('article_submit')) {
@@ -207,7 +207,7 @@ class Article extends CI_Controller
 			if ($this->form_validation->run() === FALSE) {
 				debug('form validation failed');
 				// validation failed - reload page with error message(s)
-				$data['article'] = $this->Article_model->getArticleById($id);
+				$data['article'] = $this->Article_model->get_article_by_id($id);
 				debug('loading "manager/article/edit" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/article/edit', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -222,7 +222,7 @@ class Article extends CI_Controller
 				$meta_keywords = str_replace('"', '', $this->input->post('meta_keywords'));
 				$meta_description = str_replace('"', '', $this->input->post('meta_description'));
 				// update the article
-				$this->Article_model->updateArticle($id, $title, $description, $link_text, $link_url, $meta_keywords, $meta_description);
+				$this->Article_model->update_article($id, $title, $description, $link_text, $link_url, $meta_keywords, $meta_description);
 				$data['message'] = lang('manager_article_edit_success');
 				debug('loading "manager/article/edited" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/article/edited', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -232,7 +232,7 @@ class Article extends CI_Controller
 		} else {
 			// form not submitted so just show the form
 			// get the article data from the database
-			$data['article'] = $this->Article_model->getArticleById($id);
+			$data['article'] = $this->Article_model->get_article_by_id($id);
 			// if the article id exists...
 			if ($data['article']) {
 				// display the form
@@ -257,9 +257,9 @@ class Article extends CI_Controller
 	{
 		debug('manager/article page | delete function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// get the article data from the database
-		$data['article'] = $this->Article_model->getArticleById($id);
+		$data['article'] = $this->Article_model->get_article_by_id($id);
 		// if the article id exists...
 		if ($data['article']) {
 			debug('loading "article/delete" view');
@@ -282,14 +282,14 @@ class Article extends CI_Controller
 	{
 		debug('manager/article page | deleted function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// get the article data from the database
-		$data['article'] = $this->Article_model->getArticleById($id);
+		$data['article'] = $this->Article_model->get_article_by_id($id);
 		// if the article id exists...
 		if ($data['article']) {
 			debug('delete the article');
 			// delete the article
-			$this->Article_model->deleteArticle($id);
+			$this->Article_model->delete_article($id);
 		}
 		debug('redirect to manager/articles');
 		redirect('/manager/articles', '301');

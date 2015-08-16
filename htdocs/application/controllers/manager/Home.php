@@ -48,13 +48,13 @@ class Home extends CI_Controller
 	 * Home controller class constructor
 	 */
 
-	function Home()
+	function home()
 	{
 		parent::__construct();
 		$this->load->model('Review_model');
 		$this->load->model('Comment_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -67,13 +67,13 @@ class Home extends CI_Controller
 	{
 		debug('manager/home page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load data for information on home page
-		$data['reviews_to_approve'] = $this->setting['review_approval'] == 1 ? $this->Review_model->countReviewsPending() : 0;
-		$data['comments_to_approve'] = $this->setting['comment_approval'] == 1 ? $this->Comment_model->countCommentsPending() : 0;
+		$data['reviews_to_approve'] = $this->setting['review_approval'] == 1 ? $this->Review_model->count_reviews_pending() : 0;
+		$data['comments_to_approve'] = $this->setting['comment_approval'] == 1 ? $this->Comment_model->count_comments_pending() : 0;
 		$data['action_required'] = ($data['reviews_to_approve'] OR $data['comments_to_approve']) ? TRUE : FALSE;
-		$data['topreviews'] = $this->Review_model->mostViewed();
-		$data['topclicks'] = $this->Review_model->mostClicks();
+		$data['topreviews'] = $this->Review_model->most_viewed();
+		$data['topclicks'] = $this->Review_model->most_clicks();
 		debug('loaded data for home page');
 		// display home page
 		debug('loading "manager/home" view');

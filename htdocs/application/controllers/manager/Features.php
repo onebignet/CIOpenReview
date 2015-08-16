@@ -48,12 +48,12 @@ class Features extends CI_Controller
 	 * Features controller class constructor
 	 */
 
-	function Features()
+	function features()
 	{
 		parent::__construct();
 		$this->load->model('Feature_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,16 +66,16 @@ class Features extends CI_Controller
 	{
 		debug('manager/features | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of features into an array for displaying in the view
-		$data['allfeatures'] = $this->Feature_model->getAllFeatures($this->setting['perpage_manager_features'], $this->uri->segment(4));
+		$data['allfeatures'] = $this->Feature_model->get_all_features($this->setting['perpage_manager_features'], $this->uri->segment(4));
 		if ($data['allfeatures']) {
 			debug('loaded features');
 			// set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/features/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Feature_model->countFeatures();
+			$total = $this->Feature_model->count_features();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_features'];
 			$config['uri_segment'] = 4;

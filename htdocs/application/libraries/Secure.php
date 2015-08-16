@@ -32,7 +32,7 @@ if (!defined('BASEPATH'))
 class Secure
 {
 
-	function allowManagers($session)
+	function allow_managers($session)
 	{
 		//Check user is logged and user level is manager
 		if (!$session->userdata('logged_in') OR ($session->userdata('level') < 10)) {
@@ -43,7 +43,7 @@ class Secure
 		}
 	}
 
-	function isManagerLoggedIn($session)
+	function is_manager_logged_in($session)
 	{
 		if (($session->userdata('logged_in') && ($session->userdata('level') >= 10))) {
 			return true;

@@ -35,9 +35,10 @@ function pending_comments_count()
 	// used in manager menu
 	$CI = &get_instance();
 	$CI->load->model('Setting_model');
-	if ($CI->Setting_model->getSettingByName('comment_approval') == 1) {
+	if ($CI->Setting_model->get_setting_by_name('comment_approval') == 1) {
 		$CI->load->model('Comment_model');
-		return $CI->Comment_model->countCommentsPending();
+
+		return $CI->Comment_model->count_comments_pending();
 	} else
 		return 0;
 }
@@ -48,9 +49,10 @@ function pending_reviews_count()
 	// used in manager menu
 	$CI = &get_instance();
 	$CI->load->model('Setting_model');
-	if ($CI->Setting_model->getSettingByName('review_approval') == 1) {
+	if ($CI->Setting_model->get_setting_by_name('review_approval') == 1) {
 		$CI->load->model('Review_model');
-		return $CI->Review_model->countReviewsPending();
+
+		return $CI->Review_model->count_reviews_pending();
 	} else
 		return 0;
 }

@@ -46,7 +46,7 @@ class Feature_model extends CI_Model
 	 * Feature model class constructor
 	 */
 
-	function Feature_model()
+	function feature_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,7 +56,7 @@ class Feature_model extends CI_Model
 	 * addFeature function
 	 */
 
-	function addFeature($name)
+	function add_feature($name)
 	{
 		// add the feature
 		$data = array(
@@ -69,7 +69,7 @@ class Feature_model extends CI_Model
 	 * updateFeature function
 	 */
 
-	function updateFeature($id, $name)
+	function update_feature($id, $name)
 	{
 		// update the feature
 		$data = array(
@@ -83,7 +83,7 @@ class Feature_model extends CI_Model
 	 * deleteFeature function
 	 */
 
-	function deleteFeature($id)
+	function delete_feature($id)
 	{
 		// delete the feature
 		$this->db->where('feature_id', $id);
@@ -96,7 +96,7 @@ class Feature_model extends CI_Model
 	 * getFeatureById function
 	 */
 
-	function getFeatureById($id)
+	function get_feature_by_id($id)
 	{
 		// return the feature
 		$this->db->where('id', $id);
@@ -112,7 +112,7 @@ class Feature_model extends CI_Model
 	 * getAllFeatures function
 	 */
 
-	function getAllFeatures($limit, $offset = 0)
+	function get_all_features($limit, $offset = 0)
 	{
 		// return all features
 		// offset is used in pagination
@@ -137,7 +137,7 @@ class Feature_model extends CI_Model
 	 * countFeatures function
 	 */
 
-	function countFeatures()
+	function count_features()
 	{
 		// return total number of all features
 		return $this->db->count_all_results('feature');
@@ -147,7 +147,7 @@ class Feature_model extends CI_Model
 	 * getFeaturesDropDown function
 	 */
 
-	function getFeaturesDropDown($no_blank = 0)
+	function get_features_drop_down($no_blank = 0)
 	{
 		// get data for features drop down list
 		$this->db->order_by('id');

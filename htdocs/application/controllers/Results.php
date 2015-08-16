@@ -48,14 +48,14 @@ class Results extends CI_Controller
 	 * Results controller class constructor
 	 */
 
-	function Results()
+	function results()
 	{
 		parent::__construct();
 		$this->load->model('Review_model');
 		$this->load->model('Category_model');
 		$this->load->model('Ad_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -77,20 +77,20 @@ class Results extends CI_Controller
 		$data['search_index'] = 0;
 		$data['featured_count'] = $this->setting['featured_count'];
 		$approval_required = $this->setting['review_approval'];
-		$data['featured'] = $this->Review_model->getFeaturedReviews($data['featured_count'], 0, $approval_required);
+		$data['featured'] = $this->Review_model->get_featured_reviews($data['featured_count'], 0, $approval_required);
 		$data['featured_minimum'] = $this->setting['featured_minimum'];
 		$data['featured_reviews'] = $this->setting['featured_section_search'] == 1 ? count($data['featured']) : 0;
-		$data['categories'] = $this->Category_model->getAllCategories(0);
+		$data['categories'] = $this->Category_model->get_all_categories(0);
 		$data['show_search'] = $this->setting['search_sidebar'];
 		$data['show_recent'] = $this->setting['recent_review_sidebar'];
 		if ($data['show_recent'] == 1) {
-			$data['recent'] = $this->Review_model->getLatestReviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
+			$data['recent'] = $this->Review_model->get_latest_reviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
 		} else {
 			$data['recent'] = FALSE;
 		}
 		$data['show_categories'] = $this->setting['categories_sidebar'];
-		$data['sidebar_ads'] = $this->Ad_model->getAds($this->setting['max_ads_search_sidebar'], 3);
-		$data['list_ads'] = $this->Ad_model->getAds($this->setting['max_ads_results_lists'], 1);
+		$data['sidebar_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_search_sidebar'], 3);
+		$data['list_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_results_lists'], 1);
 		if ($data['list_ads']) {
 			foreach ($data['list_ads'] as $ad) {
 				if (trim($ad->local_image_name !== '')) {
@@ -105,13 +105,13 @@ class Results extends CI_Controller
 			}
 		}
 		$approval_required = $this->setting['review_approval'];
-		$data['results'] = $this->Review_model->getReviewsByCategorySeoName($category_seo_name, $this->setting['perpage_site_category'], $this->uri->segment(4), $approval_required);
+		$data['results'] = $this->Review_model->get_reviews_by_category_seo_name($category_seo_name, $this->setting['perpage_site_category'], $this->uri->segment(4), $approval_required);
 		$data['keywords'] = '';
 		// set page title
 		$data['page_title'] = $this->setting['site_name'] . lang('results_title_in_this_category');
 		if ($this->setting['tag_cloud_sidebar'] > 0) {
 			//Prepare Tag Cloud
-			$tagcloud = $this->Review_model->getTagCloudArray();
+			$tagcloud = $this->Review_model->get_tag_cloud_array();
 			if ($tagcloud !== FALSE) {
 				$data['tagcloud'] = $tagcloud;
 				foreach ($data['tagcloud'] as $key => $value) {
@@ -121,7 +121,7 @@ class Results extends CI_Controller
 				$data['cloudmin'] = min($tagcount);
 			}
 		}
-		$data['category_name'] = $this->Category_model->getNameFromSeoName($category_seo_name);
+		$data['category_name'] = $this->Category_model->get_name_from_seo_name($category_seo_name);
 		if ($data['results']) {
 			debug('category results loaded for category "' . $data['category_name'] . '"');
 			// there are some results
@@ -130,7 +130,7 @@ class Results extends CI_Controller
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
 			$approval_required = $this->setting['review_approval'];
-			$total = $this->Review_model->countCategoryReviews($category_seo_name, $approval_required);
+			$total = $this->Review_model->count_category_reviews($category_seo_name, $approval_required);
 			$data['result_count'] = $total;
 			$data['result_singular_plural'] = $data['result_count'] != 1 ? lang('results_count_plural') : lang('results_count_singular');
 			$config['total_rows'] = $total;
@@ -207,7 +207,7 @@ class Results extends CI_Controller
 		$data['search_index'] = 0;
 		$data['featured_count'] = $this->setting['featured_count'];
 		$approval_required = $this->setting['review_approval'];
-		$data['featured'] = $this->Review_model->getFeaturedReviews($data['featured_count'], 0, $approval_required);
+		$data['featured'] = $this->Review_model->get_featured_reviews($data['featured_count'], 0, $approval_required);
 		$data['featured_minimum'] = $this->setting['featured_minimum'];
 		$data['featured_reviews'] = $this->setting['featured_section_search'] == 1 ? count($data['featured']) : 0;
 		if (trim($this->input->post('keyword')) !== '') {
@@ -217,8 +217,8 @@ class Results extends CI_Controller
 		// set meta_keywords and meta_description
 		$data['meta_keywords'] = lang('results_search_meta_keywords') . ',' . $keyword;
 		$data['meta_description'] = $this->setting['site_name'] . ' - ' . strip_tags($this->setting['site_summary_title']) . ' - ' . lang('results_search_meta_description') . ' ' . $keyword;
-		$data['sidebar_ads'] = $this->Ad_model->getAds($this->setting['max_ads_search_sidebar'], 3);
-		$data['list_ads'] = $this->Ad_model->getAds($this->setting['max_ads_results_lists'], 1);
+		$data['sidebar_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_search_sidebar'], 3);
+		$data['list_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_results_lists'], 1);
 		if ($data['list_ads']) {
 			foreach ($data['list_ads'] as $ad) {
 				if (trim($ad->local_image_name !== '')) {
@@ -232,18 +232,18 @@ class Results extends CI_Controller
 				}
 			}
 		}
-		$data['categories'] = $this->Category_model->getAllCategories(0);
+		$data['categories'] = $this->Category_model->get_all_categories(0);
 		$data['show_categories'] = $this->setting['categories_sidebar'];
 		$data['show_search'] = $this->setting['search_sidebar'];
 		$data['show_recent'] = $this->setting['recent_review_sidebar'];
 		$approval_required = $this->setting['review_approval'];
 		if ($data['show_recent'] == 1) {
-			$data['recent'] = $this->Review_model->getLatestReviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
+			$data['recent'] = $this->Review_model->get_latest_reviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
 		} else {
 			$data['recent'] = FALSE;
 		}
 		$approval_required = $this->setting['review_approval'];
-		$data['results'] = $this->Review_model->getReviewsByKeyword($keyword, $this->setting['perpage_site_search'], $this->uri->segment(4), $approval_required);
+		$data['results'] = $this->Review_model->get_reviews_by_keyword($keyword, $this->setting['perpage_site_search'], $this->uri->segment(4), $approval_required);
 		$data['keywords'] = $keyword;
 		$data['page_title'] = $this->setting['site_name'] . lang('results_title_search');
 		if ($data['results']) {
@@ -251,7 +251,7 @@ class Results extends CI_Controller
 			// there are some results
 			if ($this->setting['tag_cloud_sidebar'] > 0) {
 				//Prepare Tag Cloud
-				$tagcloud = $this->Review_model->getTagCloudArray();
+				$tagcloud = $this->Review_model->get_tag_cloud_array();
 				if ($tagcloud !== FALSE) {
 					$data['tagcloud'] = $tagcloud;
 					foreach ($data['tagcloud'] as $key => $value) {
@@ -262,7 +262,7 @@ class Results extends CI_Controller
 				}
 			}
 			$approval_required = $this->setting['review_approval'];
-			$total = $this->Review_model->countKeywordReviews($keyword, $approval_required);
+			$total = $this->Review_model->count_keyword_reviews($keyword, $approval_required);
 			$data['result_count'] = $total;
 			$data['result_singular_plural'] = $data['result_count'] != 1 ? lang('results_count_plural') : lang('results_count_singular');
 			// set up config for pagination

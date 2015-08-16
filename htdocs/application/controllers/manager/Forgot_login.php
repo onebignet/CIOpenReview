@@ -48,14 +48,14 @@ class Forgot_login extends CI_Controller
 	 * Forgot_login controller class constructor
 	 */
 
-	function Forgot_login()
+	function forgot_login()
 	{
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->model('User_model');
 		$this->load->library('email');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -68,7 +68,7 @@ class Forgot_login extends CI_Controller
 	{
 		debug('manager/forgot_login page | index function');
 		// check manager is not already logged in
-		if (!$this->secure->isManagerLoggedIn($this->session)) {
+		if (!$this->secure->is_manager_logged_in($this->session)) {
 			debug('manager is not already logged in');
 			// check form was submitted
 			if ($this->input->post('login_forgot_submit')) {
@@ -95,13 +95,13 @@ class Forgot_login extends CI_Controller
 					// validation successful
 					debug('validation successful');
 					// check email address belongs to a manager-level user
-					$user_id = $this->User_model->managerEmailExists($this->input->post('login_email'));
+					$user_id = $this->User_model->manager_email_exists($this->input->post('login_email'));
 					if ($user_id) {
 						debug('manager\'s email address exists');
 						// store a temporary key in the user record
-						$temporary_key = $this->User_model->storeTemporaryKey($user_id);
+						$temporary_key = $this->User_model->store_temporary_key($user_id);
 						// create the email message
-						$user = $this->User_model->getUserById($user_id);
+						$user = $this->User_model->get_user_by_id($user_id);
 						$email_message = lang('manager_login_forgot_email_message_1a') . $this->setting['site_name'] . "\n\n";
 						$email_message .= lang('manager_login_forgot_email_message_1b') . $user->name . "\n\n";
 						$email_message .= lang('manager_login_forgot_email_message_1c') . "\n\n";

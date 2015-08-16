@@ -48,13 +48,13 @@ class Maintenance extends CI_Controller
 	 * Maintenance controller class constructor
 	 */
 
-	function Maintenance()
+	function maintenance()
 	{
 		parent::__construct();
 		$this->load->dbutil();
 		$this->load->model('Maintenance_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -79,7 +79,7 @@ class Maintenance extends CI_Controller
 
 		debug('manager/maintenance page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		$data['message'] = '';
 		// check for submitted form
 		// update sitemap
@@ -91,7 +91,7 @@ class Maintenance extends CI_Controller
 		// session delete option
 		if ($this->input->post('session_submit')) {
 			debug('delete session data option was submitted');
-			$this->Maintenance_model->deleteSessions($this->session->userdata('session_id'));
+			$this->Maintenance_model->delete_sessions($this->session->userdata('session_id'));
 			$data['message'] = lang('manager_maintenance_session_deleted');
 			debug('session records deleted');
 		}
@@ -138,7 +138,7 @@ class Maintenance extends CI_Controller
 			$query = $this->db->query("SHOW COLUMNS FROM `ad` WHERE field = 'text'");
 			if ($query->num_rows() == 1) {
 				$row = $query->row();
-				if (strtolower($row->Type) == 'text') {
+				if (strtolower($row->type) == 'text') {
 					$data['message'] = lang('manager_maintenance_db_not_updated');
 					debug('no need to update database');
 				} else {

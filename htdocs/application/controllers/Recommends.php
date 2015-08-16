@@ -48,12 +48,12 @@ class Recommends extends CI_Controller
 	 * Recommends controller class constructor
 	 */
 
-	function Recommends()
+	function recommends()
 	{
 		parent::__construct();
 		$this->load->model('Review_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,10 +66,10 @@ class Recommends extends CI_Controller
 	{
 		debug('recommends page | this function');
 		// load the review
-		$review = $this->Review_model->getReviewBySeoTitle($seo_title);
+		$review = $this->Review_model->get_review_by_seo_title($seo_title);
 		// get the link to redirect to
 		$link = $review->link;
-		$this->Review_model->addClick($review->id);
+		$this->Review_model->add_click($review->id);
 		if ($link !== '') {
 			// redirect to link
 			debug('got link... redirecting to "' . $link . '"');

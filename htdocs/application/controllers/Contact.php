@@ -48,7 +48,7 @@ class Contact extends CI_Controller
 	 * Contact controller class constructor
 	 */
 
-	function Contact()
+	function contact()
 	{
 		parent::__construct();
 		$this->load->library('email');
@@ -59,7 +59,7 @@ class Contact extends CI_Controller
 		$this->load->model('Category_model');
 		$this->load->helper('captcha');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -77,22 +77,22 @@ class Contact extends CI_Controller
 
 		$data['page_title'] = $this->setting['site_name'] . ' - ' . lang('contact_page_title');
 		// load data for view
-		$data['sidebar_ads'] = $this->Ad_model->getAds($this->setting['max_ads_home_sidebar'], 3);
+		$data['sidebar_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_home_sidebar'], 3);
 		$data['show_recent'] = $this->setting['recent_review_sidebar'];
 		$data['show_search'] = $this->setting['search_sidebar'];
-		$data['categories'] = $this->Category_model->getAllCategories(0);
+		$data['categories'] = $this->Category_model->get_all_categories(0);
 		$data['show_categories'] = $this->setting['categories_sidebar'];
 		$data['captcha_verification'] = $this->setting['captcha_verification'];
 		$data['keywords'] = '';
 		$approval_required = $this->setting['review_approval'];
 		if ($data['show_recent'] == 1) {
-			$data['recent'] = $this->Review_model->getLatestReviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
+			$data['recent'] = $this->Review_model->get_latest_reviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
 		} else {
 			$data['recent'] = FALSE;
 		}
 		if ($this->setting['tag_cloud_sidebar'] > 0) {
 			//Prepare Tag Cloud
-			$tagcloud = $this->Review_model->getTagCloudArray();
+			$tagcloud = $this->Review_model->get_tag_cloud_array();
 			if ($tagcloud !== FALSE) {
 				$data['tagcloud'] = $tagcloud;
 				foreach ($data['tagcloud'] as $key => $value) {

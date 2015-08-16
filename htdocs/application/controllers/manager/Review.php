@@ -48,7 +48,7 @@ class Review extends CI_Controller
 	 * Review controller class constructor
 	 */
 
-	function Review()
+	function review()
 	{
 		parent::__construct();
 		$this->load->model('Review_model');
@@ -65,7 +65,7 @@ class Review extends CI_Controller
 		$this->load->library('upload');
 		$this->load->library('image_lib');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -78,9 +78,9 @@ class Review extends CI_Controller
 	{
 		debug('manager/review page | add function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// create '$review' variable for use in the view
-		$data['categories'] = $this->Category_model->getCategoriesDropDown();
+		$data['categories'] = $this->Category_model->get_categories_drop_down();
 		$data['selected_category'] = 0;
 		$data['featured'] = '';
 		$image_name = '';
@@ -158,7 +158,7 @@ class Review extends CI_Controller
 				// validation failed - reload page with error message(s)
 				$data['message'] = lang('manager_review_form_fail');
 				$data['selected_category'] = $this->input->post('category_id');
-				$data['featured'] = isset($_POST['featured']) ? 1 : 0;
+				$data['featured'] = isset($ost['featured']) ? 1 : 0;
 				debug('loading "review/add" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review/add', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -172,7 +172,7 @@ class Review extends CI_Controller
 				$url = trim($this->input->post('image_url'));
 				// when uploading review images, uploaded file takes precedence over remote image url
 				// so if a file is uploaded, the remote image url will be ignored
-				if (($_FILES['userfile']['error'] > -1) && ($_FILES['userfile']['error'] != 4)) {
+				if (($iles['userfile']['error'] > -1) && ($iles['userfile']['error'] != 4)) {
 					debug('user has tried to upload a file');
 					$remote_image_url = '';
 					// set up config for upload library
@@ -183,10 +183,10 @@ class Review extends CI_Controller
 					$config['max_height'] = $this->setting['max_upload_height'];
 					$config['remove_spaces'] = TRUE;
 					// store the file name and extension
-					$extension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
-					$file_name = str_replace(' ', '_', $_FILES['userfile']['name']);
+					$extension = pathinfo($iles['userfile']['name'], PATHINFO_EXTENSION);
+					$file_name = str_replace(' ', '_', $iles['userfile']['name']);
 					$file_name = substr($file_name, 0, strlen($file_name) - strlen($extension) - 1);
-					$file_name = str_replace('.', '_', $_FILES['userfile']['name']);
+					$file_name = str_replace('.', '_', $iles['userfile']['name']);
 					// create a random number to append to the file name
 					$random_number = rand(0, 99999999);
 					$config['file_name'] = $file_name . '_' . $random_number . '.' . $extension;
@@ -281,7 +281,7 @@ class Review extends CI_Controller
 					$seo_title = $this->input->post('seo_title');
 					$description = $this->input->post('description');
 					$category_id = $this->input->post('category_id');
-					$featured = isset($_POST['featured']) ? 1 : 0;
+					$featured = isset($ost['featured']) ? 1 : 0;
 					$tags = $this->input->post('tags');
 					$vendor = $this->input->post('vendor');
 					$link = $this->input->post('link');
@@ -292,18 +292,18 @@ class Review extends CI_Controller
 					$approved = ($review_approval == 0) OR ($auto_approve == 1) ? 1 : 0;
 					// add the review
 					debug('add the review');
-					$new_review_id = $this->Review_model->addReview($title, $description, $category_id, $featured, $tags, $uploaded_file_name, $uploaded_file_extension, $vendor, $link, $meta_keywords, $meta_description, $approved);
+					$new_review_id = $this->Review_model->add_review($title, $description, $category_id, $featured, $tags, $uploaded_file_name, $uploaded_file_extension, $vendor, $link, $meta_keywords, $meta_description, $approved);
 					// get some data and reload the form
-					$default_ratings = $this->Category_default_rating_model->getDefaultRatingsByCategoryId($category_id);
+					$default_ratings = $this->Category_default_rating_model->get_default_ratings_by_category_id($category_id);
 					if ($default_ratings) {
 						foreach ($default_ratings as $result) {
-							$this->Review_rating_model->addReviewRating($new_review_id, $result->rating_id, 5);
+							$this->Review_rating_model->add_review_rating($new_review_id, $result->rating_id, 5);
 						}
 					}
-					$default_features = $this->Category_default_feature_model->getDefaultFeaturesByCategoryId($category_id);
+					$default_features = $this->Category_default_feature_model->get_default_features_by_category_id($category_id);
 					if ($default_features) {
 						foreach ($default_features as $result) {
-							$this->Review_feature_model->addReviewFeature($new_review_id, $result->att_id, '');
+							$this->Review_feature_model->add_review_feature($new_review_id, $result->att_id, '');
 						}
 					}
 					$data['message'] = lang('manager_review_add_success');
@@ -315,7 +315,7 @@ class Review extends CI_Controller
 					// error uploading so reload the form
 					$data['message'] = lang('manager_review_form_fail') . ' - ' . $data['upload_error'];
 					$data['selected_category'] = $this->input->post('category_id');
-					$data['featured'] = isset($_POST['featured']) ? 1 : 0;
+					$data['featured'] = isset($ost['featured']) ? 1 : 0;
 					debug('there was a file uploading error... ' . $this->upload->display_errors());
 					debug('loading "manager/review/add" view');
 					$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review/add', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -340,12 +340,12 @@ class Review extends CI_Controller
 	{
 		debug('manager/review page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
-		$data['categories'] = $this->Category_model->getCategoriesDropDown();
+		$this->secure->allow_managers($this->session);
+		$data['categories'] = $this->Category_model->get_categories_drop_down();
 		$data['upload_error'] = '';
 		$data['grab_error'] = '';
 		// check form data was submitted
-		$data['review'] = $this->Review_model->getReviewById($id);
+		$data['review'] = $this->Review_model->get_review_by_id($id);
 		if ($this->input->post('review_submit')) {
 			// set up form validation config
 			debug('form was submitted');
@@ -405,7 +405,7 @@ class Review extends CI_Controller
 				debug('form validation failed');
 				// validation failed - reload page with error message(s)
 				$data['selected_category'] = $data['review']->category_id;
-				$data['featured'] = isset($_POST['featured']) ? 1 : 0;
+				$data['featured'] = isset($ost['featured']) ? 1 : 0;
 				debug('loading "review/edit" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review/edit', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -419,7 +419,7 @@ class Review extends CI_Controller
 				$uploaded_file_extension = '';
 				// when uploading review images, uploaded file takes precedence over remote image url
 				// so if a file is uploaded, the remote image url will be ignored
-				if (($_FILES['userfile']['error'] > -1) && ($_FILES['userfile']['error'] != 4)) {
+				if (($iles['userfile']['error'] > -1) && ($iles['userfile']['error'] != 4)) {
 					debug('user has tried to upload a file');
 					$remote_image_url = '';
 					// set up config for upload library
@@ -430,10 +430,10 @@ class Review extends CI_Controller
 					$config['max_height'] = $this->setting['max_upload_height'];
 					$config['remove_spaces'] = TRUE;
 					// store the file name and extension
-					$extension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
-					$file_name = str_replace(' ', '_', $_FILES['userfile']['name']);
+					$extension = pathinfo($iles['userfile']['name'], PATHINFO_EXTENSION);
+					$file_name = str_replace(' ', '_', $iles['userfile']['name']);
 					$file_name = substr($file_name, 0, strlen($file_name) - strlen($extension) - 1);
-					$file_name = str_replace('.', '_', $_FILES['userfile']['name']);
+					$file_name = str_replace('.', '_', $iles['userfile']['name']);
 					// create a random number to append to the file name
 					$random_number = rand(0, 99999999);
 					$config['file_name'] = $file_name . '_' . $random_number . '.' . $extension;
@@ -524,7 +524,7 @@ class Review extends CI_Controller
 				if ($file_error == 0) {
 					// no uploading errors
 					// prepare data for adding to the database
-					$review = $this->Review_model->getReviewById($id);
+					$review = $this->Review_model->get_review_by_id($id);
 					if (trim($uploaded_file_name) === '') {
 						$image_name = $review->image_name;
 						$image_extension = $review->image_extension;
@@ -533,7 +533,7 @@ class Review extends CI_Controller
 						$image_extension = $uploaded_file_extension;
 					}
 					// delete any previous uploaded image
-					$data['review'] = $this->Review_model->getReviewById($id);
+					$data['review'] = $this->Review_model->get_review_by_id($id);
 					$current_file = $data['review']->image_name . '.' . $data['review']->image_extension;
 					$new_file = $image_name . '.' . $image_extension;
 					if (($current_file != $new_file) && ($current_file !== '')) {
@@ -556,7 +556,7 @@ class Review extends CI_Controller
 					$seo_title = $this->input->post('seo_title');
 					$description = $this->input->post('description');
 					$category_id = $this->input->post('category_id');
-					$featured = isset($_POST['featured']) ? 1 : 0;
+					$featured = isset($ost['featured']) ? 1 : 0;
 					$vendor = $this->input->post('vendor');
 					$link = $this->input->post('link');
 					$meta_keywords = str_replace('"', '', $this->input->post('meta_keywords'));
@@ -564,13 +564,13 @@ class Review extends CI_Controller
 					$tags = $this->input->post('tags');
 					$tag_array = explode(',', $tags);
 					// update the tags for this review
-					$tags = $this->Review_model->updateTags($id, $tag_array);
+					$tags = $this->Review_model->update_tags($id, $tag_array);
 					// update the review
 					debug('update the review');
-					$this->Review_model->updateReview($id, $title, $description, $category_id, $featured, $tags, $image_name, $image_extension, $vendor, $link, $meta_keywords, $meta_description);
+					$this->Review_model->update_review($id, $title, $description, $category_id, $featured, $tags, $image_name, $image_extension, $vendor, $link, $meta_keywords, $meta_description);
 					// get some data and reload the form
-					$data['review'] = $this->Review_model->getReviewById($id);
-					$data['categories'] = $this->Category_model->getCategoriesDropDown();
+					$data['review'] = $this->Review_model->get_review_by_id($id);
+					$data['categories'] = $this->Category_model->get_categories_drop_down();
 					$data['upload_error'] = '';
 					$data['grab_error'] = '';
 					$data['current_image'] = base_url() . 'uploads/images/' . $data['review']->image_name . '_list_thumb.' . $data['review']->image_extension;
@@ -596,7 +596,7 @@ class Review extends CI_Controller
 		} else {
 			// form not submitted so load data and reload the form
 			debug('form not submitted');
-			$data['review'] = $this->Review_model->getReviewById($id);
+			$data['review'] = $this->Review_model->get_review_by_id($id);
 			if ($data['review']) {
 				$data['selected_category'] = $data['review']->category_id;
 				$data['review']->image_url = '';
@@ -633,7 +633,7 @@ class Review extends CI_Controller
 	 * check tags only contain valid characters
 	 */
 
-	function _validate_tags($str)
+	function validate_tags($str)
 	{
 		$result = (!preg_match("/^([a-z0-9,-_\s])+$/i", $str)) ? FALSE : TRUE;
 		if ($result === TRUE) {
@@ -646,8 +646,8 @@ class Review extends CI_Controller
 	function delete($id)
 	{
 		debug('manager/review page | delete function');
-		$this->secure->allowManagers($this->session);
-		$data['review'] = $this->Review_model->getReviewById($id);
+		$this->secure->allow_managers($this->session);
+		$data['review'] = $this->Review_model->get_review_by_id($id);
 		if ($data['review']) {
 			debug('loading "manager/review/delete" view');
 			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review/delete', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -668,24 +668,24 @@ class Review extends CI_Controller
 	{
 		debug('manager/review page | deleted function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the review from the database
-		$data['review'] = $this->Review_model->getReviewById($id);
+		$data['review'] = $this->Review_model->get_review_by_id($id);
 		if ($data['review']) {
 			debug('loaded the review');
 			// review exists
 			// delete all review_features for this review
 			debug('delete all review features for the review');
-			$this->Review_feature_model->deleteReviewFeaturesByReviewId($id);
+			$this->Review_feature_model->delete_review_features_by_review_id($id);
 			// delete all review_ratings for this review
 			debug('delete all review ratings for the review');
-			$this->Review_rating_model->deleteReviewRatingsByReviewId($id);
+			$this->Review_rating_model->delete_review_ratings_by_review_id($id);
 			// delete all comments for this review
 			debug('delete all comments for the review');
-			$this->Comment_model->deleteCommentsByReviewId($id);
+			$this->Comment_model->delete_comments_by_review_id($id);
 			// delete the review
 			debug('delete the review');
-			$this->Review_model->deleteReview($id);
+			$this->Review_model->delete_review($id);
 			// delete image and thumbnails for this review
 			if ($data['review']->image_name) {
 				$review_thumb_path = './uploads/images/' . $data['review']->image_name . '_review_thumb.' . $data['review']->image_extension;
@@ -718,10 +718,10 @@ class Review extends CI_Controller
 	{
 		debug('manager/review page | approve function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// approve the review
 		debug('approve the review');
-		$this->Review_model->reviewApproval($review_id, 1);
+		$this->Review_model->review_approval($review_id, 1);
 		// redirect to reviews list
 		debug('redirecting to "manager/reviews"');
 		redirect('/manager/reviews', '301');
@@ -737,10 +737,10 @@ class Review extends CI_Controller
 	{
 		debug('manager/review page | approve_pending function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// approve the review
 		debug('approve the pending review');
-		$this->Review_model->reviewApproval($review_id, 1);
+		$this->Review_model->review_approval($review_id, 1);
 		// redirect to reviews pending list
 		debug('redirecting to "manager/reviews/pending"');
 		redirect('/manager/reviews/pending', '301');
@@ -755,9 +755,9 @@ class Review extends CI_Controller
 	function unapprove($review_id)
 	{
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// unapprove the review
-		$this->Review_model->reviewApproval($review_id, 0);
+		$this->Review_model->review_approval($review_id, 0);
 		// redirect to reviews list
 		redirect('/manager/reviews', '301');
 	}
@@ -772,9 +772,9 @@ class Review extends CI_Controller
 	{
 		debug('manager/review page | delete_pending function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the review
-		$data['review'] = $this->Review_model->getReviewById($id);
+		$data['review'] = $this->Review_model->get_review_by_id($id);
 		if ($data['review']) {
 			// review exists... show delete confirmation page
 			debug('loading "manager/review/delete_pending" view');
@@ -797,24 +797,24 @@ class Review extends CI_Controller
 	{
 		debug('manager/review page | deleted_pending function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the review
-		$data['review'] = $this->Review_model->getReviewById($id);
+		$data['review'] = $this->Review_model->get_review_by_id($id);
 		if ($data['review']) {
 			// review exists
 			debug('loaded the review');
 			// delete all review_features for this review
 			debug('delete all review features for the review');
-			$this->Review_feature_model->deleteReviewFeaturesByReviewId($id);
+			$this->Review_feature_model->delete_review_features_by_review_id($id);
 			// delete all review_ratings for this review
 			debug('delete all review ratings for the review');
-			$this->Review_rating_model->deleteReviewRatingsByReviewId($id);
+			$this->Review_rating_model->delete_review_ratings_by_review_id($id);
 			// delete all comments for this review
 			debug('delete all comments for the review');
-			$this->Comment_model->deleteCommentsByReviewId($id);
+			$this->Comment_model->delete_comments_by_review_id($id);
 			// delete the review
 			debug('delete the review');
-			$this->Review_model->deleteReview($id);
+			$this->Review_model->delete_review($id);
 			// delete image and thumbnails for this review
 			if ($data['review']->image_name) {
 				$review_thumb_path = './uploads/images/' . $data['review']->image_name . '_review_thumb.' . $data['review']->image_extension;

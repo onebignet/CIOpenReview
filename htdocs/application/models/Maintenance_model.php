@@ -46,7 +46,7 @@ class Maintenance_model extends CI_Model
 	 * Maintenance model class constructor
 	 */
 
-	function Maintenance_model()
+	function maintenance_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,7 +56,7 @@ class Maintenance_model extends CI_Model
 	 * deleteSessions function
 	 */
 
-	function deleteSessions($session_id = '')
+	function delete_sessions($session_id = '')
 	{
 		// delete all session records in the session table
 		if ($session_id !== '') {

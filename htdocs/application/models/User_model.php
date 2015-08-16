@@ -46,7 +46,7 @@ class User_model extends CI_Model
 	 * User model class constructor
 	 */
 
-	function User_model()
+	function user_model()
 	{
 		parent::__construct();
 		$this->load->helper('security');
@@ -57,7 +57,7 @@ class User_model extends CI_Model
 	 * addUser function
 	 */
 
-	function addUser($name, $password, $email, $level)
+	function add_user($name, $password, $email, $level)
 	{
 		// add the user
 		$password = do_hash($password, 'md5');
@@ -74,7 +74,7 @@ class User_model extends CI_Model
 	 * updateUser function
 	 */
 
-	function updateUser($id, $name, $password, $email, $level)
+	function update_user($id, $name, $password, $email, $level)
 	{
 		// update the user
 		$data['name'] = $name;
@@ -92,7 +92,7 @@ class User_model extends CI_Model
 	 * deleteUser function
 	 */
 
-	function deleteUser($id)
+	function delete_user($id)
 	{
 		// delete the user
 		$this->db->where('id', $id);
@@ -103,7 +103,7 @@ class User_model extends CI_Model
 	 * countUsers function
 	 */
 
-	function countUsers()
+	function count_users()
 	{
 		// return total number of users
 		return $this->db->count_all_results('user');
@@ -113,7 +113,7 @@ class User_model extends CI_Model
 	 * getUserById function
 	 */
 
-	function getUserById($id)
+	function get_user_by_id($id)
 	{
 		// return the user
 		$this->db->where('id', $id);
@@ -131,7 +131,7 @@ class User_model extends CI_Model
 	 * managerEmailExists function
 	 */
 
-	function managerEmailExists($email, $id = 0)
+	function manager_email_exists($email, $id = 0)
 	{
 		// check if manager email address exists in users table... to prevent duplicates
 		$this->db->where('email', $email);
@@ -153,7 +153,7 @@ class User_model extends CI_Model
 	 * resetPassword function
 	 */
 
-	function resetPassword($key)
+	function reset_password($key)
 	{
 		// check the provided key and reset the user's password
 		$this->db->where('key', $key);
@@ -180,7 +180,7 @@ class User_model extends CI_Model
 	 * storeTemporaryKey function
 	 */
 
-	function storeTemporaryKey($user_id)
+	function store_temporary_key($user_id)
 	{
 		// put a temporary 64 character alphanumeric key in the user record
 		$data['key'] = random_string('alnum', 64);
@@ -195,7 +195,7 @@ class User_model extends CI_Model
 	 * getEmailFromKey function
 	 */
 
-	function getEmailFromKey($key)
+	function get_email_from_key($key)
 	{
 		// use the provided key to find the user's email address
 		$this->db->where('key', $key);
@@ -213,7 +213,7 @@ class User_model extends CI_Model
 	 * getUserByName function
 	 */
 
-	function getUserByName($name, $id = 0)
+	function get_user_by_name($name, $id = 0)
 	{
 		// return the user
 		$this->db->where('name', $name);
@@ -236,7 +236,7 @@ class User_model extends CI_Model
 	 * getAllUsers function
 	 */
 
-	function getAllUsers($limit, $offset = 0)
+	function get_all_users($limit, $offset = 0)
 	{
 		// return all users
 		// offset is used in pagination
@@ -261,7 +261,7 @@ class User_model extends CI_Model
 	 * countUsersForLevel function
 	 */
 
-	function countUsersForLevel($level = 10)
+	function count_users_for_level($level = 10)
 	{
 		// count the number of users for a particular level, default is 10
 		$this->db->where('level >=', $level);

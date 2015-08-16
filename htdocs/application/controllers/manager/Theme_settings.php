@@ -48,7 +48,7 @@ class Theme_settings extends CI_Controller
 	 * Theme_settings controller class constructor
 	 */
 
-	function Theme_settings()
+	function theme_settings()
 	{
 		parent::__construct();
 		$this->load->model('Setting_model');
@@ -57,7 +57,7 @@ class Theme_settings extends CI_Controller
 		$this->load->library('upload');
 		$this->load->library('image_lib');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -70,7 +70,7 @@ class Theme_settings extends CI_Controller
 	{
 		debug('manager/theme_settings page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// prepare data for the view
 		$logo_path = './uploads/site_logo/';
 		$data['max_upload_width'] = $this->setting['max_upload_width'];
@@ -83,7 +83,7 @@ class Theme_settings extends CI_Controller
 		// load available site themes into an array
 		$data['themes'] = glob('./themes/site/*', GLOB_ONLYDIR);
 		// get name of current site theme
-		$current_theme = ucwords(strtolower(str_replace("_", " ", $this->Setting_model->getSettingByName('current_theme'))));
+		$current_theme = ucwords(strtolower(str_replace("_", " ", $this->Setting_model->get_setting_by_name('current_theme'))));
 		// update the data to show just the theme names and not the paths
 		foreach ($data['themes'] as $theme => $key) {
 			$data['themes'][$theme] = ucwords(strtolower(str_replace("_", " ", str_ireplace('./themes/site/', '', $data['themes'][$theme]))));
@@ -95,7 +95,7 @@ class Theme_settings extends CI_Controller
 		// load available manager themes into an array
 		$data['manager_themes'] = glob('./themes/manager/*', GLOB_ONLYDIR);
 		// get name of current manager theme
-		$current_manager_theme = ucwords(strtolower(str_replace("_", " ", $this->Setting_model->getSettingByName('current_manager_theme'))));
+		$current_manager_theme = ucwords(strtolower(str_replace("_", " ", $this->Setting_model->get_setting_by_name('current_manager_theme'))));
 		// update the data to show just the theme names and not the paths
 		foreach ($data['manager_themes'] as $manager_theme => $key) {
 			$data['manager_themes'][$manager_theme] = ucwords(strtolower(str_replace("_", " ", str_ireplace('./themes/manager/', '', $data['manager_themes'][$manager_theme]))));
@@ -173,7 +173,7 @@ class Theme_settings extends CI_Controller
 				debug('validation successful');
 				// validation successful
 				// check if a file (logo) uploaded without php errors
-				if ($_FILES['userfile']['error'] == UPLOAD_ERR_OK) {
+				if ($iles['userfile']['error'] == UPLOAD_ERR_OK) {
 					debug('user tried to upload a file');
 					// set up config for logo upload
 					$config['upload_path'] = $logo_path;
@@ -183,10 +183,10 @@ class Theme_settings extends CI_Controller
 					$config['max_height'] = $this->setting['max_upload_height'];
 					$config['remove_spaces'] = TRUE;
 					// store the file name and extension
-					$extension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
-					$file_name = str_replace(' ', '_', $_FILES['userfile']['name']);
+					$extension = pathinfo($iles['userfile']['name'], PATHINFO_EXTENSION);
+					$file_name = str_replace(' ', '_', $iles['userfile']['name']);
 					$file_name = substr($file_name, 0, strlen($file_name) - strlen($extension) - 1);
-					$file_name = str_replace('.', '_', $_FILES['userfile']['name']);
+					$file_name = str_replace('.', '_', $iles['userfile']['name']);
 					// create a random number to append to the file name
 					$random_number = rand(0, 99999999);
 					$config['file_name'] = $file_name . '_' . $random_number . '.' . $extension;
@@ -236,24 +236,24 @@ class Theme_settings extends CI_Controller
 				}
 				debug('update settings');
 				// update settings with form values
-				$this->Setting_model->updateSetting('max_upload_width', $this->input->post('max_upload_width'));
-				$this->Setting_model->updateSetting('max_upload_height', $this->input->post('max_upload_height'));
-				$this->Setting_model->updateSetting('max_upload_filesize', $this->input->post('max_upload_filesize'));
-				$this->Setting_model->updateSetting('review_thumb_max_width', $this->input->post('review_thumb_max_width'));
-				$this->Setting_model->updateSetting('review_thumb_max_height', $this->input->post('review_thumb_max_height'));
-				$this->Setting_model->updateSetting('search_thumb_max_width', $this->input->post('search_thumb_max_width'));
-				$this->Setting_model->updateSetting('search_thumb_max_height', $this->input->post('search_thumb_max_height'));
-				$this->Setting_model->updateSetting('current_theme', strtolower(str_replace(" ", "_", $data['themes'][$this->input->post('theme')])));
-				$this->Setting_model->updateSetting('current_manager_theme', strtolower(str_replace(" ", "_", $data['manager_themes'][$this->input->post('manager_theme')])));
+				$this->Setting_model->update_setting('max_upload_width', $this->input->post('max_upload_width'));
+				$this->Setting_model->update_setting('max_upload_height', $this->input->post('max_upload_height'));
+				$this->Setting_model->update_setting('max_upload_filesize', $this->input->post('max_upload_filesize'));
+				$this->Setting_model->update_setting('review_thumb_max_width', $this->input->post('review_thumb_max_width'));
+				$this->Setting_model->update_setting('review_thumb_max_height', $this->input->post('review_thumb_max_height'));
+				$this->Setting_model->update_setting('search_thumb_max_width', $this->input->post('search_thumb_max_width'));
+				$this->Setting_model->update_setting('search_thumb_max_height', $this->input->post('search_thumb_max_height'));
+				$this->Setting_model->update_setting('current_theme', strtolower(str_replace(" ", "_", $data['themes'][$this->input->post('theme')])));
+				$this->Setting_model->update_setting('current_manager_theme', strtolower(str_replace(" ", "_", $data['manager_themes'][$this->input->post('manager_theme')])));
 				if ($file_error == 0) {
 					debug('file upload completed successfully');
 					// if logo file uploaded correctly, update the image file name setting
-					$this->Setting_model->updateSetting('site_logo_name', $file_name . '_' . $random_number);
-					$this->Setting_model->updateSetting('site_logo_extension', $extension);
+					$this->Setting_model->update_setting('site_logo_name', $file_name . '_' . $random_number);
+					$this->Setting_model->update_setting('site_logo_extension', $extension);
 				}
 				debug('reload the settings');
 				// update setting array with updated values
-				$this->setting = $this->Setting_model->getEverySetting();
+				$this->setting = $this->Setting_model->get_every_setting();
 				// prepare data to display in the view
 				$data['max_upload_width'] = $this->setting['max_upload_width'];
 				$data['max_upload_height'] = $this->setting['max_upload_height'];
@@ -265,7 +265,7 @@ class Theme_settings extends CI_Controller
 				// load available site themes into an array
 				$data['themes'] = glob('./themes/site/*', GLOB_ONLYDIR);
 				// get name of current site theme
-				$current_theme = ucwords(strtolower(str_replace("_", " ", $this->Setting_model->getSettingByName('current_theme'))));
+				$current_theme = ucwords(strtolower(str_replace("_", " ", $this->Setting_model->get_setting_by_name('current_theme'))));
 				// update the data to show just the theme names and not the paths
 				foreach ($data['themes'] as $theme => $key) {
 					$data['themes'][$theme] = ucwords(strtolower(str_replace("_", " ", str_ireplace('./themes/site/', '', $data['themes'][$theme]))));
@@ -277,7 +277,7 @@ class Theme_settings extends CI_Controller
 				// load available manager themes into an array
 				$data['manager_themes'] = glob('./themes/manager/*', GLOB_ONLYDIR);
 				// get name of current manager theme
-				$current_manager_theme = ucwords(strtolower(str_replace("_", " ", $this->Setting_model->getSettingByName('current_manager_theme'))));
+				$current_manager_theme = ucwords(strtolower(str_replace("_", " ", $this->Setting_model->get_setting_by_name('current_manager_theme'))));
 				// update the data to show just the theme names and not the paths
 				foreach ($data['manager_themes'] as $manager_theme => $key) {
 					$data['manager_themes'][$manager_theme] = ucwords(strtolower(str_replace("_", " ", str_ireplace('./themes/manager/', '', $data['manager_themes'][$manager_theme]))));

@@ -47,7 +47,7 @@ class Review extends CI_Controller
 	 * Review controller class constructor
 	 */
 
-	function Review()
+	function review()
 	{
 		parent::__construct();
 		$this->load->model('Review_model');
@@ -60,7 +60,7 @@ class Review extends CI_Controller
 		$this->load->helper('captcha');
 		$this->load->helper('Date');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -75,7 +75,7 @@ class Review extends CI_Controller
 		//load data for view
 		$data['featured_count'] = $this->setting['featured_count'];
 		$approval_required = $this->setting['review_approval'];
-		$data['featured'] = $this->Review_model->getFeaturedReviews($data['featured_count'], 0, $approval_required);
+		$data['featured'] = $this->Review_model->get_featured_reviews($data['featured_count'], 0, $approval_required);
 		$data['featured_minimum'] = $this->setting['featured_minimum'];
 		$data['featured_reviews'] = $this->setting['featured_section_review'] == 1 ? count($data['featured']) : 0;
 		$data['show_search'] = $this->setting['search_sidebar'];
@@ -84,20 +84,20 @@ class Review extends CI_Controller
 		$data['captcha_verification'] = $this->setting['captcha_verification'];
 		$approval_required = $this->setting['review_approval'];
 		if ($data['show_recent'] == 1) {
-			$data['recent'] = $this->Review_model->getLatestReviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
+			$data['recent'] = $this->Review_model->get_latest_reviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
 		} else {
 			$data['recent'] = FALSE;
 		}
 		// load the review
-		$data['review'] = $this->Review_model->getReviewBySeoTitle($requested_review_title);
+		$data['review'] = $this->Review_model->get_review_by_seo_title($requested_review_title);
 		// check if a manager level user is logged in
-		$managerLoggedIn = $this->secure->isManagerLoggedIn($this->session);
-		$data['sidebar_ads'] = $this->Ad_model->getAds($this->setting['max_ads_review_sidebar'], 3);
-		$data['categories'] = $this->Category_model->getAllCategories(0);
+		$manager_logged_in = $this->secure->is_manager_logged_in($this->session);
+		$data['sidebar_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_review_sidebar'], 3);
+		$data['categories'] = $this->Category_model->get_all_categories(0);
 		$data['show_categories'] = $this->setting['categories_sidebar'];
 		if ($this->setting['tag_cloud_sidebar'] > 0) {
 			// prepare Tag Cloud
-			$data['tagcloud'] = $this->Review_model->getTagCloudArray();
+			$data['tagcloud'] = $this->Review_model->get_tag_cloud_array();
 			foreach ($data['tagcloud'] as $key => $value) {
 				$tagcount[$key] = $value[0];
 			}
@@ -108,19 +108,19 @@ class Review extends CI_Controller
 		if ($data['review']) {
 			debug('loaded review');
 			// review exists
-			if (($data['review']->approved > 0) OR ($managerLoggedIn) OR ($approval_required == 0)) {
+			if (($data['review']->approved > 0) OR ($manager_logged_in) OR ($approval_required == 0)) {
 				// the review has been approved OR the user is a manager level user current logged in
 				debug('review is approved (or manager is logged in)');
-				$data['ratings'] = $this->Review_rating_model->getReviewRatingsForReviewById($data['review']->id);
-				$data['review_ads'] = $this->Ad_model->getAds(1, 2);
-				$data['features'] = $this->Review_feature_model->getReviewFeaturesForReviewById($data['review']->id);
+				$data['ratings'] = $this->Review_rating_model->get_review_ratings_for_review_by_id($data['review']->id);
+				$data['review_ads'] = $this->Ad_model->get_ads(1, 2);
+				$data['features'] = $this->Review_feature_model->get_review_features_for_review_by_id($data['review']->id);
 				$data['features_count'] = !$data['features'] ? 0 : count($data['features']);
 				$data['lightbox'] = $this->setting['thumbnail_is_link'] == 0;
 				$data['social_bookmarks'] = // create the Social bookmark bar
 				$data['keywords'] = '';
 				// if this review is not approved but the user is a manager
 				// show a message warning the manager that the review is not visible to visitors yet
-				$data['message'] = (($managerLoggedIn) && ($data['review']->approved == 0) && ($approval_required == 1)) ? lang('review_visible_because_manager') : '';
+				$data['message'] = (($manager_logged_in) && ($data['review']->approved == 0) && ($approval_required == 1)) ? lang('review_visible_because_manager') : '';
 				// set page title, meta keywords and description
 				$data['page_title'] = $this->setting['site_name'] . ' - ' . lang('page_title_review') . ' - ' . $data['review']->title;
 				if (trim($data['review']->meta_keywords) !== '') {
@@ -149,7 +149,7 @@ class Review extends CI_Controller
 				$this->db->query($query);
 				$data['captcha_image'] = $cap['image'];
 				// count the 'page view' for this review
-				$this->Review_model->addView($data['review']->id);
+				$this->Review_model->add_view($data['review']->id);
 				// show the review page
 				debug('loading "review/review_content" view');
 				$sections = array(
@@ -192,14 +192,14 @@ class Review extends CI_Controller
 		// check if comment approval is required
 		if ($this->setting['comment_approval'] == 1) {
 			// load only approved comments for the review
-			$data['comments'] = $this->Comment_model->getApprovedCommentsForReviewById($id);
+			$data['comments'] = $this->Comment_model->get_approved_comments_for_review_by_id($id);
 		} else {
 			// load all comments for the review
-			$data['comments'] = $this->Comment_model->getCommentsForReviewById($id);
+			$data['comments'] = $this->Comment_model->get_comments_for_review_by_id($id);
 		}
 		$data['show_visitor_rating'] = $this->setting['show_visitor_rating'];
 		$data['comments_count'] = !$data['comments'] ? 0 : count($data['comments']);
-		$data['visitor_rating_image'] = $this->Comment_model->GetVisitorRatingForReviewById($id);
+		$data['visitor_rating_image'] = $this->Comment_model->get_visitor_rating_for_review_by_id($id);
 		// show the review comments
 		debug('loading "review/review_comments" view');
 		$this->load->view('site/' . $this->setting['current_theme'] . '/template/review/review_comments', $data);
@@ -223,7 +223,7 @@ class Review extends CI_Controller
 		// check review id has been provided
 		if ($id) {
 			// load the review
-			$review = $this->Review_model->getReviewById($id);
+			$review = $this->Review_model->get_review_by_id($id);
 			if ($review) {
 				// review exists
 				if ($this->input->post('comment_submitted') == 1) {
@@ -239,7 +239,7 @@ class Review extends CI_Controller
 					$comment_approval = $this->setting['comment_approval'];
 					$approval_status = ($comment_approval == 0) OR ($auto_approve == 1) ? 1 : 0;
 					if (($quotation !== '') && ($source !== '') && (($captcha !== '') OR ($captcha_required == 0))) {
-						if (!$this->Comment_model->doesCommentExist($quotation, $source)) {
+						if (!$this->Comment_model->does_comment_exist($quotation, $source)) {
 							// comment is not a duplicate... prevents user submitting the same comment more than once
 							if ($captcha_required == 1) {
 								debug('check captcha');
@@ -261,7 +261,7 @@ class Review extends CI_Controller
 								if ($row->count > 0) {
 									// captcha code was entered successfully
 									// add the comment
-									$addComment = $this->Comment_model->addComment($id, $quotation, $source, '', $approval_status, $rating);
+									$add_comment = $this->Comment_model->add_comment($id, $quotation, $source, '', $approval_status, $rating);
 									if ($approval_status == 0) {
 										// if not approved tell user their comment will appear when manager has approved it
 										debug('comment not approved yet - display message');
@@ -282,7 +282,7 @@ class Review extends CI_Controller
 							} else {
 								// captcha not required so just add the comment
 								debug('captcha not required');
-								$addComment = $this->Comment_model->addComment($id, $quotation, $source, '', $approval_status, $rating);
+								$add_comment = $this->Comment_model->add_comment($id, $quotation, $source, '', $approval_status, $rating);
 								if ($approval_status == 0) {
 									// if not approved tell user their comment will appear when manager has approved it
 									debug('comment not approved yet - display message');
@@ -311,14 +311,14 @@ class Review extends CI_Controller
 		// reload comments
 		if ($this->setting['comment_approval'] == 1) {
 			debug('reload approved comments');
-			$data['comments'] = $this->Comment_model->getApprovedCommentsForReviewById($id);
+			$data['comments'] = $this->Comment_model->get_approved_comments_for_review_by_id($id);
 		} else {
 			debug('reload comments');
-			$data['comments'] = $this->Comment_model->getCommentsForReviewById($id);
+			$data['comments'] = $this->Comment_model->get_comments_for_review_by_id($id);
 		}
 		$data['comments_count'] = !$data['comments'] ? 0 : count($data['comments']);
 		// get visitor rating for this review
-		$data['visitor_rating_image'] = $this->Comment_model->GetVisitorRatingForReviewById($id);
+		$data['visitor_rating_image'] = $this->Comment_model->get_visitor_rating_for_review_by_id($id);
 		// show comments
 		debug('show comments');
 		$this->load->view('site/' . $this->setting['current_theme'] . '/template/review/review_comments', $data);

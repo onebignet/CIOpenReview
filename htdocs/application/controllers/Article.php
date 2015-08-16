@@ -48,7 +48,7 @@ class Article extends CI_Controller
 	 * Article controller class constructor
 	 */
 
-	function Article()
+	function article()
 	{
 		parent::__construct();
 		$this->load->model('Article_model');
@@ -56,7 +56,7 @@ class Article extends CI_Controller
 		$this->load->model('Review_model');
 		$this->load->model('Category_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -69,30 +69,30 @@ class Article extends CI_Controller
 	{
 		// load data for view
 		debug('article page | show function');
-		$data['article'] = $this->Article_model->getArticleBySeoTitle($requested_article_title);
+		$data['article'] = $this->Article_model->get_article_by_seo_title($requested_article_title);
 		$data['featured_count'] = $this->setting['featured_count'];
 		$approval_required = $this->setting['review_approval'];
-		$data['featured'] = $this->Review_model->getFeaturedReviews($data['featured_count'], 0, $approval_required);
+		$data['featured'] = $this->Review_model->get_featured_reviews($data['featured_count'], 0, $approval_required);
 		$data['featured_minimum'] = $this->setting['featured_minimum'];
 		$data['featured_reviews'] = $this->setting['featured_section_article'] == 1 ? count($data['featured']) : 0;
-		$data['sidebar_ads'] = $this->Ad_model->getAds($this->setting['max_ads_article_sidebar'], 3);
-		$data['article_ads'] = $this->Ad_model->getAds(1, 2);
+		$data['sidebar_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_article_sidebar'], 3);
+		$data['article_ads'] = $this->Ad_model->get_ads(1, 2);
 		$data['show_recent'] = $this->setting['recent_review_sidebar'];
 		$data['show_search'] = $this->setting['search_sidebar'];
 		$approval_required = $this->setting['review_approval'];
 		if ($data['show_recent'] == 1) {
-			$data['recent'] = $this->Review_model->getLatestReviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
+			$data['recent'] = $this->Review_model->get_latest_reviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
 		} else {
 			$data['recent'] = FALSE;
 		}
-		$data['categories'] = $this->Category_model->getAllCategories(0);
+		$data['categories'] = $this->Category_model->get_all_categories(0);
 		$data['show_categories'] = $this->setting['categories_sidebar'];
 		if ($data['article']) {
 			debug('found article with title "' . $requested_article_title . '"');
 			// article exists
 			if ($this->setting['tag_cloud_sidebar'] > 0) {
 				//Prepare Tag Cloud
-				$tagcloud = $this->Review_model->getTagCloudArray();
+				$tagcloud = $this->Review_model->get_tag_cloud_array();
 				if ($tagcloud !== FALSE) {
 					$data['tagcloud'] = $tagcloud;
 					foreach ($data['tagcloud'] as $key => $value) {

@@ -48,12 +48,12 @@ class Reviews extends CI_Controller
 	 * Articles controller class constructor
 	 */
 
-	function Reviews()
+	function reviews()
 	{
 		parent::__construct();
 		$this->load->model('Review_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,16 +66,16 @@ class Reviews extends CI_Controller
 	{
 		debug('manager/reviews page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of reviews into an array for displaying in the view
-		$data['allreviews'] = $this->Review_model->getAllReviews($this->setting['perpage_manager_reviews'], $this->uri->segment(4));
+		$data['allreviews'] = $this->Review_model->get_all_reviews($this->setting['perpage_manager_reviews'], $this->uri->segment(4));
 		if ($data['allreviews']) {
 			debug('loaded reviews');
 			// set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/reviews/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Review_model->countReviews();
+			$total = $this->Review_model->count_reviews();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_reviews'];
 			$config['uri_segment'] = 4;
@@ -100,16 +100,16 @@ class Reviews extends CI_Controller
 	{
 		debug('manager/reviews page | pending function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of pending reviews into an array for displaying in the view
-		$data['pendingreviews'] = $this->Review_model->getReviewsPending($this->setting['perpage_manager_reviews_pending'], $this->uri->segment(4));
+		$data['pendingreviews'] = $this->Review_model->get_reviews_pending($this->setting['perpage_manager_reviews_pending'], $this->uri->segment(4));
 		if ($data['pendingreviews']) {
 			debug('loaded pending reviews');
 			// set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/reviews/pending';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Review_model->countReviewsPending();
+			$total = $this->Review_model->count_reviews_pending();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_reviews_pending'];
 			$config['uri_segment'] = 4;

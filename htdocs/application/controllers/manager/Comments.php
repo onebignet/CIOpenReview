@@ -48,13 +48,13 @@ class Comments extends CI_Controller
 	 * Comments controller class constructor
 	 */
 
-	function Comments()
+	function comments()
 	{
 		parent::__construct();
 		$this->load->model('Comment_model');
 		$this->load->model('Review_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -67,19 +67,19 @@ class Comments extends CI_Controller
 	{
 		debug('manager/comments page | show function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		if ($review_id) {
-			$review = $this->Review_model->getReviewById($review_id);
+			$review = $this->Review_model->get_review_by_id($review_id);
 			if ($review) {
 				// load a page of comments into an array for displaying in the view
-				$data['allcomments'] = $this->Comment_model->getCommentsForReviewById($review_id, $this->setting['perpage_manager_comments'], $this->uri->segment(5));
+				$data['allcomments'] = $this->Comment_model->get_comments_for_review_by_id($review_id, $this->setting['perpage_manager_comments'], $this->uri->segment(5));
 				if ($data['allcomments']) {
 					debug('comments loaded');
 					// set up config data for pagination
 					$config['base_url'] = base_url() . 'manager/comments/show/' . $review_id;
 					$config['next_link'] = lang('results_next');
 					$config['prev_link'] = lang('results_previous');
-					$total = $this->Comment_model->countCommentsForReviewById($review_id);
+					$total = $this->Comment_model->count_comments_for_review_by_id($review_id);
 					$config['total_rows'] = $total;
 					$config['per_page'] = $this->setting['perpage_manager_comments'];
 					$config['uri_segment'] = 5;
@@ -122,16 +122,16 @@ class Comments extends CI_Controller
 	{
 		debug('manager/comments page | pending function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of pending comments into an array for displaying in the view
-		$data['pendingcomments'] = $this->Comment_model->getCommentsPending($this->setting['perpage_manager_comments_pending'], $this->uri->segment(5));
+		$data['pendingcomments'] = $this->Comment_model->get_comments_pending($this->setting['perpage_manager_comments_pending'], $this->uri->segment(5));
 		if ($data['pendingcomments']) {
 			debug('loaded pending comments');
 // set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/comments/pending';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Comment_model->countCommentsPending();
+			$total = $this->Comment_model->count_comments_pending();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_comments_pending'];
 			$config['uri_segment'] = 5;

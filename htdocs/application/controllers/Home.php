@@ -49,7 +49,7 @@ class Home extends CI_Controller
 	 * Home controller class constructor
 	 */
 
-	function Home()
+	function home()
 	{
 		parent::__construct();
 
@@ -61,7 +61,7 @@ class Home extends CI_Controller
 		$this->load->model('Comment_model');
 		$this->load->helper('directory');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -78,29 +78,29 @@ class Home extends CI_Controller
 		$data['meta_keywords'] = lang('home_meta_keywords');
 		$data['featured_count'] = $this->setting['featured_count'];
 		$approval_required = $this->setting['review_approval'];
-		$data['featured'] = $this->Review_model->getFeaturedReviews($data['featured_count'], 0, $approval_required);
+		$data['featured'] = $this->Review_model->get_featured_reviews($data['featured_count'], 0, $approval_required);
 		$data['featured_minimum'] = $this->setting['featured_minimum'];
 		$data['featured_reviews'] = $this->setting['featured_section_home'] == 1 ? count($data['featured']) : 0;
-		$data['latest'] = $this->Review_model->getLatestReviews($this->setting['perpage_site_home'], $this->uri->segment(3));
+		$data['latest'] = $this->Review_model->get_latest_reviews($this->setting['perpage_site_home'], $this->uri->segment(3));
 		if ($data['latest']) {
 			foreach ($data['latest'] as $key => $review) {
-				$data['latest'][$key]->rating_image = $this->Comment_model->GetVisitorRatingForReviewById($data['latest'][$key]->id);
+				$data['latest'][$key]->rating_image = $this->Comment_model->get_visitor_rating_for_review_by_id($data['latest'][$key]->id);
 			}
 		}
-		$data['categories'] = $this->Category_model->getAllCategories(0);
+		$data['categories'] = $this->Category_model->get_all_categories(0);
 		$data['show_categories'] = $this->setting['categories_sidebar'];
 		$data['show_search'] = $this->setting['search_sidebar'];
 		$data['show_recent'] = $this->setting['recent_review_sidebar'];
 		$approval_required = $this->setting['review_approval'];
 		if ($data['show_recent'] == 1) {
-			$data['recent'] = $this->Review_model->getLatestReviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
+			$data['recent'] = $this->Review_model->get_latest_reviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
 		} else {
 			$data['recent'] = FALSE;
 		}
 		$data['site_summary_title'] = $this->setting['site_summary_title'];
 		$data['site_summary_text'] = $this->setting['site_summary_text'];
-		$data['sidebar_ads'] = $this->Ad_model->getAds($this->setting['max_ads_home_sidebar'], 3);
-		$data['list_ads'] = $this->Ad_model->getAds($this->setting['max_ads_home_lists'], 1);
+		$data['sidebar_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_home_sidebar'], 3);
+		$data['list_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_home_lists'], 1);
 		if ($data['sidebar_ads']) {
 			foreach ($data['sidebar_ads'] as $ad) {
 				if (trim($ad->local_image_name !== '')) {
@@ -121,7 +121,7 @@ class Home extends CI_Controller
 			// there is at least one review to display in the latest section
 			if ($this->setting['tag_cloud_sidebar'] > 0) {
 				//Prepare Tag Cloud
-				$tagcloud = $this->Review_model->getTagCloudArray();
+				$tagcloud = $this->Review_model->get_tag_cloud_array();
 				if ($tagcloud !== FALSE) {
 					$data['tagcloud'] = $tagcloud;
 					foreach ($data['tagcloud'] as $key => $value) {
@@ -135,7 +135,7 @@ class Home extends CI_Controller
 			$config['base_url'] = base_url() . 'home/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Review_model->countReviews();
+			$total = $this->Review_model->count_reviews();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_site_home'];
 			$config['uri_segment'] = 3;

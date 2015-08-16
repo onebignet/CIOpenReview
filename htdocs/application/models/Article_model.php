@@ -46,7 +46,7 @@ class Article_model extends CI_Model
 	 * Article model class constructor
 	 */
 
-	function Article_model()
+	function article_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,7 +56,7 @@ class Article_model extends CI_Model
 	 * addArticle function
 	 */
 
-	function addArticle($title, $description, $link_text, $link_url, $meta_keywords, $meta_description)
+	function add_article($title, $description, $link_text, $link_url, $meta_keywords, $meta_description)
 	{
 		// add the article
 		// check the title is unique and append a number if it is not
@@ -64,7 +64,7 @@ class Article_model extends CI_Model
 		$title = trim($title);
 		$seo_title = url_title($title, '-', TRUE);
 		$safe_seo_title = $seo_title;
-		while ($this->_checkSeoTitleExists($safe_seo_title)) {
+		while ($this->check_seo_title_exists($safe_seo_title)) {
 			// keep trying numbers until the title is unique
 			$safe_seo_title = $seo_title . '-' . $title_add;
 			$title_add++;
@@ -81,7 +81,7 @@ class Article_model extends CI_Model
 		// add the article
 		$this->db->insert('article', $data);
 		// get the article id and return it
-		$article = $this->getArticleBySeoTitle($safe_seo_title);
+		$article = $this->get_article_by_seo_title($safe_seo_title);
 		$id = $article->id;
 		return $id;
 	}
@@ -90,7 +90,7 @@ class Article_model extends CI_Model
 	 * updateArticle function
 	 */
 
-	function updateArticle($id, $title, $description, $link_text, $link_url, $meta_keywords, $meta_description)
+	function update_article($id, $title, $description, $link_text, $link_url, $meta_keywords, $meta_description)
 	{
 		// update the article
 		// check the title is unique and append a number if it is not
@@ -98,7 +98,7 @@ class Article_model extends CI_Model
 		$title = trim($title);
 		$seo_title = url_title($title, '-', TRUE);
 		$safe_seo_title = $seo_title;
-		while ($this->_checkSeoTitleExists($safe_seo_title, $id)) {
+		while ($this->check_seo_title_exists($safe_seo_title, $id)) {
 			// keep trying numbers until the title is unique
 			$safe_seo_title = $seo_title . '-' . $title_add;
 			$title_add++;
@@ -121,7 +121,7 @@ class Article_model extends CI_Model
 	 * deleteArticle function
 	 */
 
-	function deleteArticle($id)
+	function delete_article($id)
 	{
 		// delete the article
 		$this->db->where('id', $id);
@@ -132,7 +132,7 @@ class Article_model extends CI_Model
 	 * _checkSeoTitleExists function
 	 */
 
-	function _checkSeoTitleExists($seo_title, $id = -1)
+	function check_seo_title_exists($seo_title, $id = -1)
 	{
 		// check the title is not already being used
 		$this->db->select('seo_title');
@@ -154,7 +154,7 @@ class Article_model extends CI_Model
 	 * countArticles function
 	 */
 
-	function countArticles()
+	function count_articles()
 	{
 		// return the total number of articles
 		return $this->db->count_all_results('article');
@@ -164,7 +164,7 @@ class Article_model extends CI_Model
 	 * getArticlesByKeyword function
 	 */
 
-	function getArticlesByKeyword($keyword, $limit, $offset = 0)
+	function get_articles_by_keyword($keyword, $limit, $offset = 0)
 	{
 		// offset is used in pagination
 		if (!$offset) {
@@ -193,7 +193,7 @@ class Article_model extends CI_Model
 	 * countKeywordArticles function
 	 */
 
-	function countKeywordArticles($keyword)
+	function count_keyword_articles($keyword)
 	{
 		// find articles that match the keyword(s)
 		$this->db->distinct();
@@ -213,7 +213,7 @@ class Article_model extends CI_Model
 	 * getArticleBySeoTitle function
 	 */
 
-	function getArticleBySeoTitle($param)
+	function get_article_by_seo_title($param)
 	{
 		// find an article based on its title and return the article
 		$this->db->where('seo_title', $param);
@@ -230,7 +230,7 @@ class Article_model extends CI_Model
 	 * getArticleById function
 	 */
 
-	function getArticleById($id)
+	function get_article_by_id($id)
 	{
 		// find an article based on its id and return the article
 		$this->db->where('id', $id);
@@ -248,7 +248,7 @@ class Article_model extends CI_Model
 	 * getAllArticles function
 	 */
 
-	function getAllArticles($limit, $offset = 0)
+	function get_all_articles($limit, $offset = 0)
 	{
 		// offset is used in pagination
 		if (!$offset) {

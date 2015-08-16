@@ -46,7 +46,7 @@ class Setting_model extends CI_Model
 	 * Setting model class constructor
 	 */
 
-	function Setting_model()
+	function setting_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,20 +56,20 @@ class Setting_model extends CI_Model
 	 * addSetting function
 	 */
 
-	function addSetting($name, $value = '')
+	function add_setting($name, $value = '')
 	{
 		// add the setting
 		$name = trim($name);
 		// format the setting without spaces
 		$setting_name = url_title($name, '-', TRUE);
-		if (!$this->checkSettingExists($setting_name)) {
+		if (!$this->check_setting_exists($setting_name)) {
 			$data = array(
 				'name' => $name,
 				'value' => $value
 			);
 			// add the setting
 			$this->db->insert('setting', $data);
-			$setting = $this->getSettingByName($setting_name);
+			$setting = $this->get_setting_by_name($setting_name);
 			// return the setting id
 			return $setting->id;
 		} else {
@@ -82,7 +82,7 @@ class Setting_model extends CI_Model
 	 * checkSettingExists function
 	 */
 
-	function checkSettingExists($name, $id = -1)
+	function check_setting_exists($name, $id = -1)
 	{
 		// check a setting exists and return TRUE or FALSE
 		$this->db->select('name');
@@ -102,10 +102,10 @@ class Setting_model extends CI_Model
 	 * updateSetting function
 	 */
 
-	function updateSetting($name, $value)
+	function update_setting($name, $value)
 	{
 		// update the setting or add it if it does not already exist
-		if ($this->checkSettingExists($name)) {
+		if ($this->check_setting_exists($name)) {
 			$data = array(
 				'value' => $value
 			);
@@ -113,7 +113,7 @@ class Setting_model extends CI_Model
 			$this->db->update('setting', $data);
 		} else {
 			// setting does not exist so add it
-			$this->addSetting($name, $value);
+			$this->add_setting($name, $value);
 		}
 	}
 
@@ -121,7 +121,7 @@ class Setting_model extends CI_Model
 	 * deleteSetting function
 	 */
 
-	function deleteSetting($id)
+	function delete_setting($id)
 	{
 		// delete the setting
 		$this->db->where('id', $id);
@@ -132,7 +132,7 @@ class Setting_model extends CI_Model
 	 * getSettingByName function
 	 */
 
-	function getSettingByName($name)
+	function get_setting_by_name($name)
 	{
 		// return the setting
 		$this->db->where('name', $name);
@@ -149,7 +149,7 @@ class Setting_model extends CI_Model
 	 * getSettingById function
 	 */
 
-	function getSettingById($id)
+	function get_setting_by_id($id)
 	{
 		// return the setting
 		$this->db - where('id', $id);
@@ -166,7 +166,7 @@ class Setting_model extends CI_Model
 	 * getEverySetting function
 	 */
 
-	function getEverySetting()
+	function get_every_setting()
 	{
 		// return all settings as an array
 		$this->db->select('name,value');

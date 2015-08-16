@@ -48,14 +48,14 @@ class Rss extends CI_Controller
 	 * Rss controller class constructor
 	 */
 
-	function Rss()
+	function rss()
 	{
 		parent::__construct();
 		$this->load->model('Review_model');
 		$this->load->model('Article_model');
 		$this->load->helper('xml');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -76,8 +76,8 @@ class Rss extends CI_Controller
 		$data['creator'] = $this->setting['site_name'];
 		$data['owner'] = $this->setting['site_email'];
 		$approval_required = $this->setting['review_approval'];
-		$data['reviews'] = $this->Review_model->getLatestReviews(200, 0, $approval_required);
-		$data['articles'] = $this->Article_model->getAllArticles(200);
+		$data['reviews'] = $this->Review_model->get_latest_reviews(200, 0, $approval_required);
+		$data['articles'] = $this->Article_model->get_all_articles(200);
 		header('Content-Type: application/rss+xml');
 		debug('loading "rss/rss_template" view');
 		$sections = array('rss_content' => 'site/' . $this->setting['current_theme'] . '/template/rss/rss');

@@ -46,7 +46,7 @@ class Page_model extends CI_Model
 	 * Page model class constructor
 	 */
 
-	function Page_model()
+	function page_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,14 +56,14 @@ class Page_model extends CI_Model
 	 * addPage function
 	 */
 
-	function addPage($name, $content, $meta_keywords, $meta_description)
+	function add_page($name, $content, $meta_keywords, $meta_description)
 	{
 		// check the page name is unique and append a number if it is not
 		$name_add = 2;
 		$name = trim($name);
 		$seo_name = url_title($name, '_', TRUE);
 		$safe_seo_name = $seo_name;
-		while ($this->_checkSeoNameExists($safe_seo_name)) {
+		while ($this->check_seo_name_exists($safe_seo_name)) {
 			// keep trying numbers until the title is unique
 			$safe_seo_name = $seo_name . '-' . $name_add;
 			$name_add++;
@@ -77,7 +77,7 @@ class Page_model extends CI_Model
 		);
 		// add the page
 		$this->db->insert('page', $data);
-		$page = $this->getPageBySeoName($safe_seo_name);
+		$page = $this->get_page_by_seo_name($safe_seo_name);
 		$id = $page->id;
 		// return the page id
 		return $id;
@@ -87,14 +87,14 @@ class Page_model extends CI_Model
 	 * updatePage function
 	 */
 
-	function updatePage($id, $name, $content, $meta_keywords, $meta_description)
+	function update_page($id, $name, $content, $meta_keywords, $meta_description)
 	{
 		// check the page name is unique and append a number if it is not
 		$name_add = 2;
 		$name = trim($name);
 		$seo_name = url_title($name, '_', TRUE);
 		$safe_seo_name = $seo_name;
-		while ($this->_checkSeoNameExists($safe_seo_name, $id)) {
+		while ($this->check_seo_name_exists($safe_seo_name, $id)) {
 			// keep trying numbers until the title is unique
 			$safe_seo_name = $seo_name . '-' . $name_add;
 			$name_add++;
@@ -115,7 +115,7 @@ class Page_model extends CI_Model
 	 * deletePage function
 	 */
 
-	function deletePage($id)
+	function delete_page($id)
 	{
 		// delete the page
 		$this->db->where('id', $id);
@@ -126,7 +126,7 @@ class Page_model extends CI_Model
 	 * _checkSeoNameExists function
 	 */
 
-	function _checkSeoNameExists($seo_name, $id = -1)
+	function check_seo_name_exists($seo_name, $id = -1)
 	{
 		// check the page name is not already being used
 		$this->db->select('seo_name');
@@ -148,7 +148,7 @@ class Page_model extends CI_Model
 	 * countPages function
 	 */
 
-	function countPages()
+	function count_pages()
 	{
 		// return the total number of pages
 		return $this->db->count_all_results('page');
@@ -158,7 +158,7 @@ class Page_model extends CI_Model
 	 * getPageBySeoName function
 	 */
 
-	function getPageBySeoName($param)
+	function get_page_by_seo_name($param)
 	{
 		// return the page
 		$this->db->where('seo_name', $param);
@@ -175,7 +175,7 @@ class Page_model extends CI_Model
 	 * getPageById function
 	 */
 
-	function getPageById($id)
+	function get_page_by_id($id)
 	{
 		// return the page
 		$this->db->where('id', $id);
@@ -193,7 +193,7 @@ class Page_model extends CI_Model
 	 * getAllPages function
 	 */
 
-	function getAllPages($limit, $offset = 0)
+	function get_all_pages($limit, $offset = 0)
 	{
 		// return all pages
 		// offset is used in pagination

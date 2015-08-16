@@ -48,12 +48,12 @@ class Users extends CI_Controller
 	 * Users controller class constructor
 	 */
 
-	function Users()
+	function users()
 	{
 		parent::__construct();
 		$this->load->model('User_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,17 +66,17 @@ class Users extends CI_Controller
 	{
 		debug('manager/users page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of users into an array for displaying in the view
-		$data['allusers'] = $this->User_model->getAllUsers($this->setting['perpage_manager_users'], $this->uri->segment(4));
+		$data['allusers'] = $this->User_model->get_all_users($this->setting['perpage_manager_users'], $this->uri->segment(4));
 		if ($data['allusers']) {
 			debug('loaded users');
 			// set up config data for pagination
-			$data['enough_managers_to_delete'] = $this->User_model->countUsersForLevel(10) > 1 ? TRUE : FALSE;
+			$data['enough_managers_to_delete'] = $this->User_model->count_users_for_level(10) > 1 ? TRUE : FALSE;
 			$config['base_url'] = base_url() . 'manager/users/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->User_model->countUsers();
+			$total = $this->User_model->count_users();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_users'];
 			$config['uri_segment'] = 4;

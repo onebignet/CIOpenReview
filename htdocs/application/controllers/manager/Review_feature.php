@@ -48,7 +48,7 @@ class Review_feature extends CI_Controller
 	 * Review_feature controller class constructor
 	 */
 
-	function Review_feature()
+	function review_feature()
 	{
 		parent::__construct();
 		$this->load->model('Review_feature_model');
@@ -56,7 +56,7 @@ class Review_feature extends CI_Controller
 		$this->load->model('Feature_model');
 		$this->load->library('form_validation');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -69,9 +69,9 @@ class Review_feature extends CI_Controller
 	{
 		debug('manager/review_feature page | add function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load data for use in the view
-		$data['features'] = $this->Feature_model->getFeaturesDropDown();
+		$data['features'] = $this->Feature_model->get_features_drop_down();
 		if ($data['features']) {
 			debug('features loaded');
 			// load data for features drop down list in view
@@ -80,7 +80,7 @@ class Review_feature extends CI_Controller
 			$data['selected_feature'] = '';
 			if ($review_id) {
 				// load the review from the database
-				$review = $this->Review_model->getReviewById($review_id);
+				$review = $this->Review_model->get_review_by_id($review_id);
 				if ($review) {
 					debug('review loaded');
 					// review exists
@@ -121,7 +121,7 @@ class Review_feature extends CI_Controller
 							$value = $this->input->post('value');
 							// add the review feature for the review
 							debug('add the review feature');
-							$addReviewFeature = $this->Review_feature_model->addReviewFeature($review_id, $feature_id, $value);
+							$add_review_feature = $this->Review_feature_model->add_review_feature($review_id, $feature_id, $value);
 							$data['review'] = $review;
 							$data['message'] = lang('manager_review_feature_add_success');
 							// clear form validation data
@@ -146,7 +146,7 @@ class Review_feature extends CI_Controller
 			}
 		} else {
 			// no feature data to choose from so show 'review_feature/no_features' page
-			$review = $this->Review_model->getReviewById($review_id);
+			$review = $this->Review_model->get_review_by_id($review_id);
 			$data['review'] = $review;
 			debug('features not found - loading "manager/review_feature/no_features" view');
 			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_feature/no_features', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -164,10 +164,10 @@ class Review_feature extends CI_Controller
 	{
 		debug('manager/review_feature page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load data for features drop down list in view
-		$data['features'] = $this->Feature_model->getFeaturesDropDown();
-		$data['review'] = $this->Review_model->getReviewForReviewFeatureId($id);
+		$data['features'] = $this->Feature_model->get_features_drop_down();
+		$data['review'] = $this->Review_model->get_review_for_review_feature_id($id);
 		// check form data was submitted
 		if ($this->input->post('review_feature_submit')) {
 			// set up form validation config
@@ -191,7 +191,7 @@ class Review_feature extends CI_Controller
 			if ($this->form_validation->run() === FALSE) {
 				debug('form validation failed');
 				// validation failed - reload page with error message(s)
-				$data['review_feature'] = $this->Review_feature_model->getReviewFeatureById($id);
+				$data['review_feature'] = $this->Review_feature_model->get_review_feature_by_id($id);
 				$data['selected_feature'] = $data['review_feature']->feature_id;
 				$data['selected_value'] = $data['review_feature']->value;
 				$data['message'] = lang('manager_review_feature_form_fail');
@@ -206,7 +206,7 @@ class Review_feature extends CI_Controller
 				$value = $this->input->post('value');
 				// update the review feature for the review
 				debug('update the review feature');
-				$updateReviewFeature = $this->Review_feature_model->updateReviewFeature($id, $feature_id, $value);
+				$update_review_feature = $this->Review_feature_model->update_review_feature($id, $feature_id, $value);
 				// reload the form
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_feature/edited', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -214,7 +214,7 @@ class Review_feature extends CI_Controller
 		} else {
 			// form not submitted so load the data and show the form
 			debug('form not submitted');
-			$data['review_feature'] = $this->Review_feature_model->getReviewFeatureById($id);
+			$data['review_feature'] = $this->Review_feature_model->get_review_feature_by_id($id);
 			if ($data['review_feature']) {
 				$data['selected_feature'] = $data['review_feature']->feature_id;
 				$data['selected_value'] = $data['review_feature']->value;
@@ -238,12 +238,12 @@ class Review_feature extends CI_Controller
 	function delete($id)
 	{
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the review feature from the database
-		$data['review_feature'] = $this->Review_feature_model->getReviewFeatureById($id);
+		$data['review_feature'] = $this->Review_feature_model->get_review_feature_by_id($id);
 		if ($data['review_feature']) {
 			// review feature exists... show confirmation page
-			$data['review'] = $this->Review_model->getReviewForReviewFeatureId($id);
+			$data['review'] = $this->Review_model->get_review_for_review_feature_id($id);
 			debug('loading "review_feature/delete" view');
 			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_feature/delete', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 			$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -264,13 +264,13 @@ class Review_feature extends CI_Controller
 	{
 		debug('manager/review_feature page | deleted function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the review feature from the database
-		$data['review_feature'] = $this->Review_feature_model->getReviewFeatureById($id);
+		$data['review_feature'] = $this->Review_feature_model->get_review_feature_by_id($id);
 		if ($data['review_feature']) {
 			// review feature exists... delete all review features that use this feature
-			$data['review'] = $this->Review_model->getReviewForReviewFeatureId($id);
-			$this->Review_feature_model->deleteReviewFeatureById($id);
+			$data['review'] = $this->Review_model->get_review_for_review_feature_id($id);
+			$this->Review_feature_model->delete_review_feature_by_id($id);
 			// delete the review feature
 			debug('delete the review feature');
 			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_feature/deleted', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');

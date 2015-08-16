@@ -46,7 +46,7 @@ class Category_model extends CI_Model
 	 * Category model class constructor
 	 */
 
-	function Category_model()
+	function category_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,7 +56,7 @@ class Category_model extends CI_Model
 	 * addCategory function
 	 */
 
-	function addCategory($name)
+	function add_category($name)
 	{
 		// add the category
 		$seo_name = url_title(trim($name), '-', TRUE);
@@ -71,7 +71,7 @@ class Category_model extends CI_Model
 	 * updateCategory function
 	 */
 
-	function updateCategory($id, $name)
+	function update_category($id, $name)
 	{
 		// update the category
 		$seo_name = url_title(trim($name), '-', TRUE);
@@ -87,7 +87,7 @@ class Category_model extends CI_Model
 	 * deleteCategory function
 	 */
 
-	function deleteCategory($id)
+	function delete_category($id)
 	{
 		// delete the category
 		$this->db->where('id', $id);
@@ -98,7 +98,7 @@ class Category_model extends CI_Model
 	 * getAllCategories function
 	 */
 
-	function getAllCategories($limit = 0, $offset = 0, $return_array = 0)
+	function get_all_categories($limit = 0, $offset = 0, $return_array = 0)
 	{
 		// return all categories
 		// offset is used in pagination
@@ -127,7 +127,7 @@ class Category_model extends CI_Model
 	 * getCategoryById function
 	 */
 
-	function getCategoryById($id)
+	function get_category_by_id($id)
 	{
 		// return the category
 		$this->db->where('id', $id);
@@ -144,7 +144,7 @@ class Category_model extends CI_Model
 	 * getCategoriesDropDown function
 	 */
 
-	function getCategoriesDropDown($id = 0)
+	function get_categories_drop_down($id = 0)
 	{
 		// get data for categories drop down list
 		$this->db->select('id,name');
@@ -169,7 +169,7 @@ class Category_model extends CI_Model
 	 * countCategories function
 	 */
 
-	function countCategories()
+	function count_categories()
 	{
 		// return total number of all categories
 		return $this->db->count_all_results('category');
@@ -179,7 +179,7 @@ class Category_model extends CI_Model
 	 * getNameFromSeoName function
 	 */
 
-	function getNameFromSeoName($category_seo_name)
+	function get_name_from_seo_name($category_seo_name)
 	{
 		// get the category name based on the seo name
 		$this->db->where('seo_name', $category_seo_name);

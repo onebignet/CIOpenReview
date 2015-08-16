@@ -48,14 +48,14 @@ class Feature extends CI_Controller
 	 * Feature controller class constructor
 	 */
 
-	function Feature()
+	function feature()
 	{
 		parent::__construct();
 		$this->load->model('Feature_model');
 		$this->load->model('Review_feature_model');
 		$this->load->library('form_validation');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -68,7 +68,7 @@ class Feature extends CI_Controller
 	{
 		debug('manager/feature page | add function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// create '$feature' variable for use in the view
 		$feature->name = '';
 		$data['feature'] = $feature;
@@ -99,7 +99,7 @@ class Feature extends CI_Controller
 				$name = $this->input->post('name');
 				// add the feature
 				debug('add the feature');
-				$this->Feature_model->addFeature($name);
+				$this->Feature_model->add_feature($name);
 				$data['message'] = lang('manager_feature_add_success');
 				// clear form validation data
 				$this->form_validation->clear_fields();
@@ -126,9 +126,9 @@ class Feature extends CI_Controller
 	{
 		debug('manager/feature page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the feature from the database
-		$data['feature'] = $this->Feature_model->getFeatureById($id);
+		$data['feature'] = $this->Feature_model->get_feature_by_id($id);
 		if ($data['feature']) {
 			debug('form submitted');
 			// check form data was submitted
@@ -156,7 +156,7 @@ class Feature extends CI_Controller
 					$name = $this->input->post('name');
 					// update the feature
 					debug('update the feature');
-					$this->Feature_model->updateFeature($id, $name);
+					$this->Feature_model->update_feature($id, $name);
 					// reload the form
 					debug('loading "manager/feature/edited" view');
 					$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/feature/edited', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -185,9 +185,9 @@ class Feature extends CI_Controller
 	{
 		debug('manager/feature page | delete function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the feature from the database
-		$data['feature'] = $this->Feature_model->getFeatureById($id);
+		$data['feature'] = $this->Feature_model->get_feature_by_id($id);
 		if ($data['feature']) {
 			debug('loaded feature');
 			// feature exists... show confirmation page
@@ -211,17 +211,17 @@ class Feature extends CI_Controller
 	{
 		debug('manager/feature page | deleted function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the feature from the database
-		$data['feature'] = $this->Feature_model->getFeatureById($id);
+		$data['feature'] = $this->Feature_model->get_feature_by_id($id);
 		if ($data['feature']) {
 			debug('loaded feature');
 			// feature exists... delete all review features that use this feature
 			debug('delete review features using this feature');
-			$this->Review_feature_model->deleteReviewFeaturesByFeatureId($id);
+			$this->Review_feature_model->delete_review_features_by_feature_id($id);
 			// delete the feature
 			debug('delete the feature');
-			$this->Feature_model->deleteFeature($id);
+			$this->Feature_model->delete_feature($id);
 		}
 		// redirect back to features list
 		debug('redirect to "manager/features"');

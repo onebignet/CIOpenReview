@@ -48,7 +48,7 @@ class Category_default_rating_model extends CI_Model
 	 * Category_default_rating model class constructor
 	 */
 
-	function Category_default_rating_model()
+	function category_default_rating_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -58,7 +58,7 @@ class Category_default_rating_model extends CI_Model
 	 * addCategory function
 	 */
 
-	function addDefaultRating($rating_id, $category_id)
+	function add_default_rating($rating_id, $category_id)
 	{
 		// add a default rating for the category
 		$data = array(
@@ -72,7 +72,7 @@ class Category_default_rating_model extends CI_Model
 	 * deleteDefaultRating function
 	 */
 
-	function deleteDefaultRating($id)
+	function delete_default_rating($id)
 	{
 		// delete a default rating
 		$this->db->where('id', $id);
@@ -83,7 +83,7 @@ class Category_default_rating_model extends CI_Model
 	 * getDefaultRatingById function
 	 */
 
-	function getDefaultRatingById($id)
+	function get_default_rating_by_id($id)
 	{
 		// return a default rating
 		$this->db->where('id', $id);
@@ -99,7 +99,7 @@ class Category_default_rating_model extends CI_Model
 	 * getDefaultRatingsByCategoryId function
 	 */
 
-	function getDefaultRatingsByCategoryId($category_id)
+	function get_default_ratings_by_category_id($category_id)
 	{
 		// return all the default ratings for a category
 		$this->db->select('category_default_rating.id AS id');

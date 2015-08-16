@@ -46,7 +46,7 @@ class Rating_model extends CI_Model
 	 * Rating model class constructor
 	 */
 
-	function Rating_model()
+	function rating_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -56,7 +56,7 @@ class Rating_model extends CI_Model
 	 * addRating function
 	 */
 
-	function addRating($name)
+	function add_rating($name)
 	{
 		// add the rating
 		$data = array(
@@ -69,7 +69,7 @@ class Rating_model extends CI_Model
 	 * updateRating function
 	 */
 
-	function updateRating($id, $name)
+	function update_rating($id, $name)
 	{
 		// update the rating
 		$data = array(
@@ -83,7 +83,7 @@ class Rating_model extends CI_Model
 	 * deleteRating function
 	 */
 
-	function deleteRating($id)
+	function delete_rating($id)
 	{
 		// delete the rating
 		$this->db->where('rating_id', $id);
@@ -96,7 +96,7 @@ class Rating_model extends CI_Model
 	 * getRatingById function
 	 */
 
-	function getRatingById($id)
+	function get_rating_by_id($id)
 	{
 		// return the rating
 		$this->db->where('id', $id);
@@ -111,7 +111,7 @@ class Rating_model extends CI_Model
 	 * getAllRatings function
 	 */
 
-	function getAllRatings($limit, $offset = 0)
+	function get_all_ratings($limit, $offset = 0)
 	{
 		// return all ratings
 		// offset is used in pagination
@@ -136,7 +136,7 @@ class Rating_model extends CI_Model
 	 * countRatings function
 	 */
 
-	function countRatings()
+	function count_ratings()
 	{
 		return $this->db->count_all_results('rating');
 	}
@@ -145,7 +145,7 @@ class Rating_model extends CI_Model
 	 * getRatingsDropDown function
 	 */
 
-	function getRatingsDropDown($no_blank = 0)
+	function get_ratings_drop_down($no_blank = 0)
 	{
 		// get data for ratings drop down list
 		$this->db->order_by('id');

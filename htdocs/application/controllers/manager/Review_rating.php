@@ -48,7 +48,7 @@ class Review_rating extends CI_Controller
 	 * Review_rating controller class constructor
 	 */
 
-	function Review_rating()
+	function review_rating()
 	{
 		parent::__construct();
 		$this->load->model('Review_rating_model');
@@ -56,7 +56,7 @@ class Review_rating extends CI_Controller
 		$this->load->model('Rating_model');
 		$this->load->library('form_validation');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -69,9 +69,9 @@ class Review_rating extends CI_Controller
 	{
 		debug('manager/review_rating page | add function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load data for use in the view
-		$data['ratings'] = $this->Rating_model->getRatingsDropDown();
+		$data['ratings'] = $this->Rating_model->get_ratings_drop_down();
 		$data['selected_rating'] = '';
 		$data['selected_value'] = '';
 		if ($data['ratings']) {
@@ -82,7 +82,7 @@ class Review_rating extends CI_Controller
 			$data[] = '';
 			if ($review_id) {
 				// load the review from the database
-				$review = $this->Review_model->getReviewById($review_id);
+				$review = $this->Review_model->get_review_by_id($review_id);
 				if ($review) {
 					debug('review loaded');
 					// review exists
@@ -114,8 +114,7 @@ class Review_rating extends CI_Controller
 							$data['message'] = lang('manager_review_rating_form_fail');
 							debug('loading "review_rating/add" view');
 							$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_rating/add', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
-							$this->template->load('site/' . $this->setting['current_theme']
-								. '/manager_template', $sections, $data);
+							$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
 						} else {
 							debug('validation successful');
 							// validation successful
@@ -124,7 +123,7 @@ class Review_rating extends CI_Controller
 							$value_id = $this->input->post('value_id');
 							// add the review rating for the review
 							debug('add the review rating');
-							$addReviewRating = $this->Review_rating_model->addReviewRating($review_id, $rating_id, $value_id);
+							$add_review_rating = $this->Review_rating_model->add_review_rating($review_id, $rating_id, $value_id);
 							$data['review'] = $review;
 							$data['message'] = lang('manager_review_rating_add_success');
 							// clear form validation data
@@ -149,7 +148,7 @@ class Review_rating extends CI_Controller
 			}
 		} else {
 			// no rating data to choose from so show 'review_rating/no_ratings' page
-			$review = $this->Review_model->getReviewById($review_id);
+			$review = $this->Review_model->get_review_by_id($review_id);
 			$data['review'] = $review;
 			debug('ratings not found - loading "manager/review_rating/no_ratings" view');
 			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_rating/no_ratings', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -167,11 +166,11 @@ class Review_rating extends CI_Controller
 	{
 		debug('manager/review_rating page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load data for ratings drop down list in view
-		$data['ratings'] = $this->Rating_model->getRatingsDropDown();
+		$data['ratings'] = $this->Rating_model->get_ratings_drop_down();
 		$data['values'] = array('--------', '1', '2', '3', '4', '5');
-		$data['review'] = $this->Review_model->getReviewForReviewRatingId($id);
+		$data['review'] = $this->Review_model->get_review_for_review_rating_id($id);
 		// check form data was submitted
 		if ($this->input->post('review_rating_submit')) {
 			// set up form validation config
@@ -196,7 +195,7 @@ class Review_rating extends CI_Controller
 			if ($this->form_validation->run() === FALSE) {
 				debug('form validation failed');
 				// validation failed - reload page with error message(s)
-				$data['review_rating'] = $this->Review_rating_model->getReviewRatingById($id);
+				$data['review_rating'] = $this->Review_rating_model->get_review_rating_by_id($id);
 				$data['selected_rating'] = $data['review_rating']->rating_id;
 				$data['selected_value'] = $data['review_rating']->value;
 				$data['message'] = lang('manager_review_rating_form_fail');
@@ -211,7 +210,7 @@ class Review_rating extends CI_Controller
 				$rating_id = $this->input->post('rating_id');
 				// update the review rating for the review
 				debug('update the review rating');
-				$updateReview_rating = $this->Review_rating_model->updateReviewRating($id, $rating_id, $value);
+				$update_review_rating = $this->Review_rating_model->update_review_rating($id, $rating_id, $value);
 				// reload the form
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_rating/edited', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -219,7 +218,7 @@ class Review_rating extends CI_Controller
 		} else {
 			// form not submitted so load the data and show the form
 			debug('form not submitted');
-			$data['review_rating'] = $this->Review_rating_model->getReviewRatingById($id);
+			$data['review_rating'] = $this->Review_rating_model->get_review_rating_by_id($id);
 			if ($data['review_rating']) {
 				$data['selected_rating'] = $data['review_rating']->rating_id;
 				$data['selected_value'] = $data['review_rating']->value;
@@ -244,12 +243,12 @@ class Review_rating extends CI_Controller
 	{
 		debug('manager/review_rating page | delete function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the review rating from the database
-		$data['review_rating'] = $this->Review_rating_model->getReviewRatingById($id);
+		$data['review_rating'] = $this->Review_rating_model->get_review_rating_by_id($id);
 		if ($data['review_rating']) {
 			// review rating exists... show confirmation page
-			$data['review'] = $this->Review_model->getReviewForReviewRatingId($id);
+			$data['review'] = $this->Review_model->get_review_for_review_rating_id($id);
 			debug('loading "review_rating/delete" view');
 			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_rating/delete', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 			$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -270,15 +269,15 @@ class Review_rating extends CI_Controller
 	{
 		debug('manager/review_rating page | deleted function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the review rating from the database
-		$data['review_rating'] = $this->Review_rating_model->getReviewRatingById($id);
+		$data['review_rating'] = $this->Review_rating_model->get_review_rating_by_id($id);
 		if ($data['review_rating']) {
 			// review rating exists... delete all review ratings that use this rating
-			$data['review'] = $this->Review_model->getReviewForReviewRatingId($id);
+			$data['review'] = $this->Review_model->get_review_for_review_rating_id($id);
 			// delete the review rating
 			debug('delete the review rating');
-			$this->Review_rating_model->deleteReviewRatingById($id);
+			$this->Review_rating_model->delete_review_rating_by_id($id);
 			// redirect back to review ratings list for this review
 			redirect('/manager/review_ratings/show/' . $data['review']->id);
 		} else {

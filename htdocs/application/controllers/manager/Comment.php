@@ -48,14 +48,14 @@ class Comment extends CI_Controller
 	 * Comment controller class constructor
 	 */
 
-	function Comment()
+	function comment()
 	{
 		parent::__construct();
 		$this->load->model('Comment_model');
 		$this->load->model('Review_model');
 		$this->load->library('form_validation');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -68,14 +68,14 @@ class Comment extends CI_Controller
 	{
 		debug('manager/comment page | add function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// create '$comment' variable for use in the view
 		$comment->quotation = '';
 		$comment->source = '';
 		$data['comment'] = $comment;
 		// check review exists
 		if ($review_id) {
-			$review = $this->Review_model->getReviewById($review_id);
+			$review = $this->Review_model->get_review_by_id($review_id);
 			if ($review) {
 				// check form data was submitted
 				if ($this->input->post('comment_submit')) {
@@ -109,10 +109,10 @@ class Comment extends CI_Controller
 						// prepare data for adding to database
 						$quotation = $this->input->post('quotation');
 						$source = $this->input->post('source');
-						$approved = isset($_POST['approved']) ? 1 : 0;
+						$approved = isset($ost['approved']) ? 1 : 0;
 						// add the comment
 						debug('add the comment');
-						$addComment = $this->Comment_model->addComment($review_id, $quotation, $source, '', $approved, 0);
+						$add_comment = $this->Comment_model->add_comment($review_id, $quotation, $source, '', $approved, 0);
 						$data['review'] = $review;
 						$data['message'] = lang('manager_comment_add_success');
 						// clear form validation data
@@ -151,12 +151,12 @@ class Comment extends CI_Controller
 	{
 		debug('manager/comment page | add function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// create '$comment' variable for use in the view
-		$data['comment'] = $this->Comment_model->getCommentById($id);
+		$data['comment'] = $this->Comment_model->get_comment_by_id($id);
 		if ($data['comment']) {
 			// get the review for this comment
-			$data['review'] = $this->Review_model->getReviewForCommentId($id);
+			$data['review'] = $this->Review_model->get_review_for_comment_id($id);
 			// if the comment is approved prepare 'checked' variable
 			if ($data['comment']->approved > 0) {
 				$data['checked'] = 'CHECKED';
@@ -186,8 +186,8 @@ class Comment extends CI_Controller
 			if ($this->form_validation->run() === FALSE) {
 				debug('form validation failed');
 				// validation failed - reload page with error message(s)
-				$data['comment'] = $this->Comment_model->getCommentById($id);
-				$data['review'] = $this->Review_model->getReviewForCommentId($id);
+				$data['comment'] = $this->Comment_model->get_comment_by_id($id);
+				$data['review'] = $this->Review_model->get_review_for_comment_id($id);
 				debug('loading "manager/comment/edit" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/comment/edit', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -197,11 +197,11 @@ class Comment extends CI_Controller
 				// prepare data for updating the database
 				$quotation = $this->input->post('quotation');
 				$source = $this->input->post('source');
-				$approved = isset($_POST['approved']) ? 1 : 0;
+				$approved = isset($ost['approved']) ? 1 : 0;
 				// update the comment
 				debug('update the comment');
-				$updateComment = $this->Comment_model->updateComment($id, $quotation, $source, '', $approved);
-				$data['review'] = $this->Review_model->getReviewForCommentId($id);
+				$update_comment = $this->Comment_model->update_comment($id, $quotation, $source, '', $approved);
+				$data['review'] = $this->Review_model->get_review_for_comment_id($id);
 				debug('loading "manager/comment/edited" view');
 				$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/comment/edited', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 				$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
@@ -231,16 +231,16 @@ class Comment extends CI_Controller
 	{
 		debug('manager/comment page | deleted function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the comment from the database
-		$data['comment'] = $this->Comment_model->getCommentById($id);
+		$data['comment'] = $this->Comment_model->get_comment_by_id($id);
 		if ($data['comment']) {
 			debug('loaded comment');
 			// comment exists, find the review for this comment
-			$data['review'] = $this->Review_model->getReviewForCommentId($id);
+			$data['review'] = $this->Review_model->get_review_for_comment_id($id);
 			// delete the comment
 			debug('delete comment');
-			$this->Comment_model->deleteCommentById($id);
+			$this->Comment_model->delete_comment_by_id($id);
 			// show the 'comment/deleted' page
 			debug('loading "manager/comment/deleted" view');
 			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/comment/deleted', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -262,16 +262,16 @@ class Comment extends CI_Controller
 	{
 		debug('manager/comment page | approve function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the comment from the database
-		$comment = $this->Comment_model->getCommentById($comment_id);
+		$comment = $this->Comment_model->get_comment_by_id($comment_id);
 		if ($comment) {
 			debug('loaded the comment');
 			// approve the comment
 			debug('approve the comment');
-			$this->Comment_model->commentApproval($comment_id, 1);
+			$this->Comment_model->comment_approval($comment_id, 1);
 			// get the review for this comment
-			$review = $this->Review_model->getReviewForCommentId($comment_id);
+			$review = $this->Review_model->get_review_for_comment_id($comment_id);
 			if ($review) {
 				// redirect to list of comments for this review
 				debug('redirecting to "manager/comments/show"');
@@ -293,16 +293,16 @@ class Comment extends CI_Controller
 	{
 		debug('manager/comment page | unapprove function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the comment from the database
-		$comment = $this->Comment_model->getCommentById($comment_id);
+		$comment = $this->Comment_model->get_comment_by_id($comment_id);
 		if ($comment) {
 			debug('loaded the comment');
 			// unapprove the comment
 			debug('unapprove the comment');
-			$this->Comment_model->commentApproval($comment_id, 0);
+			$this->Comment_model->comment_approval($comment_id, 0);
 			// get the review for this comment
-			$review = $this->Review_model->getReviewForCommentId($comment_id);
+			$review = $this->Review_model->get_review_for_comment_id($comment_id);
 			if ($review) {
 				// redirect to comments list for this review
 				debug('redirecting to "manager/comments/show"');
@@ -324,12 +324,12 @@ class Comment extends CI_Controller
 	{
 		debug('manager/comment page | approve_pending function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
-		$comment = $this->Comment_model->getCommentById($comment_id);
+		$this->secure->allow_managers($this->session);
+		$comment = $this->Comment_model->get_comment_by_id($comment_id);
 		if ($comment) {
 			// approve the comment
 			debug('approve the comment');
-			$this->Comment_model->commentApproval($comment_id, 1);
+			$this->Comment_model->comment_approval($comment_id, 1);
 		}
 		// redirect to comments pending list
 		debug('redirecting to "manager/comments/pending"');
@@ -346,13 +346,13 @@ class Comment extends CI_Controller
 	{
 		debug('manager/comment page | delete_pending function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the comment from the database
-		$comment = $this->Comment_model->getCommentById($id);
+		$comment = $this->Comment_model->get_comment_by_id($id);
 		if ($comment) {
 			// delete the comment
 			debug('delete the comment');
-			$this->Comment_model->deleteCommentById($id);
+			$this->Comment_model->delete_comment_by_id($id);
 		}
 		// redirect to comments pending list
 		debug('redirecting to "manager/comments/pending"');

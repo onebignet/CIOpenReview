@@ -48,14 +48,14 @@ class Rating extends CI_Controller
 	 * Rating controller class constructor
 	 */
 
-	function Rating()
+	function rating()
 	{
 		parent::__construct();
 		$this->load->model('Rating_model');
 		$this->load->model('Review_rating_model');
 		$this->load->library('form_validation');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -68,7 +68,7 @@ class Rating extends CI_Controller
 	{
 		debug('manager/rating page | add function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// create '$rating' variable for use in the view
 		$rating->name = '';
 		$data['rating'] = $rating;
@@ -100,7 +100,7 @@ class Rating extends CI_Controller
 				$name = $this->input->post('name');
 				// add the rating
 				debug('add the rating');
-				$this->Rating_model->addRating($name);
+				$this->Rating_model->add_rating($name);
 				$data['message'] = lang('manager_rating_add_success');
 				// clear form validation data
 				$this->form_validation->clear_fields();
@@ -127,9 +127,9 @@ class Rating extends CI_Controller
 	{
 		debug('manager/rating page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the rating from the database
-		$data['rating'] = $this->Rating_model->getRatingById($id);
+		$data['rating'] = $this->Rating_model->get_rating_by_id($id);
 		if ($data['rating']) {
 			debug('form submitted');
 			// check form data was submitted
@@ -158,7 +158,7 @@ class Rating extends CI_Controller
 					$name = $this->input->post('name');
 					// update the rating
 					debug('update the rating');
-					$this->Rating_model->updateRating($id, $name);
+					$this->Rating_model->update_rating($id, $name);
 					$data['message'] = lang('manager_rating_edit_success');
 					// reload the form
 					debug('loading "manager/rating/edited" view');
@@ -188,9 +188,9 @@ class Rating extends CI_Controller
 	{
 		debug('manager/rating page | delete function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the rating from the database
-		$data['rating'] = $this->Rating_model->getRatingById($id);
+		$data['rating'] = $this->Rating_model->get_rating_by_id($id);
 		if ($data['rating']) {
 			debug('loaded rating');
 			// rating exists... show confirmation page
@@ -214,17 +214,17 @@ class Rating extends CI_Controller
 	{
 		debug('manager/rating page | deleted function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load the rating from the database
-		$data['rating'] = $this->Rating_model->getRatingById($id);
+		$data['rating'] = $this->Rating_model->get_rating_by_id($id);
 		if ($data['rating']) {
 			debug('loaded rating');
 			// rating exists... delete all review ratings that use this rating
 			debug('delete review ratings using this rating');
-			$this->Review_rating_model->deleteReviewRatingsByRatingId($id);
+			$this->Review_rating_model->delete_review_ratings_by_rating_id($id);
 			// delete the rating
 			debug('delete the rating');
-			$this->Rating_model->deleteRating($id);
+			$this->Rating_model->delete_rating($id);
 		}
 		// redirect back to ratings list
 		debug('redirect to "manager/ratings"');

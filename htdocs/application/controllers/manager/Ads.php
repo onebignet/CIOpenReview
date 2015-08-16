@@ -48,12 +48,12 @@ class Ads extends CI_Controller
 	 * Ads controller class constructor
 	 */
 
-	function Ads()
+	function ads()
 	{
 		parent::__construct();
 		$this->load->model('Ad_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,16 +66,16 @@ class Ads extends CI_Controller
 	{
 		debug('manager/ads page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of ads into an array for displaying in the view
-		$data['allads'] = $this->Ad_model->getManagerAds($this->setting['perpage_manager_ads'], $this->uri->segment(4));
+		$data['allads'] = $this->Ad_model->get_manager_ads($this->setting['perpage_manager_ads'], $this->uri->segment(4));
 		if ($data['allads']) {
 			debug('loaded ads');
 			// set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/ads/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Ad_model->countAds();
+			$total = $this->Ad_model->count_ads();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_ads'];
 			$config['uri_segment'] = 4;

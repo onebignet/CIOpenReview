@@ -48,7 +48,7 @@ class Page extends CI_Controller
 	 * Pages controller class constructor
 	 */
 
-	function Page()
+	function page()
 	{
 		parent::__construct();
 		$this->load->model('Page_model');
@@ -56,7 +56,7 @@ class Page extends CI_Controller
 		$this->load->model('Review_model');
 		$this->load->model('Category_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -69,19 +69,19 @@ class Page extends CI_Controller
 	{
 		debug('custom page page | show function');
 		// load data for view
-		$data['sidebar_ads'] = $this->Ad_model->getAds($this->setting['max_ads_custom_page_sidebar'], 3);
-		$data['page_ads'] = $this->Ad_model->getAds(1, 2);
+		$data['sidebar_ads'] = $this->Ad_model->get_ads($this->setting['max_ads_custom_page_sidebar'], 3);
+		$data['page_ads'] = $this->Ad_model->get_ads(1, 2);
 		$data['show_search'] = $this->setting['search_sidebar'];
 		$data['show_recent'] = $this->setting['recent_review_sidebar'];
 		$approval_required = $this->setting['review_approval'];
 		if ($data['show_recent'] == 1) {
-			$data['recent'] = $this->Review_model->getLatestReviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
+			$data['recent'] = $this->Review_model->get_latest_reviews($this->setting['number_of_reviews_sidebar'], 0, $approval_required);
 		} else {
 			$data['recent'] = FALSE;
 		}
-		$data['categories'] = $this->Category_model->getAllCategories(0);
+		$data['categories'] = $this->Category_model->get_all_categories(0);
 		$data['show_categories'] = $this->setting['categories_sidebar'];
-		$data['page'] = $this->Page_model->getPageBySeoName($requested_page_name);
+		$data['page'] = $this->Page_model->get_page_by_seo_name($requested_page_name);
 		if ($data['page']) {
 			debug('loaded page with name "' . $requested_page_name . '"');
 			$data['page_title'] = $this->setting['site_name'] . ' - Page - ' . $data['page']->name;

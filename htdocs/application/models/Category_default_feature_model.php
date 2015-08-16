@@ -48,7 +48,7 @@ class Category_default_feature_model extends CI_Model
 	 * Category_default_feature model class constructor
 	 */
 
-	function Category_default_feature_model()
+	function category_default_feature_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -58,7 +58,7 @@ class Category_default_feature_model extends CI_Model
 	 * addDefaultFeature function
 	 */
 
-	function addDefaultFeature($feature_id, $category_id)
+	function add_default_feature($feature_id, $category_id)
 	{
 		// add a default feature for the category
 		$data = array(
@@ -72,7 +72,7 @@ class Category_default_feature_model extends CI_Model
 	 * deleteDefaultFeature function
 	 */
 
-	function deleteDefaultFeature($id)
+	function delete_default_feature($id)
 	{
 		// delete a default feature
 		$this->db->where('id', $id);
@@ -83,7 +83,7 @@ class Category_default_feature_model extends CI_Model
 	 * getDefaultFeatureById function
 	 */
 
-	function getDefaultFeatureById($id)
+	function get_default_feature_by_id($id)
 	{
 		// return a default feature
 		$this->db->where('id', $id);
@@ -99,7 +99,7 @@ class Category_default_feature_model extends CI_Model
 	 * getDefaultFeaturesByCategoryId function
 	 */
 
-	function getDefaultFeaturesByCategoryId($category_id)
+	function get_default_features_by_category_id($category_id)
 	{
 		// return all the default features for a category
 		$this->db->select('category_default_feature.id AS id');

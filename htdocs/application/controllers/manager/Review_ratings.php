@@ -44,7 +44,7 @@
 class Review_ratings extends CI_Controller
 {
 
-	function Review_ratings()
+	function review_ratings()
 	{
 		parent::__construct();
 		$this->load->model('Rating_model');
@@ -52,7 +52,7 @@ class Review_ratings extends CI_Controller
 		$this->load->model('Review_rating_model');
 		$this->load->helper('form');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -65,18 +65,18 @@ class Review_ratings extends CI_Controller
 	{
 		debug('manager/review_ratings page | show function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		if ($review_id) {
 			debug('loaded review');
 			$data['values'] = array('--------', '1', '2', '3', '4', '5');
 			// load a page of review features for this review into an array for displaying in the view
-			$review = $this->Review_model->getReviewById($review_id);
+			$review = $this->Review_model->get_review_by_id($review_id);
 			if ($review) {
-				$data['allreviewratings'] = $this->Review_rating_model->getReviewRatingsForReviewById($review_id, 10, $this->uri->segment(5));
+				$data['allreviewratings'] = $this->Review_rating_model->get_review_ratings_for_review_by_id($review_id, 10, $this->uri->segment(5));
 				if ($data['allreviewratings']) {
 					debug('loaded review ratings');
 					$data['review'] = $review;
-					$data['ratings'] = $this->Rating_model->getRatingsDropDown(1);
+					$data['ratings'] = $this->Rating_model->get_ratings_drop_down(1);
 					// show the review ratings page
 					debug('loading "manager/review_ratings" view');
 					$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_ratings/review_ratings', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
@@ -110,8 +110,8 @@ class Review_ratings extends CI_Controller
 	{
 		debug('manager/review_ratings page | edit function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
-		$data['review'] = $this->Review_model->getReviewById($id);
+		$this->secure->allow_managers($this->session);
+		$data['review'] = $this->Review_model->get_review_by_id($id);
 		// check form data was submitted
 		if ($this->input->post('review_ratings_submit')) {
 			debug('form submitted');
@@ -120,7 +120,7 @@ class Review_ratings extends CI_Controller
 				$review_rating_id = $this->input->post('review_rating_id' . $index);
 				$rating_id = $this->input->post('rating_id' . $index);
 				$value = $this->input->post('value' . $index);
-				$updateReview_rating = $this->Review_rating_model->updateReviewRating($review_rating_id, $rating_id, $value);
+				$update_review_rating = $this->Review_rating_model->update_review_rating($review_rating_id, $rating_id, $value);
 			}
 			debug('redirecting to "manager/review_ratings/show/"' . $id);
 			redirect('/manager/review_ratings/show/' . $id, '301');

@@ -48,12 +48,12 @@ class Pages extends CI_Controller
 	 * Pages controller class constructor
 	 */
 
-	function Pages()
+	function pages()
 	{
 		parent::__construct();
 		$this->load->model('Page_model');
 		// load all settings into an array
-		$this->setting = $this->Setting_model->getEverySetting();
+		$this->setting = $this->Setting_model->get_every_setting();
 	}
 
 	/*
@@ -66,16 +66,16 @@ class Pages extends CI_Controller
 	{
 		debug('manager/pages page | index function');
 		// check user is logged in with manager level permissions
-		$this->secure->allowManagers($this->session);
+		$this->secure->allow_managers($this->session);
 		// load a page of custom pages into an array for displaying in the view
-		$data['allpages'] = $this->Page_model->getAllPages($this->setting['perpage_manager_custom_pages'], $this->uri->segment(4));
+		$data['allpages'] = $this->Page_model->get_all_pages($this->setting['perpage_manager_custom_pages'], $this->uri->segment(4));
 		if ($data['allpages']) {
 			debug('loaded pages');
 			// set up config data for pagination
 			$config['base_url'] = base_url() . 'manager/pages/index';
 			$config['next_link'] = lang('results_next');
 			$config['prev_link'] = lang('results_previous');
-			$total = $this->Page_model->countPages();
+			$total = $this->Page_model->count_pages();
 			$config['total_rows'] = $total;
 			$config['per_page'] = $this->setting['perpage_manager_custom_pages'];
 			$config['uri_segment'] = 4;

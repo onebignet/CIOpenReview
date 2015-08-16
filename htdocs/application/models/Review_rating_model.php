@@ -46,7 +46,7 @@ class Review_rating_model extends CI_Model
 	 * Review_rating model class constructor
 	 */
 
-	function Review_rating_model()
+	function review_rating_model()
 	{
 		parent::__construct();
 		$this->load->database();
@@ -57,7 +57,7 @@ class Review_rating_model extends CI_Model
 	 * addReviewRating function
 	 */
 
-	function addReviewRating($review_id, $rating_id, $value)
+	function add_review_rating($review_id, $rating_id, $value)
 	{
 		// add the review rating
 		$data = array(
@@ -72,7 +72,7 @@ class Review_rating_model extends CI_Model
 	 * updateReviewRating function
 	 */
 
-	function updateReviewRating($id, $rating_id, $value)
+	function update_review_rating($id, $rating_id, $value)
 	{
 		// update the review rating
 		$data = array(
@@ -87,7 +87,7 @@ class Review_rating_model extends CI_Model
 	 * deleteReviewRatingsByRatingId function
 	 */
 
-	function deleteReviewRatingsByRatingId($rating_id)
+	function delete_review_ratings_by_rating_id($rating_id)
 	{
 		// delete all review ratings for the rating
 		$this->db->where('rating_id', $rating_id);
@@ -98,7 +98,7 @@ class Review_rating_model extends CI_Model
 	 * deleteReviewRatingsByReviewId function
 	 */
 
-	function deleteReviewRatingsByReviewId($review_id)
+	function delete_review_ratings_by_review_id($review_id)
 	{
 		// delete all review ratings for the review
 		$this->db->where('review_id', $review_id);
@@ -109,7 +109,7 @@ class Review_rating_model extends CI_Model
 	 * deleteReviewRatingById function
 	 */
 
-	function deleteReviewRatingById($id)
+	function delete_review_rating_by_id($id)
 	{
 		// delete the review rating
 		$this->db->where('id', $id);
@@ -120,7 +120,7 @@ class Review_rating_model extends CI_Model
 	 * getReviewRatingById function
 	 */
 
-	function getReviewRatingById($id)
+	function get_review_rating_by_id($id)
 	{
 		// return the review rating
 		$this->db->where('id', $id);
@@ -136,7 +136,7 @@ class Review_rating_model extends CI_Model
 	 * getReviewRatingsForReviewById function
 	 */
 
-	function getReviewRatingsForReviewById($review_id, $limit = 0, $offset = 0)
+	function get_review_ratings_for_review_by_id($review_id, $limit = 0, $offset = 0)
 	{
 		// return review ratings for the review
 		// offset is used in pagination
@@ -154,7 +154,7 @@ class Review_rating_model extends CI_Model
 		if ($query->num_rows() > 0) {
 			// set the rating image for each review rating
 			foreach ($query->result() as $result) {
-				$result->rating_name = $this->Rating_model->getRatingById($result->rating_id)->name;
+				$result->rating_name = $this->Rating_model->get_rating_by_id($result->rating_id)->name;
 				switch ($result->value) {
 					case 1:
 						$result->rating_image = "rating_1.jpg";
@@ -184,7 +184,7 @@ class Review_rating_model extends CI_Model
 	 * countReviewRatingsForReviewById function
 	 */
 
-	function countReviewRatingsForReviewById($review_id)
+	function count_review_ratings_for_review_by_id($review_id)
 	{
 		// return the number of review ratings for the review
 		$this->db->where('review_id', $review_id);
