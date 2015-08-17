@@ -8,6 +8,8 @@ CIOpenReview is a fork of the original OpenReviewScript which was abandoned as o
 * CIOpenReview now uses CodeIgniter 3.0 and has updated requirements (see Server Requirements)
 * You can now rate in 1/2 star increments
 * Debug information is stored in a table on the DB
+* Bootstrap-based Theme
+* User password hashed with password_hash() (Much more secure)
 
 Newer features are in the works and I am open to any suggestions:
 * Adding admin and user logging
