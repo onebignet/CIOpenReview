@@ -209,7 +209,7 @@ VALUES (1, 'site_name', 'CIOpenReview'), (2, 'site_email', ''), (3, 'captcha_ver
   (13, 'max_ads_home_sidebar', '5'), (14, 'max_ads_review_sidebar', '5'), (15, 'max_ads_article_sidebar', '5'),
   (16, 'max_ads_search_sidebar', '5'), (17, 'max_ads_home_lists', '5'), (18, 'max_ads_articles_lists', '5'),
   (19, 'max_ads_results_lists', '5'), (20, 'review_approval', '0'), (21, 'review_auto', '1'),
-  (22, 'comment_approval', '1'), (23, 'comment_auto', '1'), (24, 'current_theme', 'light'),
+  (22, 'comment_approval', '1'), (23, 'comment_auto', '1'), (24, 'current_theme', 'bootstrap'),
   (25, 'featured_minimum', '3'), (26, 'max_ads_custom_page_sidebar', '5'), (27, 'perpage_site_home', '5'),
   (28, 'perpage_site_search', '5'), (29, 'perpage_site_category', '5'), (30, 'perpage_site_articles', '5'),
   (31, 'perpage_manager_reviews', '5'), (32, 'perpage_manager_reviews_pending', '5'),

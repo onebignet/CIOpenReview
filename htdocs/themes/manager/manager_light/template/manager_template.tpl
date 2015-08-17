@@ -57,7 +57,7 @@ $version="1.0.2beta";
 <body>
 <div id="container">
     <div id="header">
-        {{ if ($this->secure->isManagerLoggedIn($this->session)): }}
+        {{ if ($this->secure->is_manager_logged_in($this->session)): }}
         <p>
             <span class="manager_log">{{= lang('manager_logged_in_as').' ('.$this->session->userdata('name').') | '.anchor('/manager/logout',lang('manager_log_out')) }}</span>
         </p>
