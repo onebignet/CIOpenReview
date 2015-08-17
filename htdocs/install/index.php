@@ -44,6 +44,7 @@ $database_fail = FALSE;
 $show_info_form = FALSE;
 $path_to_database_file = 'database.php';
 $path_to_config_file = '../application/config/database.php';
+require_once('../application/libraries/Password.php');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -98,7 +99,7 @@ $path_to_config_file = '../application/config/database.php';
 								// delete all users - in case there has been a previous installation attempt
 								mysql_query("DELETE FROM `user`");
 								// insert manager level user
-								mysql_query("INSERT INTO `user` (`name`, `email`, `password`, `level`) VALUES ('" . $username . "', '" . $siteemail . "', '" . md5($password) . "', '10')");
+								mysql_query("INSERT INTO `user` (`name`, `email`, `password`, `level`) VALUES ('" . $username . "', '" . $siteemail . "', '" . password_hash($password, PASSWORD_BCRYPT) . "', '10')");
 								// update settings
 								mysql_query("UPDATE `setting` SET `value` = '" . $sitename . "' WHERE `name` ='site_name'");
 								mysql_query("UPDATE `setting` SET `value` = '" . $siteemail . "' WHERE `name` ='site_email'");

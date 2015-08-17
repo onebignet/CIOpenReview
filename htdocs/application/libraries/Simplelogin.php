@@ -2,6 +2,9 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
+//Include stronger password-hashing
+include_once("Password.php");
+
 /**
  * Simplelogin Class
  * Author: Anthony Graddy
@@ -34,37 +37,39 @@ class Simplelogin
 	 * Create a user account
 	 *
 	 * @access    public
-	 * @param    string
+	 *
+	 * @param           string
 	 * @param    string
 	 * @param    bool
+	 *
 	 * @return    bool
 	 */
-	function create($user = '', $password = '', $level = 1, $auto_login = true)
+	function create($user = '', $password = '', $level = 1, $auto_login = TRUE)
 	{
 		//Put here for PHP 4 users
 		$this->CI = &get_instance();
 		//Make sure account info was sent
 		if ($user === '' OR $password === '') {
-			return false;
+			return FALSE;
 		}
 		//Check against user table
 		$this->CI->db->where('name', $user);
 		$query = $this->CI->db->getwhere($this->user_table);
 		if ($query->num_rows() > 0) {
 			//name already exists
-			return false;
+			return FALSE;
 		} else {
 			//Encrypt password
-			$password = md5($password);
+			$password = password_hash($password, PASSWORD_BCRYPT);
 			//Insert account into the database
 			$data = array(
-				'name' => $user,
-				'password' => $password
+				'name'     => $user,
+				'password' => $password,
 			);
 			$this->CI->db->set($data);
 			if (!$this->CI->db->insert($this->user_table)) {
 				//There was a problem!
-				return false;
+				return FALSE;
 			}
 			$user_id = $this->CI->db->insert_id();
 			//Automatically login to created account
@@ -76,10 +81,11 @@ class Simplelogin
 				//Set session data
 				$this->CI->session->set_userdata(array('id' => $user_id, 'name' => $user));
 				//Set logged_in to true
-				$this->CI->session->set_userdata(array('logged_in' => true));
+				$this->CI->session->set_userdata(array('logged_in' => TRUE));
 			}
+
 			//Login was successful
-			return true;
+			return TRUE;
 		}
 	}
 
@@ -87,7 +93,9 @@ class Simplelogin
 	 * Delete user
 	 *
 	 * @access    public
+	 *
 	 * @param integer
+	 *
 	 * @return    bool
 	 */
 	function delete($user_id)
@@ -96,14 +104,14 @@ class Simplelogin
 		$this->CI = &get_instance();
 		if (!is_numeric($user_id)) {
 			//There was a problem
-			return false;
+			return FALSE;
 		}
 		if ($this->CI->db->delete($this->user_table, array('id' => $user_id))) {
 			//Database call was successful, user is deleted
-			return true;
+			return TRUE;
 		} else {
 			//There was a problem
-			return false;
+			return FALSE;
 		}
 	}
 
@@ -111,8 +119,10 @@ class Simplelogin
 	 * Login and sets session variables
 	 *
 	 * @access    public
+	 *
 	 * @param    string
 	 * @param    string
+	 *
 	 * @return    bool
 	 */
 	function login($user = '', $password = '', $min_level = 0)
@@ -121,26 +131,46 @@ class Simplelogin
 		$this->CI = &get_instance();
 		//Make sure login info was sent
 		if ($user === '' OR $password === '') {
-			return false;
+			return FALSE;
 		}
 		//Check if already logged in
 		if ($this->CI->session->userdata('name') == $user) {
 			//User is already logged in.
-			return false;
+			return FALSE;
 		}
 		//Check against user table
 		$this->CI->db->where('name', $user);
 		$query = $this->CI->db->get_where($this->user_table);
 		if ($query->num_rows() > 0) {
 			$row = $query->row_array();
-			//Check against password
-			if (md5($password) != $row['password']) {
-				return false;
+			//Verify if old or new password type
+			//Old
+			if (strlen($row['password']) <= 33) {
+				//Check against password
+
+				if (md5($password) != $row['password']) {
+					return FALSE;
+				}
+
+				//Update hash to new type and insert into DB
+				$update = array(
+					'password' => password_hash($password, PASSWORD_BCRYPT),
+				);
+
+				$this->CI->db->where('name', $user);
+				$this->CI->db->update($this->user_table, $update);
+
+			} else {
+				//New Password Type
+				if (!password_verify($password, $row['password'])) {
+					return FALSE;
+				}
 			}
+
 			//Check user level is high enough
 			if ($row['level'] < $min_level) {
 
-				return false;
+				return FALSE;
 			}
 
 			//Remove the password field
@@ -148,13 +178,14 @@ class Simplelogin
 			//Set session data
 			$this->CI->session->set_userdata($row);
 			//Set logged_in to true
-			$this->CI->session->set_userdata(array('logged_in' => true));
+			$this->CI->session->set_userdata(array('logged_in' => TRUE));
 			$this->CI->session->set_userdata('level', $row['level']);
+
 			//Login was successful
-			return true;
+			return TRUE;
 		} else {
 			//No database result found
-			return false;
+			return FALSE;
 		}
 	}
 
