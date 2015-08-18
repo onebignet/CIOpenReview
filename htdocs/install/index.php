@@ -148,8 +148,9 @@ function check_function_exists($name, $value, $fail_code)
 					<h1>CIOpenReview Installer</h1>
 
 					<div class="col-md-12">
-						<p>Full installation Instructions Are Available At <u><a target="_blank"
-						                                                         href="http://ciopenreview.com">GitHub</a></u>
+						<p>Full installation Instructions Are Available on <u><a target="_blank"
+						                                                         href="http://www.ciopenreview.com/guide/install">our
+									Install Guide</a></u>
 						</p>
 					</div>
 				</div>
@@ -202,8 +203,8 @@ function check_function_exists($name, $value, $fail_code)
 					<li>to visit your manager area <b><a href="../manager" target="_blank">click
 								here</a></b></li>
 					<li>and for more help and support visit our <b><a
-								href="http://ciopenreview.com" target="_blank">CIOpenReview
-								Page</a></b>
+								href="http://ciopenreview.com/guide/userguide" target="_blank">CIOpenReview
+								User Guide</a></b>
 					</li>
 				</ul>
 				<br/>
