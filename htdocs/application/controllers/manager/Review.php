@@ -633,7 +633,7 @@ class Review extends CI_Controller
 	 * check tags only contain valid characters
 	 */
 
-	function validate_tags($str)
+	function _validate_tags($str)
 	{
 		$result = (!preg_match("/^([a-z0-9,-_\s])+$/i", $str)) ? FALSE : TRUE;
 		if ($result === TRUE) {
