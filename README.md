@@ -30,6 +30,27 @@ Server Requirements
 
 Also required for Installation:
  - An FTP client / Shell Access to be able to upload/download script
+ 
+ Demo
+ ============
+ 
+ The CIOpenReview demo is available on the following URLS
+ 
+ User Site
+ 
+ http://demo.ciopenreview.com/
+ 
+ 
+ Manager Site
+ 
+ http://demo.ciopenreview.com/manager
+ ```
+ User: demo
+ Passowrd: demo123
+ ```
+ 
+ 
+ Note: The demo database is deleted and refreshed every night at midnight central time
 
 Installation
 ============
@@ -54,23 +75,3 @@ chown -R <user> *
 
 <your_domain_name>/install/
 
-Demo
-============
-
-The CIOpenReview demo is available on the following URLS
-
-User Site
-
-```
-http://demo.ciopenreview.com/
-```
-
-Manager Site
-
-```
-http://demo.ciopenreview.com/manager
-User: demo
-Passowrd: demo123
-```
-
-Note: The demo database is deleted and refreshed every night at midnight central time
