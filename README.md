@@ -61,10 +61,16 @@ The CIOpenReview demo is available on the following URLS
 
 User Site
 
+```
 http://demo.ciopenreview.com/
+```
+
 Manager Site
 
+```
 http://demo.ciopenreview.com/manager
 User: demo
 Passowrd: demo123
+```
+
 Note: The demo database is deleted and refreshed every night at midnight central time
