@@ -93,7 +93,7 @@
 <!-- END OF 'CONTAINER' SECTION -->
 
 <!-- FOOTER -->
-<nav class="navbar navbar-default navbar-fixed-bottom">
+<nav class="navbar navbar-default navbar-bottom">
     <div class="container">
         <div class="container">
             <div class="row">
