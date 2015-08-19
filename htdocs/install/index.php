@@ -39,6 +39,7 @@ $installer = new Installer();
 
 include_once("includes/installer.header.php");
 
+
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	if (isset($_POST['info_form'])) {
 // validate form
@@ -46,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 		if (!$installer->validate_site_vars()) {
 			include_once("includes/installer.stage_3.php");
 
-		} else if ($installer->load_site_vars_into_db()) {
+		} else if ($installer->load_site_vars_into_db() && $installer->complete_installation()) {
 			include_once("includes/installer.stage_4.php");
 
 		} else {
@@ -84,6 +85,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 } else {
 	// Nothing submitted - show first page of installer
+
+	//Do we need to install anything or are we already up-to-date
+	if (!$installer->is_install_needed()) {
+		exit;
+	}
+
 	include_once("includes/installer.stage_1.php");
 	include_once("includes/installer.footer.php");
 }

@@ -72,8 +72,14 @@ $upload_max_filesize = ini_get('upload_max_filesize') + 0;
 	<tr><?php $installer->check_function_exists("GD Support", "gd_info", "gd_info_fail"); ?></tr>
 </table>
 
+<h3>Checking CIOpenReview configuration...</h3>
+<table class="table">
+	<tr><?php $installer->check_installed_version(); ?></tr>
+
+</table>
+
 <?php
-echo '<h2>Testing Mail Function....</h2>';
+echo '<h3>Testing Mail Function....</h3>';
 echo '(Note: this is just a simple email function test - you might need to check your mail settings if you have any problems with your site sending emails)<br /><br />';
 echo '<table class="table">';
 $headers = 'From: install@ciopenreview.com' . "\r\n" .

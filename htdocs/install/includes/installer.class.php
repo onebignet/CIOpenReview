@@ -78,6 +78,7 @@ class Installer
 	private $password_min_length = 3;
 	private $password_max_length = 15;
 
+	//Verifies that a directory is writable
 	public function is_dir_writable($dir_name)
 	{
 		if (is_writable("../" . $dir_name)) {
@@ -88,6 +89,7 @@ class Installer
 		}
 	}
 
+	//Verfies that a certain value is more than the minimum requirement (ex PHP POST size)
 	public function is_more_than($name, $value, $required, $append = "")
 	{
 		if ($value >= $required) {
@@ -97,6 +99,7 @@ class Installer
 		}
 	}
 
+	//Verifies that certain functionality is enables or disabled (ex. register_globals)
 	public function is_on_or_off($name, $value, $required, $error_key)
 	{
 
@@ -116,6 +119,7 @@ class Installer
 
 	}
 
+	//Check to see if we have the minimum PHP version to run CI3.0
 	public function check_php_version()
 	{
 		//Older versions to not have PHP_VERSION_ID
@@ -134,6 +138,7 @@ class Installer
 		}
 	}
 
+	//Check to see if we have Apache, NGINX, or an unknown server
 	public function check_server_software()
 	{
 		//If server is Apache or NGINX all is well, else warn that it is unknown
@@ -144,6 +149,21 @@ class Installer
 		}
 	}
 
+
+	public function check_installed_version()
+	{
+
+		$current_version = $this->get_installed_version();
+
+		if ($current_version) {
+			$this->show_success("Current version of application: " . $current_version);
+		} else {
+			$this->show_success("Current version of application: Not Installed ");
+		}
+
+	}
+
+	//Check to see if mod_rewrite is enabled for Apache, or try_files for NGINX
 	public function check_url_rewrite()
 	{
 
@@ -157,6 +177,7 @@ class Installer
 				$this->show_error("Your Apache server <b>DOES NOT</b> have the correct mod_rewrite settings. Please ensure mod_rewrite is enabled");
 			}
 		} else if ($this->is_nginx()) {
+			//If NGINX, test index.php to verify CI is forwarding properly
 			$filename = 'http://' . $_SERVER['HTTP_HOST'] . '/nginx_rewrite_test';
 			if ($this->curl_check($filename)) {
 				$this->show_success("Your NGINX server has the correct try_files settings");
@@ -170,6 +191,7 @@ class Installer
 		}
 	}
 
+	//Check to see if a PHP function exists
 	public function check_function_exists($name, $function_name, $fail_code)
 	{
 		if (function_exists($function_name)) {
@@ -180,6 +202,7 @@ class Installer
 		}
 	}
 
+	//Check to see if the mail() function works
 	public function check_email_system()
 	{
 		$headers = 'From: install@ciopenreview.com' . "\r\n" .
@@ -194,23 +217,29 @@ class Installer
 		}
 	}
 
+	//Checks for critical errors
 	public function is_critical_error()
 	{
+		//If no errors, return false
 		if (count($this->error) == 0) {
 			return FALSE;
 		}
 
 		foreach ($this->error as $error) {
 			if (in_array($error, $this->critical_errors)) {
+				//There is a critical error
 				return TRUE;
 			}
 		}
 
+		//No critical errors
 		return FALSE;
 	}
 
+	//Display a summary of errprs/warning on sytage_1
 	public function show_precheck_errors_and_warnings()
 	{
+		//If there are no errors
 		if (count($this->error) == 0) {
 			$this->alert_success("All checks have passed! You can install without issue!");
 
@@ -218,8 +247,10 @@ class Installer
 		}
 
 		$error_string_list = array();
+		//Look for critical errors
 		foreach ($this->error as $error) {
 			if (in_array($error, $this->critical_errors)) {
+				//Display critical errors first
 				$this->alert_error($this->failure_codes[$error]);
 
 				return FALSE;
@@ -227,6 +258,7 @@ class Installer
 			$error_string_list[] = $this->failure_codes[$error];
 		}
 
+		//If there are no critical errors, display the warnings
 		$error_string = implode("<br><br>", $error_string_list);
 		$this->alert_warning($error_string);
 
@@ -234,39 +266,36 @@ class Installer
 
 	}
 
+	//Create the database.php config file needed by CI
 	public function create_database_file()
 	{
-		if (!$this->validate_database_vars()) {
-			include_once("installer.stage_2.php");
-			exit;
+
+		//If no install/update is needed...do not make changes!
+		if (!$this->is_install_needed()) {
+			return;
 		}
 
+		//Attempt to connect to database
 		if (mysql_connect($this->db_hostname, $this->db_username, $this->db_password)) {
 			if (mysql_select_db($this->db_name)) {
 
+				//Cycle through the install.sql and execute all queries
 				$queries = explode(";\n", file_get_contents('install.sql'));
 				foreach ($queries as $query) {
 					mysql_query($query);
 				}
 
-				$installed_version = $this->get_installed_version();
-
-				if ($installed_version == NULL) {
-					mysql_query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('59', 'build_code', '" . $this->build_number . "')");
-					mysql_query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('60', 'version_string', '" . $this->version_string . "')");
-				} else {
-					mysql_query("UPDATE `setting` SET `value` = '" . $this->build_number . "' WHERE `name` = 'build_code')");
-					mysql_query("UPDATE `setting` SET `value` = '" . $this->version_string . "' WHERE `name` = 'version_string')");
-				}
-
 			} else {
+				//mysql_select_db failes
 				$this->error_list[] = 'Unable to select the database "' . $this->db_name . '" Please go back and try again';
 			}
 		} else {
+			//mysql_connect failes
 			$this->error_list[] = 'Unable to connect to the database on host "' . $this->db_username . '@' . $this->db_hostname . '" Please go back and try again';
 		}
 
 
+		//Load the database.php file and write it to disk
 		$database_file = file_get_contents($this->path_to_database_file);
 		$database_file = str_replace("{{hostname}}", $this->db_hostname, str_replace("{{database}}", $this->db_name, str_replace("{{username}}", $this->db_username, str_replace("{{password}}", $this->db_password, $database_file))));
 
@@ -280,11 +309,13 @@ class Installer
 					//Everything should be complete, just verify there were no errors
 					return $this->display_all_errors();
 				} else {
+					//File was not written
 					$this->alert_error('There was a problem writing the database config file, please check the file \'application/config/database.php\' is writable then click <a href="">here</a> to try again</div>');
 
 					return FALSE;
 				}
 			} else {
+				//fwrite() failes
 				$this->alert_error('There was a problem writing the database config file, please check the file \'application/config/database.php\' is writable then click <a href="">here</a> to try again</div>');
 
 				return FALSE;
@@ -299,15 +330,16 @@ class Installer
 
 	}
 
+	//Verify the database variables
 	public function validate_database_vars()
 	{
-		$error_list = array();
 
 		$this->db_hostname = trim($_POST['hostname']);
 		$this->db_name = trim($_POST['database']);
 		$this->db_username = trim($_POST['username']);
 		$this->db_password = trim($_POST['password']);
 
+		//Do some sanity checks on the values
 		if ($this->db_name == NULL) {
 			$this->error_list[] = "Database name cannot be empty";
 		}
@@ -325,29 +357,35 @@ class Installer
 			$this->error_list[] = 'Database password should be more than ' . $this->password_min_length . ' characters long';
 		}
 
+		//Attempt to connect to DB
 		if ($this->db_hostname && $this->db_username && $this->db_password && $this->db_name) {
 
 			if (mysql_connect($this->db_hostname, $this->db_username, $this->db_password)) {
 				if (!mysql_select_db($this->db_name)) {
+					//mysql_select_db failed
 					$this->error_list[] = 'Unable to select the database "' . $this->db_name . '" Please go back and try again';
 				}
 			} else {
+				//mysql_connect failed
 				$this->error_list[] = 'Unable to connect to the database on host "' . $this->db_username . '@' . $this->db_hostname . '" Please go back and try again';
 			}
 		}
 
+		//Display errors if any
 		return $this->display_all_errors();
 	}
 
+	//Validate the site settings
 	public function validate_site_vars()
 	{
-		$error_list = array();
 
+		//
 		$this->manager_username = trim($_POST['managerusername']);
 		$this->manager_password = trim($_POST['managerpassword']);
 		$this->site_name = trim($_POST['sitename']);
 		$this->site_email = trim($_POST['siteemail']);
 
+		//Do some sanity checks on the values
 		if ($this->manager_username == NULL) {
 			$this->error_list[] = 'The username cannot be empty';
 
@@ -378,16 +416,24 @@ class Installer
 			$this->error_list[] = 'The site email needs to be a valid email address';
 		}
 
+		//Display errors, if any
 		return $this->display_all_errors();
 	}
 
+	//Update the database with the new site_vars;
 	public function load_site_vars_into_db()
 	{
-		$error_list = array();
+		//If no install/update is needed...do not make changes!
+		if (!$this->is_install_needed()) {
+			return;
+		}
+
 		$db = array();
 
-		define('BASEPATH', 'whatever');
+		define('BASEPATH', 'basepath');
+		//Load the database.php file CI uses
 		include $this->path_to_config_file;
+		//Connect to DB
 		if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
 			if (mysql_select_db($db['default']['database'])) {
 				// delete all users - in case there has been a previous installation attempt
@@ -399,50 +445,128 @@ class Installer
 				mysql_query("UPDATE `setting` SET `value` = '" . $this->site_email . "' WHERE `name` ='site_email'");
 				chmod('../application/config', 0705);
 			} else {
+				//mysql_select_db failed
 				$this->error_list[] = 'Unable to select the database "' . $this->db_name . '" Please go back and try again';
 			}
 		} else {
+			//mysql_connect failed
 			$this->error_list[] = 'Unable to connect to the database on host "' . $this->db_username . '@' . $this->db_hostname . '" Please go back and try again';
 		}
 
+		//Display errors, if any
 		return $this->display_all_errors();
 
 	}
+
+	//Add an error into the error array
+
+	public function is_install_needed()
+	{
+		if ($this->get_installed_build() >= $this->build_number) {
+			$this->alert_success("You are currently running the latest version of CIOpenReview (" . $this->version_string . ")");
+			$this->alert_warning("IMPORTANT - You must now delete the /install folder, if you don't your site could be vulnerable to security attacks");
+
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
+	//Show a basic green table row
+
+	public function complete_installation()
+	{
+		$db = array();
+		if (is_file($this->path_to_config_file)) {
+			define('BASEPATH', 'basepath');
+			include $this->path_to_config_file;
+			//Connect to DB
+			if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
+				if (mysql_select_db($db['default']['database'])) {
+
+					//Check the currently installed version of CIOpenReview/OpenReviewScript
+					$installed_version = $this->get_installed_build();
+
+					//If OpenReviewScript is installed, installed_version is NULL. Add DB entries
+					if ($installed_version == NULL) {
+						mysql_query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('59', 'build_code', '" . $this->build_number . "')") or die(mysql_error());
+						mysql_query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('60', 'version_string', '" . $this->version_string . "')") or die(mysql_error());
+					} else {
+						//Update the version of CIOpenReview in the database
+						mysql_query("UPDATE `setting` SET `value` = '" . $this->build_number . "' WHERE `name` = 'build_code'") or die(mysql_error());
+						mysql_query("UPDATE `setting` SET `value` = '" . $this->version_string . "' WHERE `name` = 'version_string'") or die(mysql_error());
+					}
+
+					return TRUE;
+
+				} else {
+					//mysql_select_db failed
+					$this->error_list[] = "Could not select CIOpenReview database. Please ensure application/config/database.php is readable";
+				}
+			} else {
+				//mysql_connect failed
+				$this->error_list[] = "Could not connect to CIOpenreview database. Please ensure application/config/database.php is readable";
+			}
+		} else {
+			//database.php is missing
+			$this->error_list[] = "Could not finalize DB configurations. Please ensure application/config/database.php exists";
+		}
+
+		//Display errors, if any
+		return $this->display_all_errors();
+
+	}
+
+	//Show a basic red table row
 
 	private function set_error($error_code)
 	{
 		$this->error[] = $error_code;
 	}
 
+	//Show a basic yellow table row
+
 	private function show_success($message)
 	{
 		echo '<td class="success">' . $message . '</td>';
 	}
+
+	//Show a green alert
 
 	private function show_error($message)
 	{
 		echo '<td class="danger">' . $message . '</td>';
 	}
 
+	//Show a yellow alert
+
 	private function show_warning($message)
 	{
 		echo '<td class="warning">' . $message . '</td>';
 	}
+
+	//Show a red alert
 
 	private function alert_success($message)
 	{
 		echo '<div class="alert alert-success">' . $message . '</div>';
 	}
 
+	//Is this Apache?
+
 	private function alert_warning($message)
 	{
 		echo '<div class="alert alert-warning">' . $message . '</div>';
 	}
 
+	//Is this NGINX?
+
 	private function alert_error($message)
 	{
 		echo '<div class="alert alert-danger">' . $message . '</div>';
 	}
+
+	//Open a curl connection to a remote URL
 
 	private function is_apache()
 	{
@@ -453,6 +577,8 @@ class Installer
 		return FALSE;
 	}
 
+	//Check the installed build of CIOpenReview
+
 	private function is_nginx()
 	{
 		if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), "nginx") !== FALSE) {
@@ -461,6 +587,8 @@ class Installer
 
 		return FALSE;
 	}
+
+	//Check the installed version of CIOpenReview
 
 	private function curl_check($url)
 	{
@@ -472,6 +600,7 @@ class Installer
 			$response = curl_exec($curl);
 			curl_close($curl);
 
+			//We are looking for a specific response for apache/NGINX
 			if (trim($response) == 'yes' || strpos($response, "404 Page Not Found") !== FALSE) {
 				return TRUE;
 			} else {
@@ -480,15 +609,62 @@ class Installer
 		}
 	}
 
-	private function get_installed_version()
-	{
-		$query = mysql_query("select `value` from 'setting' WHERE name='build_code' ");
-		$row = mysql_fetch_row($query);
 
-		return $row['value'];
+	//Display all of the errors in the errors[] array
+
+	private function get_installed_build()
+	{
+		$db = array();
+
+		if (is_file($this->path_to_config_file)) {
+			define('BASEPATH', 'basepath');
+			include $this->path_to_config_file;
+			//Connect to DB
+			if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
+				if (mysql_select_db($db['default']['database'])) {
+
+					$query = mysql_query("select `value` from `setting` WHERE `name`='build_code'") or die(mysql_error());
+					$row = mysql_fetch_row($query);
+
+				}
+			}
+		}
+
+
+		return $row[0];
 	}
 
-	private function display_all_errors()
+	//Is an install needed in the first place or are we already up-to-date?
+
+	private function get_installed_version()
+	{
+		$db = array();
+
+		if (is_file($this->path_to_config_file)) {
+			define('BASEPATH', 'basepath');
+			include $this->path_to_config_file;
+			//Connect to DB
+			if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
+				if (mysql_select_db($db['default']['database'])) {
+
+					$query = mysql_query("select `value` from `setting` WHERE `name`='version_string'") or die(mysql_error());
+					$row = mysql_fetch_row($query);
+
+				}
+				if ($row[0] == NULL) {
+					$row[0] = '1.0.1';
+				}
+			}
+		}
+
+
+		return $row[0];
+	}
+
+	//Complete the installation by updating the DB build number. This should make the installer no-longer work.
+
+	private
+	function display_all_errors()
 	{
 		if (sizeof($this->error_list) !== 0) {
 
