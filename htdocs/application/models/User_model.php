@@ -39,6 +39,9 @@
  * @author        CIOpenReview.com
  * @link        http://CIOpenReview.com
  */
+
+require_once(APPPATH . "libraries/Password.php");
+
 class User_model extends CI_Model
 {
 
@@ -62,10 +65,10 @@ class User_model extends CI_Model
 		// add the user
 		$password = do_hash($password, 'md5');
 		$data = array(
-			'name' => $name,
+			'name'  => $name,
 			'password' => $password,
 			'email' => $email,
-			'level' => $level
+			'level' => $level,
 		);
 		$this->db->insert('user', $data);
 	}
@@ -82,7 +85,7 @@ class User_model extends CI_Model
 		$data['email'] = $email;
 		if ($password != 'PASSWORDSAME') {
 			// password has been edited so update the password
-			$data['password'] = do_hash($password, 'md5');
+			$data['password'] = password_hash($password, PASSWORD_BCRYPT);
 		};
 		$this->db->where('id', $id);
 		$this->db->update('user', $data);
@@ -121,8 +124,10 @@ class User_model extends CI_Model
 		$query = $this->db->get('user');
 		if ($query->num_rows() > 0) {
 			$result = $query->result();
+
 			return $result[0];
 		}
+
 		// no result
 		return FALSE;
 	}
@@ -145,6 +150,7 @@ class User_model extends CI_Model
 		if ($query->num_rows() > 0) {
 			return $query->row()->id;
 		}
+
 		// no other users
 		return FALSE;
 	}
@@ -164,14 +170,16 @@ class User_model extends CI_Model
 			$user_id = $query->row()->id;
 			// create a new password
 			$password = random_string('alnum', 12);
-			$data['password'] = do_hash($password, 'md5');
+			$data['password'] = password_hash($password, PASSWORD_BCRYPT);
 			$data['key'] = '';
 			$this->db->where('id', $user_id);
 			// update the user
 			$this->db->update('user', $data);
+
 			// return the new password
 			return $password;
 		}
+
 		// key not found
 		return FALSE;
 	}
@@ -187,6 +195,7 @@ class User_model extends CI_Model
 		$this->db->where('id', $user_id);
 		// update the user
 		$this->db->update('user', $data);
+
 		// return the key
 		return $data['key'];
 	}
@@ -205,6 +214,7 @@ class User_model extends CI_Model
 		if ($query->num_rows() > 0) {
 			return $query->row()->email;
 		}
+
 		// no result
 		return FALSE;
 	}
@@ -226,8 +236,10 @@ class User_model extends CI_Model
 		// return the user
 		if ($query->num_rows() > 0) {
 			$result = $query->result();
+
 			return $result[0];
 		}
+
 		// no result
 		return FALSE;
 	}
@@ -253,6 +265,7 @@ class User_model extends CI_Model
 		if ($query->num_rows() > 0) {
 			return $query->result();
 		}
+
 		// no result
 		return FALSE;
 	}
@@ -265,6 +278,7 @@ class User_model extends CI_Model
 	{
 		// count the number of users for a particular level, default is 10
 		$this->db->where('level >=', $level);
+
 		// return number of users
 		return $this->db->count_all_results('user');
 	}

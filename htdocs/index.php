@@ -54,7 +54,7 @@ header("Content-Type: text/html; charset=UTF-8");
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
+define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
@@ -100,6 +100,9 @@ $system_path = 'system';
  * If there is no database config, forward to the installer. If the install directory has not been deleted, show a warning
  */
 if (!file_exists('application/config/database.php')) {
+	if ($_SERVER['REQUEST_URI'] == "/nginx_rewrite_test" && $_SERVER['DOCUMENT_URI'] == "/index.php") {
+		die("yes");
+	}
 	header("Location: install", 301);
 	exit;
 }

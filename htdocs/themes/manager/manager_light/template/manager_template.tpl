@@ -28,7 +28,6 @@
 *    You should have received a copy of the GNU General Public License
 *    along with CIOpenReview.  If not, see <http://www.gnu.org/licenses/>.
 */
-$version="1.0.2beta";
 }}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -64,7 +63,7 @@ $version="1.0.2beta";
         {{ endif }}
     </div>
     <div id="navbar">
-        <div id="version">{{= lang('version_number').$version }}</div>
+        <div id="version">{{= lang('version_number').$this->Setting_model->get_setting_by_name('version_string') }}</div>
     </div>
     <div id="main_section">
         {{ if(isset($sidebar)): }}
