@@ -464,11 +464,7 @@ class Installer
 	{
 		if ($this->get_installed_build() >= $this->build_number) {
 			$this->alert_success("You are currently running the latest version of CIOpenReview (" . $this->version_string . ")");
-			if ($this->delete_install_dir()) {
-				$this->alert_success("Install directory has been auto deleted");
-			} else {
-				$this->alert_warning("IMPORTANT - You must now delete the /install folder, if you don't your site could be vulnerable to security attacks");
-			}
+			$this->delete_install_dir();
 
 			return FALSE;
 		}
@@ -518,12 +514,7 @@ class Installer
 
 		//Display errors, if any
 		if ($this->display_all_errors()) {
-			if ($this->delete_install_dir()) {
-				$this->alert_success("Install directory has been auto deleted");
-			} else {
-				$this->alert_warning("IMPORTANT - You must now delete the /install folder, if
-		you don't your site could be vulnerable to security attacks");
-			}
+			$this->delete_install_dir();
 		}
 
 	}
@@ -537,7 +528,8 @@ class Installer
 
 			return TRUE;
 		}
-		$this->alert_error('Failed to automatically delete "install" dir.');
+		$this->alert_error("Failed to automatically delete \"install\" dir. IMPORTANT - You must now delete the /install folder, if
+		you don't your site could be vulnerable to security attacks");
 
 		return FALSE;
 	}
