@@ -464,7 +464,11 @@ class Installer
 	{
 		if ($this->get_installed_build() >= $this->build_number) {
 			$this->alert_success("You are currently running the latest version of CIOpenReview (" . $this->version_string . ")");
-			$this->alert_warning("IMPORTANT - You must now delete the /install folder, if you don't your site could be vulnerable to security attacks");
+			if ($this->delete_install_dir()) {
+				$this->alert_success("Install directory has been auto deleted");
+			} else {
+				$this->alert_warning("IMPORTANT - You must now delete the /install folder, if you don't your site could be vulnerable to security attacks");
+			}
 
 			return FALSE;
 		}
@@ -513,60 +517,81 @@ class Installer
 		}
 
 		//Display errors, if any
-		return $this->display_all_errors();
+		if ($this->display_all_errors()) {
+			if ($this->delete_install_dir()) {
+				$this->alert_success("Install directory has been auto deleted");
+			} else {
+				$this->alert_warning("IMPORTANT - You must now delete the /install folder, if
+		you don't your site could be vulnerable to security attacks");
+			}
+		}
 
 	}
 
 	//Show a basic red table row
+
+	public function delete_install_dir()
+	{
+		if ($this->remove_directory("../install")) {
+			$this->alert_success('"install" directory has been automatically deleted for safety .');
+
+			return TRUE;
+		}
+		$this->alert_error('Failed to automatically delete "install" dir.');
+
+		return FALSE;
+	}
+
+	//Show a basic yellow table row
 
 	private function set_error($error_code)
 	{
 		$this->error[] = $error_code;
 	}
 
-	//Show a basic yellow table row
+	//Show a green alert
 
 	private function show_success($message)
 	{
 		echo '<td class="success">' . $message . '</td>';
 	}
 
-	//Show a green alert
+	//Show a yellow alert
 
 	private function show_error($message)
 	{
 		echo '<td class="danger">' . $message . '</td>';
 	}
 
-	//Show a yellow alert
+	//Show a red alert
 
 	private function show_warning($message)
 	{
 		echo '<td class="warning">' . $message . '</td>';
 	}
 
-	//Show a red alert
+	//Is this Apache?
 
 	private function alert_success($message)
 	{
 		echo '<div class="alert alert-success">' . $message . '</div>';
 	}
 
-	//Is this Apache?
+	//Is this NGINX?
 
 	private function alert_warning($message)
 	{
 		echo '<div class="alert alert-warning">' . $message . '</div>';
 	}
 
-	//Is this NGINX?
+	//Open a curl connection to a remote URL
 
 	private function alert_error($message)
 	{
 		echo '<div class="alert alert-danger">' . $message . '</div>';
 	}
 
-	//Open a curl connection to a remote URL
+	//Check the installed build of CIOpenReview
 
 	private function is_apache()
 	{
@@ -577,7 +602,7 @@ class Installer
 		return FALSE;
 	}
 
-	//Check the installed build of CIOpenReview
+	//Check the installed version of CIOpenReview
 
 	private function is_nginx()
 	{
@@ -588,7 +613,8 @@ class Installer
 		return FALSE;
 	}
 
-	//Check the installed version of CIOpenReview
+
+	//Display all of the errors in the errors[] array
 
 	private function curl_check($url)
 	{
@@ -609,8 +635,7 @@ class Installer
 		}
 	}
 
-
-	//Display all of the errors in the errors[] array
+	//Is an install needed in the first place or are we already up-to-date?
 
 	private function get_installed_build()
 	{
@@ -634,7 +659,7 @@ class Installer
 		return $row[0];
 	}
 
-	//Is an install needed in the first place or are we already up-to-date?
+	//Complete the installation by updating the DB build number. This should make the installer no-longer work.
 
 	private function get_installed_version()
 	{
@@ -661,8 +686,6 @@ class Installer
 		return $row[0];
 	}
 
-	//Complete the installation by updating the DB build number. This should make the installer no-longer work.
-
 	private
 	function display_all_errors()
 	{
@@ -679,6 +702,17 @@ class Installer
 		}
 
 		return TRUE;
+	}
+
+	private function remove_directory($path)
+	{
+		$files = glob($path . '/*');
+		foreach ($files as $file) {
+			is_dir($file) ? $this->remove_directory($file) : unlink($file);
+		}
+		rmdir($path);
+
+		return;
 	}
 
 }
