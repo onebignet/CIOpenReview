@@ -25,10 +25,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"
             type="text/javascript"></script>
+    <script src="{{= template_path() }}assets/js/script.js"
+            type="text/javascript"></script>
     <script src='{{= base_url() }}libs/raty/jquery.raty.js' type="text/javascript"
             language="javascript"></script>
-    <link href='{{= base_url() }}libs/star-rating/jquery.rating.css' type="text/css" rel="stylesheet"/>
-
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icons/114x114.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icons/72x72.png">
     <link rel="apple-touch-icon-precomposed" href="img/icons/default.png">

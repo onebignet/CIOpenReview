@@ -3,7 +3,7 @@
     $(document).ready(function () {
 
         $('.star_rating').raty({
-            path: '{{= base_url()}}libs/raty/images',
+            path: '{{=base_url()}}libs/raty/images',
             readOnly: true,
             half: true,
             score: function () {
