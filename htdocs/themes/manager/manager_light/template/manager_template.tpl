@@ -35,21 +35,20 @@
     <title>{{= lang('manager_page_title') }} - {{= $this->config->item('site_name') }}</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" href="{{= manager_template_path() }}design/style.css">
-    <script type="text/javascript" src="{{=  base_url() }}libs/tiny_mce/tiny_mce.js"></script>
+    <script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
     <script type="text/javascript">
-        tinyMCE.init({
+        tinymce.init({
             mode: "exact",
-            theme: "advanced",
             elements: "description,pagecontent",
-            plugins: "emotions,spellchecker,advhr,insertdatetime,preview",
-            // Theme options - button# indicated the row# only
-            theme_advanced_buttons1: "newdocument,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect",
-            theme_advanced_buttons2: "cut,copy,paste,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor|,advhr,,removeformat,|,charmap",
-            theme_advanced_buttons3: "",
-            theme_advanced_toolbar_location: "top",
-            theme_advanced_toolbar_align: "left",
-            theme_advanced_statusbar_location: "bottom",
-            theme_advanced_resizing: true
+            theme: "modern",
+            plugins: [
+                "advlist autolink lists link image charmap preview hr anchor pagebreak",
+                "searchreplace wordcount visualblocks visualchars code",
+                "insertdatetime media nonbreaking table contextmenu directionality",
+                "emoticons template paste textcolor colorpicker textpattern imagetools"
+            ],
+            toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+            toolbar2: "print preview media | forecolor backcolor emoticons",
         });
     </script>
 </head>
