@@ -223,7 +223,7 @@ VALUES (1, 'site_name', 'CIOpenReview'), (2, 'site_email', ''), (3, 'captcha_ver
   (48, 'site_logo_name', 'orslogogray_38824462'), (49, 'site_logo_extension', 'png'), (50, 'max_upload_width', '2048'),
   (51, 'max_upload_height', '1536'), (52, 'max_upload_filesize', '20000'), (53, 'review_thumb_max_width', '210'),
   (54, 'review_thumb_max_height', '140'), (55, 'search_thumb_max_width', '150'), (56, 'search_thumb_max_height', '100'),
-  (57, 'debug', '0'), (58, 'search_sidebar', '1');
+  (57, 'debug', '0'), (58, 'search_sidebar', '1'), (61, 'template_color_theme', 'default');
 CREATE TABLE IF NOT EXISTS `tags` (
   `id`        INT(11)      NOT NULL AUTO_INCREMENT,
   `review_id` INT(11)      NOT NULL,

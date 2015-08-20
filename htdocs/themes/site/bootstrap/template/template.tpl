@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <link href="{{= template_path() }}assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="{{= template_path() }}assets/css/{{= $this->setting['template_color_theme'] }}.css">
     <link rel="alternate" type="application/rss+xml" title="Latest Reviews (RSS2.0)" href="{{= base_url() . 'rss' }}"/>
     <script language="JavaScript" type="text/javascript">
         <!--
@@ -22,9 +22,10 @@
         }
         -->
     </script>
-    <script src="{{= template_path() }}assets/js/jquery.js" type="text/javascript"></script>
-    <script src="{{= base_url() }}libs/jquery/jquery.form.js" type="text/javascript"></script>
-    <script src='{{= base_url() }}libs/star-rating/jquery.rating.js' type="text/javascript"
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"
+            type="text/javascript"></script>
+    <script src='{{= base_url() }}libs/raty/jquery.raty.js' type="text/javascript"
             language="javascript"></script>
     <link href='{{= base_url() }}libs/star-rating/jquery.rating.css' type="text/css" rel="stylesheet"/>
 

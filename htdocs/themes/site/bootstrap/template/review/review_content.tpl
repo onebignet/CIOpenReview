@@ -1,4 +1,18 @@
 <!-- START OF 'CONTENT' SECTION -->
+<script language="JavaScript">
+    $(document).ready(function () {
+
+        $('.star_rating').raty({
+            path: '{{= base_url()}}libs/raty/images',
+            readOnly: true,
+            half: true,
+            score: function () {
+                return $(this).attr('data-score');
+            }
+        });
+        // Handler for .ready() called.
+    });
+</script>
 <!-- START OF CONDITIONAL 'FEATURED' SECTION -->
 {{ if ($featured_reviews >= $featured_minimum): }}
 <div class="panel panel-danger featured_panel">
@@ -78,14 +92,12 @@
                         <!-- END OF 'THUMBNAIL AND FEATURES' SECTION -->
                         <!-- START OF 'RATINGS' SECTION -->
                         {{ if ($ratings): }}
+
                         <div class="col-sm-6">
                             <h2>Scores</h2>
                             {{ foreach ($ratings as $rating): }}
-                            <div class="rating_value">
-                                <img src="{{= template_path() . 'design/images/' . $rating->rating_image }}" alt=""/>
-                            </div>
-                            <div class="rating_text">
-                                {{= $rating->rating_name }}
+                            <div class="star_rating"
+                                 data-score="{{=  $rating->rating_value }}">{{= $rating->rating_name }}:
                             </div>
                             {{ endforeach }}
                         </div>
