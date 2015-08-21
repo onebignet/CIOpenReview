@@ -40,8 +40,8 @@ class Installer
 	//Initialize some variables that will be needed
 	private $minimum_php_version_code = "50204";
 	private $minimum_php_version_string = "5.2.4";
-	private $build_number = "10002";
-	private $version_string = "1.0.2";
+	private $build_number = "10003";
+	private $version_string = "1.0.3";
 	private $failure_codes = array(
 		'php_version_fail'    => "Your version of PHP is too old to be able to run CodeIgniter. You will not be able to install this script",
 		'permissions_fail'    => "Not all the required files and directories are writable. You will not be able to install and run the script until you have made them writable",
@@ -59,7 +59,8 @@ class Installer
 	);
 	private $error = array();
 	private $error_list = array();
-	private $path_to_database_file = "database.php";
+	private $path_to_database_file = "includes/database.php";
+	private $path_to_sql_file = "includes/db_queries.php";
 	private $path_to_config_file = '../application/config/database.php';
 
 	private $db_hostname = NULL;
@@ -77,6 +78,9 @@ class Installer
 	private $username_max_length = 15;
 	private $password_min_length = 3;
 	private $password_max_length = 15;
+
+	private $session_username = NULL;
+	private $session_token = NULL;
 
 	//Verifies that a directory is writable
 	public function is_dir_writable($dir_name)
@@ -280,13 +284,13 @@ class Installer
 			if (mysql_select_db($this->db_name)) {
 
 				//Cycle through the install.sql and execute all queries
-				$queries = explode(";\n", file_get_contents('install.sql'));
-				foreach ($queries as $query) {
+				include($this->path_to_sql_file);
+				foreach ($db_queries as $query) {
 					mysql_query($query);
 				}
 
 			} else {
-				//mysql_select_db failes
+				//mysql_select_db files
 				$this->error_list[] = 'Unable to select the database "' . $this->db_name . '" Please go back and try again';
 			}
 		} else {
@@ -334,10 +338,10 @@ class Installer
 	public function validate_database_vars()
 	{
 
-		$this->db_hostname = trim($_POST['hostname']);
-		$this->db_name = trim($_POST['database']);
-		$this->db_username = trim($_POST['username']);
-		$this->db_password = trim($_POST['password']);
+		$this->db_hostname = mysql_real_escape_string(trim($_POST['hostname']));
+		$this->db_name = mysql_real_escape_string(trim($_POST['database']));
+		$this->db_username = mysql_real_escape_string(trim($_POST['username']));
+		$this->db_password = mysql_real_escape_string(trim($_POST['password']));
 
 		//Do some sanity checks on the values
 		if ($this->db_name == NULL) {
@@ -380,10 +384,10 @@ class Installer
 	{
 
 		//
-		$this->manager_username = trim($_POST['managerusername']);
-		$this->manager_password = trim($_POST['managerpassword']);
-		$this->site_name = trim($_POST['sitename']);
-		$this->site_email = trim($_POST['siteemail']);
+		$this->manager_username = mysql_real_escape_string(trim($_POST['managerusername']));
+		$this->manager_password = mysql_real_escape_string(trim($_POST['managerpassword']));
+		$this->site_name = mysql_real_escape_string(trim($_POST['sitename']));
+		$this->site_email = mysql_real_escape_string(trim($_POST['siteemail']));
 
 		//Do some sanity checks on the values
 		if ($this->manager_username == NULL) {
@@ -436,10 +440,17 @@ class Installer
 		//Connect to DB
 		if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
 			if (mysql_select_db($db['default']['database'])) {
-				// delete all users - in case there has been a previous installation attempt
-				mysql_query("DELETE FROM `user` WHERE `name` = '" . $this->manager_username . "'");
-				// insert manager level user
-				mysql_query("INSERT INTO `user` (`name`, `email`, `password`, `level`) VALUES ('" . $this->manager_username . "', '" . $this->site_email . "', '" . password_hash($this->manager_password, PASSWORD_BCRYPT) . "', '10')");
+
+				// check if users already exist. If so, do not delete and override the user. This is simply a bad idea
+				$query = mysql_query("SELECT `email` FROM `user`");
+				$user_count = mysql_num_rows($query);
+
+				if ($user_count == 0) {
+					// insert manager level user
+					mysql_query("INSERT INTO `user` (`name`, `email`, `password`, `level`) VALUES ('" . $this->manager_username . "', '" . $this->site_email . "', '" . password_hash($this->manager_password, PASSWORD_BCRYPT) . "', '10')");
+
+				}
+
 				// update settings
 				mysql_query("UPDATE `setting` SET `value` = '" . $this->site_name . "' WHERE `name` ='site_name'");
 				mysql_query("UPDATE `setting` SET `value` = '" . $this->site_email . "' WHERE `name` ='site_email'");
@@ -489,12 +500,12 @@ class Installer
 
 					//If OpenReviewScript is installed, installed_version is NULL. Add DB entries
 					if ($installed_version == NULL) {
-						mysql_query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('59', 'build_code', '" . $this->build_number . "')") or die(mysql_error());
-						mysql_query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('60', 'version_string', '" . $this->version_string . "')") or die(mysql_error());
+						mysql_query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('59', 'build_code', '" . $this->build_number . "')");
+						mysql_query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('60', 'version_string', '" . $this->version_string . "')");
 					} else {
 						//Update the version of CIOpenReview in the database
-						mysql_query("UPDATE `setting` SET `value` = '" . $this->build_number . "' WHERE `name` = 'build_code'") or die(mysql_error());
-						mysql_query("UPDATE `setting` SET `value` = '" . $this->version_string . "' WHERE `name` = 'version_string'") or die(mysql_error());
+						mysql_query("UPDATE `setting` SET `value` = '" . $this->build_number . "' WHERE `name` = 'build_code'");
+						mysql_query("UPDATE `setting` SET `value` = '" . $this->version_string . "' WHERE `name` = 'version_string'");
 					}
 
 					return TRUE;
@@ -514,6 +525,7 @@ class Installer
 
 		//Display errors, if any
 		if ($this->display_all_errors()) {
+			session_destroy();
 			$this->delete_install_dir();
 		}
 
@@ -536,54 +548,168 @@ class Installer
 
 	//Show a basic yellow table row
 
+	public function db_exists()
+	{
+		$db = array();
+
+		if (is_file($this->path_to_config_file)) {
+			define('BASEPATH', 'basepath');
+			include $this->path_to_config_file;
+			//Connect to DB
+			if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
+				if (mysql_select_db($db['default']['database'])) {
+
+					$query = mysql_query("select `email` from `user` LIMIT 1");
+					$user_count = mysql_num_rows($query);
+
+					$query = mysql_query("select `value` from `setting` LIMIT 1");
+					$setting_count = mysql_num_rows($query);
+
+					if ($user_count == 1 && $setting_count == 1) {
+						return TRUE;
+					}
+
+				}
+			}
+		}
+
+		return FALSE;
+	}
+
+	//Show a green alert
+
+	public function login_manager($username, $password)
+	{
+
+		$username = mysql_real_escape_string(trim($username));
+		$password = mysql_real_escape_string(trim($password));
+		$db = array();
+
+		if (is_file($this->path_to_config_file)) {
+			define('BASEPATH', 'basepath');
+			include $this->path_to_config_file;
+			//Connect to DB
+			if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
+				if (mysql_select_db($db['default']['database'])) {
+
+					//Validate user and set class tokens
+					$query = mysql_query("select `password` from `user` WHERE `name`='" . $username . "' LIMIT 1");
+					$userpass = mysql_fetch_row($query);
+
+					if (password_verify($password, $userpass[0])) {
+						$this->set_session_vars($username, md5(md5($userpass[0])));
+
+						return TRUE;
+					}
+
+				}
+			}
+		}
+
+		return FALSE;
+	}
+
+	//Show a yellow alert
+
+	public function validate_token($username, $token)
+	{
+
+		$username = mysql_real_escape_string(trim($username));
+		$token = mysql_real_escape_string(trim($token));
+		$db = array();
+
+		if (is_file($this->path_to_config_file)) {
+			define('BASEPATH', 'basepath');
+			include $this->path_to_config_file;
+			//Connect to DB
+			if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
+				if (mysql_select_db($db['default']['database'])) {
+
+					//Validate user and set class tokens
+					$query = mysql_query("select `password` from `user` WHERE `name`='" . $username . "' LIMIT 1");
+					$userpass = mysql_fetch_row($query);
+					if ($token == md5(md5($userpass[0]))) {
+						$this->set_session_vars($username, md5(md5($userpass[0])));
+
+						return TRUE;
+					}
+
+				}
+			}
+		}
+
+		return FALSE;
+	}
+
+	//Show a red alert
+
+	public function validation_error()
+	{
+		$this->alert_error("Error validating your manager credentials. Please restart Installation.");
+	}
+
+	//Is this Apache?
+
+	public function set_session_vars($session_username, $session_token)
+	{
+		$this->session_username = $session_username;
+		$this->session_token = $session_token;
+	}
+
+	//Is this NGINX?
+
+	public function get_session_token()
+	{
+		return $this->session_token;
+	}
+
+	//Open a curl connection to a remote URL
+
 	private function set_error($error_code)
 	{
 		$this->error[] = $error_code;
 	}
 
-	//Show a green alert
+	//Check the installed build of CIOpenReview
 
 	private function show_success($message)
 	{
 		echo '<td class="success">' . $message . '</td>';
 	}
 
-	//Show a yellow alert
+	//Check the installed version of CIOpenReview
 
 	private function show_error($message)
 	{
 		echo '<td class="danger">' . $message . '</td>';
 	}
 
-	//Show a red alert
+
+	//Display all of the errors in the errors[] array
 
 	private function show_warning($message)
 	{
 		echo '<td class="warning">' . $message . '</td>';
 	}
 
-	//Is this Apache?
+	//Is an install needed in the first place or are we already up-to-date?
 
 	private function alert_success($message)
 	{
 		echo '<div class="alert alert-success">' . $message . '</div>';
 	}
 
-	//Is this NGINX?
+	//Complete the installation by updating the DB build number. This should make the installer no-longer work.
 
 	private function alert_warning($message)
 	{
 		echo '<div class="alert alert-warning">' . $message . '</div>';
 	}
 
-	//Open a curl connection to a remote URL
-
 	private function alert_error($message)
 	{
 		echo '<div class="alert alert-danger">' . $message . '</div>';
 	}
-
-	//Check the installed build of CIOpenReview
 
 	private function is_apache()
 	{
@@ -594,8 +720,6 @@ class Installer
 		return FALSE;
 	}
 
-	//Check the installed version of CIOpenReview
-
 	private function is_nginx()
 	{
 		if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), "nginx") !== FALSE) {
@@ -604,9 +728,6 @@ class Installer
 
 		return FALSE;
 	}
-
-
-	//Display all of the errors in the errors[] array
 
 	private function curl_check($url)
 	{
@@ -627,8 +748,6 @@ class Installer
 		}
 	}
 
-	//Is an install needed in the first place or are we already up-to-date?
-
 	private function get_installed_build()
 	{
 		$db = array();
@@ -640,7 +759,7 @@ class Installer
 			if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
 				if (mysql_select_db($db['default']['database'])) {
 
-					$query = mysql_query("select `value` from `setting` WHERE `name`='build_code'") or die(mysql_error());
+					$query = mysql_query("select `value` from `setting` WHERE `name`='build_code'");
 					$row = mysql_fetch_row($query);
 
 				}
@@ -650,8 +769,6 @@ class Installer
 
 		return $row[0];
 	}
-
-	//Complete the installation by updating the DB build number. This should make the installer no-longer work.
 
 	private function get_installed_version()
 	{
@@ -664,7 +781,7 @@ class Installer
 			if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
 				if (mysql_select_db($db['default']['database'])) {
 
-					$query = mysql_query("select `value` from `setting` WHERE `name`='version_string'") or die(mysql_error());
+					$query = mysql_query("select `value` from `setting` WHERE `name`='version_string'");
 					$row = mysql_fetch_row($query);
 
 				}
@@ -706,5 +823,6 @@ class Installer
 
 		return;
 	}
+
 
 }

@@ -63,26 +63,30 @@ if (!$installer) {
 				address. It is also where messages from the contact form are sent, and also appears in
 				RSS feeds</p>
 		</div>
-		<div class="form-group">
-			<label for="managerusername">Manager Username</label>
-			<input type="text" class="form-control" id="managerusername" name="managerusername"
-			       placeholder="Manager Username" value="<?php if (isset($_POST['managerusername']))
-				echo htmlspecialchars($_POST['managerusername']); ?>">
+		<?php if ($installer->db_exists()) { ?>
+			<input type="hidden" name="managerusername" value="predefined">
+			<input type="hidden" name="managerpassword" value="predefined">
+		<?php } else { ?>
+			<div class="form-group">
+				<label for="managerusername">Manager Username</label>
+				<input type="text" class="form-control" id="managerusername" name="managerusername"
+				       placeholder="Manager Username" value="<?php if (isset($_POST['managerusername']))
+					echo htmlspecialchars($_POST['managerusername']); ?>">
 
-			<p class="help-block">Enter a username for a Manager level user (you can create more
-				Managers after installation). min 4 characters, max 15 characters, letters and numbers
-				only</p>
-		</div>
-		<div class="form-group">
-			<label for="managerpassword">Manager Password</label>
-			<input type="password" class="form-control" id="managerpassword" name="managerpassword"
-			       placeholder="Manager Password" value="<?php if (isset($_POST['managerpassword']))
-				echo htmlspecialchars($_POST['managerpassword']); ?>">
+				<p class="help-block">Enter a username for a Manager level user (you can create more
+					Managers after installation). min 4 characters, max 15 characters, letters and numbers
+					only</p>
+			</div>
+			<div class="form-group">
+				<label for="managerpassword">Manager Password</label>
+				<input type="password" class="form-control" id="managerpassword" name="managerpassword"
+				       placeholder="Manager Password" value="<?php if (isset($_POST['managerpassword']))
+					echo htmlspecialchars($_POST['managerpassword']); ?>">
 
-			<p class="help-block">Enter a password for the Manager user... min 6 characters, max 15
-				characters</p>
-		</div>
-
+				<p class="help-block">Enter a password for the Manager user... min 6 characters, max 15
+					characters</p>
+			</div>
+		<?php } ?>
 		<input type="submit" name="info_submit" id="button" class="btn btn-success" value="Next Step"/>
 	</form>
 </div>

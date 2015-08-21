@@ -30,14 +30,57 @@
  */
 ?>
 <?php
-error_reporting(0);
+session_start();
+error_reporting(E_ALL);
+ini_set("display_erros", 1);
 require_once('../application/libraries/Password.php');
 define('INSTALLER', TRUE);
 require_once("includes/installer.class.php");
 
+$session_username = $_SESSION['session_username'];
+$session_token = $_SESSION['session_token'];
+print_r($_SESSION);
+print_r($_POST);
+
+
 $installer = new Installer();
 
 include_once("includes/installer.header.php");
+
+//If there is already a DB, we want them to validate their credentials...otherwise bas things can happen
+if ($installer->db_exists() && !$installer->validate_token($session_username, $session_token)) {
+	//validate Login form
+	if ($_SERVER['REQUEST_METHOD'] == "POST") {
+		if (isset($_POST['login_form'])) {
+			//Check for valid login
+			if ($installer->login_manager($_POST['managerusername'], $_POST['managerpassword'])) {
+
+				//Login successful, set the session vars and load stage 1
+				$_SESSION['session_username'] = mysql_real_escape_string(trim($_POST['managerusername']));
+				$_SESSION['session_token'] = $installer->get_session_token();
+				include_once("includes/installer.stage_1.php");
+				include_once("includes/installer.footer.php");
+
+			} else {
+				//Invalid login
+				session_destroy();
+				$installer->validation_error();
+				include_once("includes/installer.stage_0.php");
+				include_once("includes/installer.footer.php");
+				exit;
+			}
+
+		}
+	} else {
+		//Display the login page
+		session_destroy();
+		$installer->validation_error();
+		include_once("includes/installer.stage_0.php");
+		include_once("includes/installer.footer.php");
+		exit;
+	}
+
+}
 
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -76,8 +119,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	}
 
 	if (isset($_POST['settings_form'])) {
+
 		// Settings form submitted - show database settings form
-		include_once("includes/installer.stage_2.php");
+
+		//Skip if the DB already exists
+		if ($installer->db_exists()) {
+			include_once("includes/installer.stage_3.php");
+
+		} else {
+			//database does not exist
+			include_once("includes/installer.stage_2.php");
+		}
 		include_once("includes/installer.footer.php");
 		exit;
 
