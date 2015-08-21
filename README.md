@@ -55,23 +55,7 @@ Also required for Installation:
 Installation
 ============
 
-Installing CIOpenReview is pretty easy:
+For full installation instructions, please refer to the Install Guide located at
 
-* Upload the script to the directory that you wish to host it from and update the file permissions
-
-```
-find . -type d -exec chmod 755 {} \;
-find . -type f -exec chmod 644 {} \;
-```
-
-* You will also want to change the ownership of the files to be the same of the server running them. (On shared hosts, this will be your FTP user. On dedicated hosts
-it might be nginx or apache
-
-```
-chown -R <user> *
-```
-
-* Open the installer page located at
-
-<your_domain_name>/install/
+http://ciopenreview.com/guide/install
 
