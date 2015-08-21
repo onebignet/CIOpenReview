@@ -172,7 +172,7 @@ class Review extends CI_Controller
 				$url = trim($this->input->post('image_url'));
 				// when uploading review images, uploaded file takes precedence over remote image url
 				// so if a file is uploaded, the remote image url will be ignored
-				if (($iles['userfile']['error'] > -1) && ($iles['userfile']['error'] != 4)) {
+				if (($_FILES['userfile']['error'] > -1) && ($_FILES['userfile']['error'] != 4)) {
 					debug('user has tried to upload a file');
 					$remote_image_url = '';
 					// set up config for upload library
@@ -183,10 +183,10 @@ class Review extends CI_Controller
 					$config['max_height'] = $this->setting['max_upload_height'];
 					$config['remove_spaces'] = TRUE;
 					// store the file name and extension
-					$extension = pathinfo($iles['userfile']['name'], PATHINFO_EXTENSION);
-					$file_name = str_replace(' ', '_', $iles['userfile']['name']);
+					$extension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
+					$file_name = str_replace(' ', '_', $_FILES['userfile']['name']);
 					$file_name = substr($file_name, 0, strlen($file_name) - strlen($extension) - 1);
-					$file_name = str_replace('.', '_', $iles['userfile']['name']);
+					$file_name = str_replace('.', '_', $_FILES['userfile']['name']);
 					// create a random number to append to the file name
 					$random_number = rand(0, 99999999);
 					$config['file_name'] = $file_name . '_' . $random_number . '.' . $extension;
@@ -419,7 +419,7 @@ class Review extends CI_Controller
 				$uploaded_file_extension = '';
 				// when uploading review images, uploaded file takes precedence over remote image url
 				// so if a file is uploaded, the remote image url will be ignored
-				if (($iles['userfile']['error'] > -1) && ($iles['userfile']['error'] != 4)) {
+				if (($_FILES['userfile']['error'] > -1) && ($_FILES['userfile']['error'] != 4)) {
 					debug('user has tried to upload a file');
 					$remote_image_url = '';
 					// set up config for upload library
@@ -430,10 +430,10 @@ class Review extends CI_Controller
 					$config['max_height'] = $this->setting['max_upload_height'];
 					$config['remove_spaces'] = TRUE;
 					// store the file name and extension
-					$extension = pathinfo($iles['userfile']['name'], PATHINFO_EXTENSION);
-					$file_name = str_replace(' ', '_', $iles['userfile']['name']);
+					$extension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
+					$file_name = str_replace(' ', '_', $_FILES['userfile']['name']);
 					$file_name = substr($file_name, 0, strlen($file_name) - strlen($extension) - 1);
-					$file_name = str_replace('.', '_', $iles['userfile']['name']);
+					$file_name = str_replace('.', '_', $_FILES['userfile']['name']);
 					// create a random number to append to the file name
 					$random_number = rand(0, 99999999);
 					$config['file_name'] = $file_name . '_' . $random_number . '.' . $extension;
