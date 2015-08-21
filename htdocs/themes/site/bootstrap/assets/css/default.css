@@ -18,3 +18,10 @@
 .star_rating {
     padding-bottom: 10px;
 }
+
+.review_item .image {
+    display: block;
+    width: 150px;
+    height: 100px;
+    background: #feffd2;
+}

@@ -3,7 +3,7 @@
     $(document).ready(function () {
 
         $('.star_rating').raty({
-            path: '{{=base_url()}}libs/raty/images',
+            path: '{{= base_url() }}libs/raty/images',
             readOnly: true,
             half: true,
             score: function () {
@@ -79,107 +79,116 @@
                 <div id="features_and_rating" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <!-- START OF 'THUMBNAIL AND FEATURES' SECTION -->
-                        <div class="col-sm-6">
-                            {{ if ($features_count > 0): }}
-                            <div class="review_features">
-                                <h2>{{= lang('review_features') }}</h2>
-                                {{ foreach ($features as $feature): }}
-                                <p><b>{{= $feature->name }}: </b>{{= $feature->value }}</p>
-                                {{ endforeach }}
-                            </div>
-                            {{ endif }}
+                        <div class="col-sm-4">
+                            {{ if ($lightbox): }}
+                            {{= anchor($review->image_url, '<img src="'.$review->review_thumb_url.'">', 'rel="lightbox" class="thumbnail"') }}
+                            <div class="review_click_image">{{= lang('review_larger_image') }}</div>
+                            {{ else: }}
+                            {{= anchor('recommends/this/' . $review->seo_title, '<img src="'.$review->review_thumb_url.'">', 'class="thumbnail"') }}
                         </div>
-                        <!-- END OF 'THUMBNAIL AND FEATURES' SECTION -->
-                        <!-- START OF 'RATINGS' SECTION -->
-                        {{ if ($ratings): }}
-
-                        <div class="col-sm-6">
-                            <h2>Scores</h2>
-                            {{ foreach ($ratings as $rating): }}
-                            <div class="star_rating"
-                                 data-score="{{=  $rating->rating_value }}">{{= $rating->rating_name }}:
-                            </div>
+                        {{ endif }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ if ($features_count > 0): }}
+                        <div class="review_features">
+                            <h2>{{= lang('review_features') }}</h2>
+                            {{ foreach ($features as $feature): }}
+                            <p><b>{{= $feature->name }}: </b>{{= $feature->value }}</p>
                             {{ endforeach }}
                         </div>
                         {{ endif }}
-                        <!-- END OF 'RATINGS' SECTION -->
-
-                        <!-- START OF 'BUTTON' SECTION -->
-                        <div class="col-sm-12">
-                            {{= anchor('recommends/this/' . $review->seo_title, lang('review_button') . " " . $review->seo_title, 'rel="nofollow" class="btn btn-lg btn-success center col-sm-5 offset2"') }}
-                        </div>
-                        <!-- END OF 'BUTTON' SECTION -->
-                        <!-- START OF 'SOCIAL BOOKMARKS' SECTION -->
-                        <div class="col-sm-12">
-                            <a target="_blank" href="http://www.freescriptsite.com/free-social-bookmark-script/">
-                                <img border="0"
-                                     src="http://www.freescriptsite.com/free-social-bookmark-script/social1.gif"
-                                     alt=""/>
-                            </a>
-                            <SCRIPT type="text/javaScript"
-                                    src="http://www.freescriptsite.com/free-social-bookmark-script/bookmark-script.js"></SCRIPT>
-                        </div>
-                        <!-- END OF 'SOCIAL BOOKMARKS' SECTION -->
                     </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#full_review">
-                            <h4>Full Review</h4>
+                    <!-- END OF 'THUMBNAIL AND FEATURES' SECTION -->
+                    <!-- START OF 'RATINGS' SECTION -->
+                    {{ if ($ratings): }}
+
+                    <div class="col-sm-4">
+                        <h2>Scores</h2>
+                        {{ foreach ($ratings as $rating): }}
+                        <div class="star_rating"
+                             data-score="{{=  $rating->rating_value }}">{{= $rating->rating_name }}:
+                        </div>
+                        {{ endforeach }}
+                    </div>
+                    {{ endif }}
+                    <!-- END OF 'RATINGS' SECTION -->
+
+                    <!-- START OF 'BUTTON' SECTION -->
+                    <div class="col-sm-12">
+                        {{= anchor('recommends/this/' . $review->seo_title, lang('review_button') . " " . $review->seo_title, 'rel="nofollow" class="btn btn-lg btn-success center col-sm-5 offset2"') }}
+                    </div>
+                    <!-- END OF 'BUTTON' SECTION -->
+                    <!-- START OF 'SOCIAL BOOKMARKS' SECTION -->
+                    <div class="col-sm-12">
+                        <a target="_blank" href="http://www.freescriptsite.com/free-social-bookmark-script/">
+                            <img border="0"
+                                 src="http://www.freescriptsite.com/free-social-bookmark-script/social1.gif"
+                                 alt=""/>
                         </a>
-                    </h4>
-                </div>
-                <div id="full_review" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        {{= auto_typography($review->description) }}
-
-                        <!-- START OF 'BUTTON' SECTION -->
-                        <div class="col-sm-12">
-                            {{= anchor('recommends/this/' . $review->seo_title, lang('review_button') . " " . $review->seo_title, 'rel="nofollow" class="btn btn-lg btn-success center col-sm-5 offset2"') }}
-                        </div>
-                        <!-- END OF 'BUTTON' SECTION -->
-                        <!-- START OF 'SOCIAL BOOKMARKS' SECTION -->
-                        <div class="col-sm-12">
-                            <a target="_blank" href="http://www.freescriptsite.com/free-social-bookmark-script/">
-                                <img border="0"
-                                     src="http://www.freescriptsite.com/free-social-bookmark-script/social1.gif"
-                                     alt=""/>
-                            </a>
-                            <SCRIPT type="text/javaScript"
-                                    src="http://www.freescriptsite.com/free-social-bookmark-script/bookmark-script.js"></SCRIPT>
-                        </div>
-                        <!-- END OF 'SOCIAL BOOKMARKS' SECTION -->
+                        <SCRIPT type="text/javaScript"
+                                src="http://www.freescriptsite.com/free-social-bookmark-script/bookmark-script.js"></SCRIPT>
                     </div>
+                    <!-- END OF 'SOCIAL BOOKMARKS' SECTION -->
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#full_review">
+                        <h4>Full Review</h4>
+                    </a>
+                </h4>
+            </div>
+            <div id="full_review" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    {{= auto_typography($review->description) }}
+
+                    <!-- START OF 'BUTTON' SECTION -->
+                    <div class="col-sm-12">
+                        {{= anchor('recommends/this/' . $review->seo_title, lang('review_button') . " " . $review->seo_title, 'rel="nofollow" class="btn btn-lg btn-success center col-sm-5 offset2"') }}
+                    </div>
+                    <!-- END OF 'BUTTON' SECTION -->
+                    <!-- START OF 'SOCIAL BOOKMARKS' SECTION -->
+                    <div class="col-sm-12">
+                        <a target="_blank" href="http://www.freescriptsite.com/free-social-bookmark-script/">
+                            <img border="0"
+                                 src="http://www.freescriptsite.com/free-social-bookmark-script/social1.gif"
+                                 alt=""/>
+                        </a>
+                        <SCRIPT type="text/javaScript"
+                                src="http://www.freescriptsite.com/free-social-bookmark-script/bookmark-script.js"></SCRIPT>
+                    </div>
+                    <!-- END OF 'SOCIAL BOOKMARKS' SECTION -->
                 </div>
             </div>
         </div>
     </div>
-    <!-- END OF 'REVIEW CONTENT' SECTION -->
+</div>
+<!-- END OF 'REVIEW CONTENT' SECTION -->
 
 
-    <!-- START OF CONDITIONAL 'ADS' SECTION -->
-    {{ if ($review_ads): }}
-    {{ foreach ($review_ads as $ad) : }}
-    {{ if ($ad->visible_on_review_page > 0): }}
-    <div class=" review_ad_block">
-        {{ if ($ad->image !== ''): }}
-        <div class="ad_image">
-            {{= anchor($ad->link, $ad->image) }}
-        </div>
-        {{ endif }}
-        {{ if ($ad->text !== ''): }}
-        <div class="ad_text">
-            {{= character_limiter($ad->text) }}
-        </div>
-        {{ endif }}
+<!-- START OF CONDITIONAL 'ADS' SECTION -->
+{{ if ($review_ads): }}
+{{ foreach ($review_ads as $ad) : }}
+{{ if ($ad->visible_on_review_page > 0): }}
+<div class=" review_ad_block">
+    {{ if ($ad->image !== ''): }}
+    <div class="ad_image">
+        {{= anchor($ad->link, $ad->image) }}
     </div>
     {{ endif }}
-    {{ break }}
-    {{ endforeach }}
+    {{ if ($ad->text !== ''): }}
+    <div class="ad_text">
+        {{= character_limiter($ad->text) }}
+    </div>
     {{ endif }}
-    <!-- END OF 'ADS' SECTION -->
+</div>
+{{ endif }}
+{{ break }}
+{{ endforeach }}
+{{ endif }}
+<!-- END OF 'ADS' SECTION -->
 </div>
 
 
