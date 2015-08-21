@@ -81,7 +81,7 @@
                         <!-- START OF 'THUMBNAIL AND FEATURES' SECTION -->
                         <div class="col-sm-4">
                             {{ if ($lightbox): }}
-                            {{= anchor($review->image_url, '<img src="'.$review->review_thumb_url.'">', 'rel="lightbox" class="thumbnail"') }}
+                            {{= anchor($review->image_url, '<img src="'.$review->review_thumb_url.'">', 'data-lightbox="review_image"  data-title="'.$review->title.'" class="thumbnail"') }}
                             <div class="review_click_image">{{= lang('review_larger_image') }}</div>
                             {{ else: }}
                             {{= anchor('recommends/this/' . $review->seo_title, '<img src="'.$review->review_thumb_url.'">', 'class="thumbnail"') }}

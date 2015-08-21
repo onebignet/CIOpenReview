@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <link href="{{= template_path() }}assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{= template_path() }}assets/css/{{= $this->setting['template_color_theme'] }}.css">
+    {{ if ($lightbox): }}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/css/lightbox.min.css">
+    {{ endif }}
+
     <link rel="alternate" type="application/rss+xml" title="Latest Reviews (RSS2.0)" href="{{= base_url() . 'rss' }}"/>
     <script language="JavaScript" type="text/javascript">
         <!--
@@ -29,6 +34,9 @@
             type="text/javascript"></script>
     <script src='{{= base_url() }}libs/raty/jquery.raty.js' type="text/javascript"
             language="javascript"></script>
+    {{ if ($lightbox): }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js"></script>
+    {{ endif }}
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icons/114x114.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icons/72x72.png">
     <link rel="apple-touch-icon-precomposed" href="img/icons/default.png">
