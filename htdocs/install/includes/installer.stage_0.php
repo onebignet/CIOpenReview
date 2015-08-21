@@ -36,10 +36,8 @@ if (!$installer) {
 }
 
 ?>
-<h2>Site and Manager Details</h2>
-<b>We just need a little more information to complete your CIOpenReview installation... You can
-	change
-	any of this information after installation</b>
+<h2>Please login to CIOpenReview</h2>
+<b>Before you can proceed with an upgrade, please log into CIOpenReview</b>
 <div class="col-md-8">
 	<form class="myform" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 		<input type="hidden" name="login_form"/>

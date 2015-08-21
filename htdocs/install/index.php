@@ -39,9 +39,6 @@ require_once("includes/installer.class.php");
 
 $session_username = $_SESSION['session_username'];
 $session_token = $_SESSION['session_token'];
-print_r($_SESSION);
-print_r($_POST);
-
 
 $installer = new Installer();
 
@@ -58,6 +55,11 @@ if ($installer->db_exists() && !$installer->validate_token($session_username, $s
 				//Login successful, set the session vars and load stage 1
 				$_SESSION['session_username'] = mysql_real_escape_string(trim($_POST['managerusername']));
 				$_SESSION['session_token'] = $installer->get_session_token();
+
+				//Do we need to install anything or are we already up-to-date
+				if (!$installer->is_install_needed()) {
+					exit;
+				}
 				include_once("includes/installer.stage_1.php");
 				include_once("includes/installer.footer.php");
 

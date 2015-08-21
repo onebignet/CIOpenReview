@@ -645,7 +645,7 @@ class Installer
 
 	public function validation_error()
 	{
-		$this->alert_error("Error validating your manager credentials. Please restart Installation.");
+		$this->alert_error("Please provide your CIOpenReview login credentials in order to proceed.");
 	}
 
 	//Is this Apache?
