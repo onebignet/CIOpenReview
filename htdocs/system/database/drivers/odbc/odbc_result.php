@@ -170,6 +170,7 @@ class CI_DB_odbc_result extends CI_DB_result
 	 * Returns the result set as an object
 	 *
 	 * @param    string $class_name
+	 *
 	 * @return    object
 	 */
 	protected function _fetch_object($class_name = 'stdClass')
@@ -192,7 +193,8 @@ class CI_DB_odbc_result extends CI_DB_result
 
 // --------------------------------------------------------------------
 
-if (!function_exists('odbc_fetch_array')) {
+if (!function_exists('odbc_fetch_array'))
+{
 	/**
 	 * ODBC Fetch array
 	 *
@@ -200,19 +202,21 @@ if (!function_exists('odbc_fetch_array')) {
 	 * it is not available (odbc_fetch_array() requires unixODBC)
 	 *
 	 * @param    resource &$result
-	 * @param    int $rownumber
+	 * @param    int      $rownumber
+	 *
 	 * @return    array
 	 */
 	function odbc_fetch_array(&$result, $rownumber = 1)
 	{
 		$rs = array();
-		if (!odbc_fetch_into($result, $rs, $rownumber)) {
+		if (!odbc_fetch_into($result, $rs, $rownumber))
+		{
 			return FALSE;
 		}
 
 		$rs_assoc = array();
 		foreach ($rs as $k => $v) {
-			$field_name = odbc_field_name($result, $k + 1);
+			$field_name = odbc_field_name($result, $k+1);
 			$rs_assoc[$field_name] = $v;
 		}
 
@@ -222,7 +226,8 @@ if (!function_exists('odbc_fetch_array')) {
 
 // --------------------------------------------------------------------
 
-if (!function_exists('odbc_fetch_object')) {
+if (!function_exists('odbc_fetch_object'))
+{
 	/**
 	 * ODBC Fetch object
 	 *
@@ -230,19 +235,21 @@ if (!function_exists('odbc_fetch_object')) {
 	 * it is not available.
 	 *
 	 * @param    resource &$result
-	 * @param    int $rownumber
+	 * @param    int      $rownumber
+	 *
 	 * @return    object
 	 */
 	function odbc_fetch_object(&$result, $rownumber = 1)
 	{
 		$rs = array();
-		if (!odbc_fetch_into($result, $rs, $rownumber)) {
+		if (!odbc_fetch_into($result, $rs, $rownumber))
+		{
 			return FALSE;
 		}
 
 		$rs_object = new stdClass();
 		foreach ($rs as $k => $v) {
-			$field_name = odbc_field_name($result, $k + 1);
+			$field_name = odbc_field_name($result, $k+1);
 			$rs_object->$field_name = $v;
 		}
 

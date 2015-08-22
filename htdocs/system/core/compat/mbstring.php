@@ -64,13 +64,16 @@ if (!function_exists('mb_strlen')) {
 	 * if iconv is not available!
 	 *
 	 * @link    http://php.net/mb_strlen
+	 *
 	 * @param    string $str
 	 * @param    string $encoding
+	 *
 	 * @return    string
 	 */
 	function mb_strlen($str, $encoding = NULL)
 	{
-		if (ICONV_ENABLED === TRUE) {
+		if (ICONV_ENABLED === TRUE)
+		{
 			return iconv_strlen($str, isset($encoding) ? $encoding : config_item('charset'));
 		}
 
@@ -81,7 +84,8 @@ if (!function_exists('mb_strlen')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('mb_strpos')) {
+if (!function_exists('mb_strpos'))
+{
 	/**
 	 * mb_strpos()
 	 *
@@ -89,15 +93,18 @@ if (!function_exists('mb_strpos')) {
 	 * if iconv is not available!
 	 *
 	 * @link    http://php.net/mb_strpos
+	 *
 	 * @param    string $haystack
 	 * @param    string $needle
-	 * @param    int $offset
+	 * @param    int    $offset
 	 * @param    string $encoding
+	 *
 	 * @return    mixed
 	 */
 	function mb_strpos($haystack, $needle, $offset = 0, $encoding = NULL)
 	{
-		if (ICONV_ENABLED === TRUE) {
+		if (ICONV_ENABLED === TRUE)
+		{
 			return iconv_strpos($haystack, $needle, $offset, isset($encoding) ? $encoding : config_item('charset'));
 		}
 
@@ -108,7 +115,8 @@ if (!function_exists('mb_strpos')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('mb_substr')) {
+if (!function_exists('mb_substr'))
+{
 	/**
 	 * mb_substr()
 	 *
@@ -116,15 +124,18 @@ if (!function_exists('mb_substr')) {
 	 * if iconv is not available.
 	 *
 	 * @link    http://php.net/mb_substr
+	 *
 	 * @param    string $str
-	 * @param    int $start
-	 * @param    int $length
+	 * @param    int    $start
+	 * @param    int    $length
 	 * @param    string $encoding
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	function mb_substr($str, $start, $length = NULL, $encoding = NULL)
 	{
-		if (ICONV_ENABLED === TRUE) {
+		if (ICONV_ENABLED === TRUE)
+		{
 			isset($encoding) OR $encoding = config_item('charset');
 			return iconv_substr(
 				$str,

@@ -66,7 +66,9 @@ if (!function_exists('password_get_info')) {
 	 * password_get_info()
 	 *
 	 * @link    http://php.net/password_get_info
+	 *
 	 * @param    string $hash
+	 *
 	 * @return    array
 	 */
 	function password_get_info($hash)
@@ -79,14 +81,17 @@ if (!function_exists('password_get_info')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('password_hash')) {
+if (!function_exists('password_hash'))
+{
 	/**
 	 * password_hash()
 	 *
 	 * @link    http://php.net/password_hash
+	 *
 	 * @param    string $password
-	 * @param    int $algo
-	 * @param    array $options
+	 * @param    int    $algo
+	 * @param    array  $options
+	 *
 	 * @return    mixed
 	 */
 	function password_hash($password, $algo, array $options = array())
@@ -108,9 +113,11 @@ if (!function_exists('password_hash')) {
 			trigger_error('password_hash(): Provided salt is too short: ' . $saltlen . ' expecting 22', E_USER_WARNING);
 			return NULL;
 		} elseif (!isset($options['salt'])) {
-			if (defined('MCRYPT_DEV_URANDOM')) {
+			if (defined('MCRYPT_DEV_URANDOM'))
+			{
 				$options['salt'] = mcrypt_create_iv(16, MCRYPT_DEV_URANDOM);
-			} elseif (function_exists('openssl_random_pseudo_bytes')) {
+			} elseif (function_exists('openssl_random_pseudo_bytes'))
+			{
 				$options['salt'] = openssl_random_pseudo_bytes(16);
 			} elseif (DIRECTORY_SEPARATOR === '/' && (is_readable($dev = '/dev/arandom') OR is_readable($dev = '/dev/urandom'))) {
 				if (($fp = fopen($dev, 'rb')) === FALSE) {
@@ -124,20 +131,22 @@ if (!function_exists('password_hash')) {
 				$options['salt'] = '';
 				for ($read = 0; $read < 16; $read = ($func_override) ? mb_strlen($options['salt'], '8bit') : strlen($options['salt'])) {
 					if (($read = fread($fp, 16 - $read)) === FALSE) {
-						log_message('error', 'compat/password: Error while reading from ' . $dev . '.');
+						log_message('error', 'compat/password: Error while reading from ' . $dev.'.');
 						return FALSE;
 					}
 					$options['salt'] .= $read;
 				}
 
 				fclose($fp);
-			} else {
+			} else
+			{
 				log_message('error', 'compat/password: No CSPRNG available.');
 				return FALSE;
 			}
 
 			$options['salt'] = str_replace('+', '.', rtrim(base64_encode($options['salt']), '='));
-		} elseif (!preg_match('#^[a-zA-Z0-9./]+$#D', $options['salt'])) {
+		} elseif (!preg_match('#^[a-zA-Z0-9./]+$#D', $options['salt']))
+		{
 			$options['salt'] = str_replace('+', '.', rtrim(base64_encode($options['salt']), '='));
 		}
 
@@ -151,21 +160,25 @@ if (!function_exists('password_hash')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('password_needs_rehash')) {
+if (!function_exists('password_needs_rehash'))
+{
 	/**
 	 * password_needs_rehash()
 	 *
 	 * @link    http://php.net/password_needs_rehash
+	 *
 	 * @param    string $hash
-	 * @param    int $algo
-	 * @param    array $options
-	 * @return    bool
+	 * @param    int    $algo
+	 * @param    array  $options
+	 *
+	 * @return	bool
 	 */
 	function password_needs_rehash($hash, $algo, array $options = array())
 	{
 		$info = password_get_info($hash);
 
-		if ($algo !== $info['algo']) {
+		if ($algo !== $info['algo'])
+		{
 			return TRUE;
 		} elseif ($algo === 1) {
 			$options['cost'] = isset($options['cost']) ? (int)$options['cost'] : 10;
@@ -181,23 +194,28 @@ if (!function_exists('password_needs_rehash')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('password_verify')) {
+if (!function_exists('password_verify'))
+{
 	/**
 	 * password_verify()
 	 *
 	 * @link    http://php.net/password_verify
+	 *
 	 * @param    string $password
 	 * @param    string $hash
-	 * @return    bool
+	 *
+	 *@return	bool
 	 */
 	function password_verify($password, $hash)
 	{
-		if (strlen($hash) !== 60 OR strlen($password = crypt($password, $hash)) !== 60) {
+		if (strlen($hash) !== 60 OR strlen($password = crypt($password, $hash)) !== 60)
+		{
 			return FALSE;
 		}
 
 		$compare = 0;
-		for ($i = 0; $i < 60; $i++) {
+		for ($i = 0; $i < 60; $i++)
+		{
 			$compare |= (ord($password[$i]) ^ ord($hash[$i]));
 		}
 

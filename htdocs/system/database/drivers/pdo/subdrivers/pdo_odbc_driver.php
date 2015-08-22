@@ -100,6 +100,7 @@ class CI_DB_pdo_odbc_driver extends CI_DB_pdo_driver
 	 * Builds the DSN if not already set.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -153,11 +154,12 @@ class CI_DB_pdo_odbc_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
+	 *
 	 * @return    string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
 	{
-		$sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = '" . $this->schema . "'";
+		$sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = '" . $this->schema ."'";
 
 		if ($prefix_limit !== FALSE && $this->dbprefix !== '') {
 			return $sql . " AND table_name LIKE '" . $this->escape_like_str($this->dbprefix) . "%' "
@@ -175,6 +177,7 @@ class CI_DB_pdo_odbc_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
+	 *
 	 * @return    string
 	 */
 	protected function _list_columns($table = '')
@@ -190,7 +193,8 @@ class CI_DB_pdo_odbc_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
+	 * @param    array  $values
+	 *
 	 * @return    string
 	 */
 	protected function _update($table, $values)
@@ -211,11 +215,12 @@ class CI_DB_pdo_odbc_driver extends CI_DB_pdo_driver
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'DELETE FROM ' . $table;
+		return 'DELETE FROM '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -226,7 +231,8 @@ class CI_DB_pdo_odbc_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string    the table name
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _delete($table)
 	{
@@ -242,11 +248,12 @@ class CI_DB_pdo_odbc_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql SQL Query
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _limit($sql)
 	{
-		return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP ' . $this->qb_limit . ' ', $sql);
+		return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP ' . $this->qb_limit.' ', $sql);
 	}
 
 }

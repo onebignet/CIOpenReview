@@ -76,6 +76,7 @@ class CI_DB_mysqli_utility extends CI_DB_utility
 	 * Export
 	 *
 	 * @param    array $params Preferences
+	 *
 	 * @return    mixed
 	 */
 	protected function _backup($params = array())

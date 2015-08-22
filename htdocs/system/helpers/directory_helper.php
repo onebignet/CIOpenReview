@@ -58,9 +58,10 @@ if (!function_exists('directory_map')) {
 	 * directory will be mapped as well.
 	 *
 	 * @param    string $source_dir Path to source
-	 * @param    int $directory_depth Depth of directories to traverse
+	 * @param    int    $directory_depth Depth of directories to traverse
 	 *                        (0 = fully recursive, 1 = current dir, etc)
-	 * @param    bool $hidden Whether to show hidden files
+	 * @param    bool   $hidden Whether to show hidden files
+	 *
 	 * @return    array
 	 */
 	function directory_map($source_dir, $directory_depth = 0, $hidden = FALSE)

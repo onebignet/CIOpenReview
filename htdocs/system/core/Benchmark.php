@@ -66,6 +66,7 @@ class CI_Benchmark
 	 * execution points can be timed.
 	 *
 	 * @param    string $name Marker name
+	 *
 	 * @return    void
 	 */
 	public function mark($name)
@@ -87,7 +88,7 @@ class CI_Benchmark
 	 *
 	 * @param    string $point1 A particular marked point
 	 * @param    string $point2 A particular marked point
-	 * @param    int $decimals Number of decimal places
+	 * @param    int    $decimals Number of decimal places
 	 *
 	 * @return    string    Calculated elapsed time on success,
 	 *            an '{elapsed_string}' if $point1 is empty

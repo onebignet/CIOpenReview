@@ -98,6 +98,7 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Class constructor
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -116,6 +117,7 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Non-persistent database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    resource
 	 */
 	public function db_connect($persistent = FALSE)
@@ -131,12 +133,14 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Begin Transaction
 	 *
 	 * @param    bool $test_mode
+	 *
 	 * @return    bool
 	 */
 	public function trans_begin($test_mode = FALSE)
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -153,12 +157,13 @@ class CI_DB_odbc_driver extends CI_DB
 	/**
 	 * Commit Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_commit()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -172,12 +177,13 @@ class CI_DB_odbc_driver extends CI_DB
 	/**
 	 * Rollback Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_rollback()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -191,7 +197,7 @@ class CI_DB_odbc_driver extends CI_DB
 	/**
 	 * Affected Rows
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function affected_rows()
 	{
@@ -203,7 +209,7 @@ class CI_DB_odbc_driver extends CI_DB
 	/**
 	 * Insert ID
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function insert_id()
 	{
@@ -218,7 +224,7 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Returns an array containing code and message of the last
 	 * database error that has occured.
 	 *
-	 * @return    array
+	 * @return	array
 	 */
 	public function error()
 	{
@@ -231,6 +237,7 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Execute the query
 	 *
 	 * @param    string $sql an SQL query
+	 *
 	 * @return    resource
 	 */
 	protected function _execute($sql)
@@ -244,7 +251,8 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Platform-dependant string escape
 	 *
 	 * @param    string
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _escape_str($str)
 	{
@@ -259,7 +267,8 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
 	{
@@ -281,11 +290,12 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _list_columns($table = '')
 	{
-		return 'SHOW COLUMNS FROM ' . $table;
+		return 'SHOW COLUMNS FROM '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -296,11 +306,12 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Generates a platform-specific query so that the column data can be retrieved
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _field_data($table)
 	{
-		return 'SELECT TOP 1 FROM ' . $table;
+		return 'SELECT TOP 1 FROM '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -311,8 +322,9 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
-	 * @return    string
+	 * @param    array  $values
+	 *
+	 *@return	string
 	 */
 	protected function _update($table, $values)
 	{
@@ -332,11 +344,12 @@ class CI_DB_odbc_driver extends CI_DB
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'DELETE FROM ' . $table;
+		return 'DELETE FROM '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -347,7 +360,8 @@ class CI_DB_odbc_driver extends CI_DB
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _delete($table)
 	{
@@ -360,7 +374,7 @@ class CI_DB_odbc_driver extends CI_DB
 	/**
 	 * Close DB Connection
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	protected function _close()
 	{

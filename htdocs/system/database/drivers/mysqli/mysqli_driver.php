@@ -102,8 +102,8 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    object
-	 * @todo    SSL support
 	 */
 	public function db_connect($persistent = FALSE)
 	{
@@ -129,8 +129,48 @@ class CI_DB_mysqli_driver extends CI_DB
 			$mysqli->options(MYSQLI_INIT_COMMAND, 'SET SESSION sql_mode="STRICT_ALL_TABLES"');
 		}
 
-		return $mysqli->real_connect($hostname, $this->username, $this->password, $this->database, $port, $socket, $client_flags)
-			? $mysqli : FALSE;
+		if (is_array($this->encrypt)) {
+			$ssl = array();
+			empty($this->encrypt['ssl_key']) OR $ssl['key'] = $this->encrypt['ssl_key'];
+			empty($this->encrypt['ssl_cert']) OR $ssl['cert'] = $this->encrypt['ssl_cert'];
+			empty($this->encrypt['ssl_ca']) OR $ssl['ca'] = $this->encrypt['ssl_ca'];
+			empty($this->encrypt['ssl_capath']) OR $ssl['capath'] = $this->encrypt['ssl_capath'];
+			empty($this->encrypt['ssl_cipher']) OR $ssl['cipher'] = $this->encrypt['ssl_cipher'];
+
+			if (!empty($ssl)) {
+				if (!empty($this->encrypt['ssl_verify']) && defined('MYSQLI_OPT_SSL_VERIFY_SERVER_CERT')) {
+					$mysqli->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, TRUE);
+				}
+
+				$client_flags |= MYSQLI_CLIENT_SSL;
+				$mysqli->ssl_set(
+					isset($ssl['key']) ? $ssl['key'] : NULL,
+					isset($ssl['cert']) ? $ssl['cert'] : NULL,
+					isset($ssl['ca']) ? $ssl['ca'] : NULL,
+					isset($ssl['capath']) ? $ssl['capath'] : NULL,
+					isset($ssl['cipher']) ? $ssl['cipher'] : NULL
+				);
+			}
+		}
+
+		if ($mysqli->real_connect($hostname, $this->username, $this->password, $this->database, $port, $socket, $client_flags)) {
+			// Prior to version 5.7.3, MySQL silently downgrades to an unencrypted connection if SSL setup fails
+			if (
+				($client_flags & MYSQLI_CLIENT_SSL)
+				&& version_compare($mysqli->client_info, '5.7.3', '<=')
+				&& empty($mysqli->query("SHOW STATUS LIKE 'ssl_cipher'")->fetch_object()->Value)
+			) {
+				$mysqli->close();
+				$message = 'MySQLi was configured for an SSL connection, but got an unencrypted connection instead!';
+				log_message('error', $message);
+
+				return ($this->db->db_debug) ? $this->db->display_error($message, '', TRUE) : FALSE;
+			}
+
+			return $mysqli;
+		}
+
+		return FALSE;
 	}
 
 	// --------------------------------------------------------------------
@@ -156,15 +196,18 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Select the database
 	 *
 	 * @param    string $database
+	 *
 	 * @return    bool
 	 */
 	public function db_select($database = '')
 	{
-		if ($database === '') {
+		if ($database === '')
+		{
 			$database = $this->database;
 		}
 
-		if ($this->conn_id->select_db($database)) {
+		if ($this->conn_id->select_db($database))
+		{
 			$this->database = $database;
 			return TRUE;
 		}
@@ -181,7 +224,8 @@ class CI_DB_mysqli_driver extends CI_DB
 	 */
 	public function version()
 	{
-		if (isset($this->data_cache['version'])) {
+		if (isset($this->data_cache['version']))
+		{
 			return $this->data_cache['version'];
 		}
 
@@ -194,12 +238,14 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Begin Transaction
 	 *
 	 * @param    bool $test_mode
+	 *
 	 * @return    bool
 	 */
 	public function trans_begin($test_mode = FALSE)
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -219,16 +265,18 @@ class CI_DB_mysqli_driver extends CI_DB
 	/**
 	 * Commit Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_commit()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
-		if ($this->conn_id->commit()) {
+		if ($this->conn_id->commit())
+		{
 			$this->conn_id->autocommit(TRUE);
 			return TRUE;
 		}
@@ -241,16 +289,18 @@ class CI_DB_mysqli_driver extends CI_DB
 	/**
 	 * Rollback Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_rollback()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
-		if ($this->conn_id->rollback()) {
+		if ($this->conn_id->rollback())
+		{
 			$this->conn_id->autocommit(TRUE);
 			return TRUE;
 		}
@@ -263,7 +313,7 @@ class CI_DB_mysqli_driver extends CI_DB
 	/**
 	 * Affected Rows
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function affected_rows()
 	{
@@ -275,7 +325,7 @@ class CI_DB_mysqli_driver extends CI_DB
 	/**
 	 * Insert ID
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function insert_id()
 	{
@@ -288,11 +338,13 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
-	 * @return    array
+	 *
+	 * @return	array
 	 */
 	public function field_data($table)
 	{
-		if (($query = $this->query('SHOW COLUMNS FROM ' . $this->protect_identifiers($table, TRUE, NULL, FALSE))) === FALSE) {
+		if (($query = $this->query('SHOW COLUMNS FROM ' . $this->protect_identifiers($table, TRUE, NULL, FALSE))) === FALSE)
+		{
 			return FALSE;
 		}
 		$query = $query->result_object();
@@ -322,11 +374,12 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Returns an array containing code and message of the last
 	 * database error that has occurred.
 	 *
-	 * @return    array
+	 * @return	array
 	 */
 	public function error()
 	{
-		if (!empty($this->conn_id->connect_errno)) {
+		if (!empty($this->conn_id->connect_errno))
+		{
 			return array(
 				'code' => $this->conn_id->connect_errno,
 				'message' => is_php('5.2.9') ? $this->conn_id->connect_error : mysqli_connect_error()
@@ -342,7 +395,8 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Set client character set
 	 *
 	 * @param    string $charset
-	 * @return    bool
+	 *
+	 * @return	bool
 	 */
 	protected function _db_set_charset($charset)
 	{
@@ -355,7 +409,8 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Execute the query
 	 *
 	 * @param    string $sql an SQL query
-	 * @return    mixed
+	 *
+	 * @return	mixed
 	 */
 	protected function _execute($sql)
 	{
@@ -370,14 +425,15 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * If needed, each database adapter can prep the query string
 	 *
 	 * @param    string $sql an SQL query
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _prep_query($sql)
 	{
 		// mysqli_affected_rows() returns 0 for "DELETE FROM TABLE" queries. This hack
 		// modifies the query so that it a proper number of affected rows is returned.
 		if ($this->delete_hack === TRUE && preg_match('/^\s*DELETE\s+FROM\s+(\S+)\s*$/i', $sql)) {
-			return trim($sql) . ' WHERE 1=1';
+			return trim($sql).' WHERE 1=1';
 		}
 
 		return $sql;
@@ -389,7 +445,8 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Platform-dependant string escape
 	 *
 	 * @param    string
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _escape_str($str)
 	{
@@ -404,14 +461,15 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
 	{
 		$sql = 'SHOW TABLES FROM ' . $this->escape_identifiers($this->database);
 
 		if ($prefix_limit !== FALSE && $this->dbprefix !== '') {
-			return $sql . " LIKE '" . $this->escape_like_str($this->dbprefix) . "%'";
+			return $sql . " LIKE '" . $this->escape_like_str($this->dbprefix)."%'";
 		}
 
 		return $sql;
@@ -425,7 +483,8 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _list_columns($table = '')
 	{
@@ -440,12 +499,12 @@ class CI_DB_mysqli_driver extends CI_DB
 	 * Groups tables in FROM clauses if needed, so there is no confusion
 	 * about operator precedence.
 	 *
-	 * @return    string
+	 * @return	string
 	 */
 	protected function _from_tables()
 	{
 		if (!empty($this->qb_join) && count($this->qb_from) > 1) {
-			return '(' . implode(', ', $this->qb_from) . ')';
+			return '(' . implode(', ', $this->qb_from).')';
 		}
 
 		return implode(', ', $this->qb_from);
@@ -456,7 +515,7 @@ class CI_DB_mysqli_driver extends CI_DB
 	/**
 	 * Close DB Connection
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	protected function _close()
 	{

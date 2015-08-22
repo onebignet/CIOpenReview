@@ -77,6 +77,7 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 	 * Builds the DSN if not already set.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -123,6 +124,7 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
+	 *
 	 * @return    array
 	 */
 	public function field_data($table)
@@ -168,7 +170,7 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 				AND "syscolumns"."colno" = "sysdefaults"."colno"
 				AND "systables"."tabtype" = \'T\'
 				AND LOWER("systables"."owner") = ' . $this->escape(strtolower($this->username)) . '
-				AND LOWER("systables"."tabname") = ' . $this->escape(strtolower($table)) . '
+				AND LOWER("systables"."tabname") = ' . $this->escape(strtolower($table)).'
 			ORDER BY "syscolumns"."colno"';
 
 		return (($query = $this->query($sql)) !== FALSE)
@@ -184,6 +186,7 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
+	 *
 	 * @return    string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
@@ -207,13 +210,16 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
+	 *
 	 * @return    string
 	 */
 	protected function _list_columns($table = '')
 	{
-		if (strpos($table, '.') !== FALSE) {
+		if (strpos($table, '.') !== FALSE)
+		{
 			sscanf($table, '%[^.].%s', $owner, $table);
-		} else {
+		} else
+		{
 			$owner = $this->username;
 		}
 
@@ -232,8 +238,9 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
-	 * @return    string
+	 * @param    array  $values
+	 *
+	 * @return	string
 	 */
 	protected function _update($table, $values)
 	{
@@ -253,11 +260,12 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'TRUNCATE TABLE ONLY ' . $table;
+		return 'TRUNCATE TABLE ONLY '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -268,7 +276,8 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _delete($table)
 	{
@@ -284,11 +293,12 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql $SQL Query
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _limit($sql)
 	{
-		$select = 'SELECT ' . ($this->qb_offset ? 'SKIP ' . $this->qb_offset : '') . 'FIRST ' . $this->qb_limit . ' ';
+		$select = 'SELECT ' . ($this->qb_offset ? 'SKIP ' . $this->qb_offset : '') . 'FIRST ' . $this->qb_limit.' ';
 		return preg_replace('/^(SELECT\s)/i', $select, $sql, 1);
 	}
 

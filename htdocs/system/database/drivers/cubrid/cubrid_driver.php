@@ -89,6 +89,7 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Class constructor
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -111,11 +112,13 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Non-persistent database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    resource
 	 */
 	public function db_connect($persistent = FALSE)
 	{
-		if (preg_match('/^CUBRID:[^:]+(:[0-9][1-9]{0,4})?:[^:]+:([^:]*):([^:]*):(\?.+)?$/', $this->dsn, $matches)) {
+		if (preg_match('/^CUBRID:[^:]+(:[0-9][1-9]{0,4})?:[^:]+:([^:]*):([^:]*):(\?.+)?$/', $this->dsn, $matches))
+		{
 			$func = ($persistent !== TRUE) ? 'cubrid_connect_with_url' : 'cubrid_pconnect_with_url';
 			return ($matches[2] === '' && $matches[3] === '' && $this->username !== '' && $this->password !== '')
 				? $func($this->dsn, $this->username, $this->password)
@@ -140,7 +143,8 @@ class CI_DB_cubrid_driver extends CI_DB
 	 */
 	public function reconnect()
 	{
-		if (cubrid_ping($this->conn_id) === FALSE) {
+		if (cubrid_ping($this->conn_id) === FALSE)
+		{
 			$this->conn_id = FALSE;
 		}
 	}
@@ -154,7 +158,8 @@ class CI_DB_cubrid_driver extends CI_DB
 	 */
 	public function version()
 	{
-		if (isset($this->data_cache['version'])) {
+		if (isset($this->data_cache['version']))
+		{
 			return $this->data_cache['version'];
 		}
 
@@ -169,12 +174,14 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Begin Transaction
 	 *
 	 * @param    bool $test_mode
+	 *
 	 * @return    bool
 	 */
 	public function trans_begin($test_mode = FALSE)
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -183,7 +190,8 @@ class CI_DB_cubrid_driver extends CI_DB
 		// even if the queries produce a successful result.
 		$this->_trans_failure = ($test_mode === TRUE);
 
-		if (cubrid_get_autocommit($this->conn_id)) {
+		if (cubrid_get_autocommit($this->conn_id))
+		{
 			cubrid_set_autocommit($this->conn_id, CUBRID_AUTOCOMMIT_FALSE);
 		}
 
@@ -195,18 +203,20 @@ class CI_DB_cubrid_driver extends CI_DB
 	/**
 	 * Commit Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_commit()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
 		cubrid_commit($this->conn_id);
 
-		if ($this->auto_commit && !cubrid_get_autocommit($this->conn_id)) {
+		if ($this->auto_commit && !cubrid_get_autocommit($this->conn_id))
+		{
 			cubrid_set_autocommit($this->conn_id, CUBRID_AUTOCOMMIT_TRUE);
 		}
 
@@ -218,18 +228,20 @@ class CI_DB_cubrid_driver extends CI_DB
 	/**
 	 * Rollback Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_rollback()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
 		cubrid_rollback($this->conn_id);
 
-		if ($this->auto_commit && !cubrid_get_autocommit($this->conn_id)) {
+		if ($this->auto_commit && !cubrid_get_autocommit($this->conn_id))
+		{
 			cubrid_set_autocommit($this->conn_id, CUBRID_AUTOCOMMIT_TRUE);
 		}
 
@@ -241,7 +253,7 @@ class CI_DB_cubrid_driver extends CI_DB
 	/**
 	 * Affected Rows
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function affected_rows()
 	{
@@ -253,7 +265,7 @@ class CI_DB_cubrid_driver extends CI_DB
 	/**
 	 * Insert ID
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function insert_id()
 	{
@@ -266,11 +278,13 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
-	 * @return    array
+	 *
+	 * @return	array
 	 */
 	public function field_data($table)
 	{
-		if (($query = $this->query('SHOW COLUMNS FROM ' . $this->protect_identifiers($table, TRUE, NULL, FALSE))) === FALSE) {
+		if (($query = $this->query('SHOW COLUMNS FROM ' . $this->protect_identifiers($table, TRUE, NULL, FALSE))) === FALSE)
+		{
 			return FALSE;
 		}
 		$query = $query->result_object();
@@ -300,7 +314,7 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Returns an array containing code and message of the last
 	 * database error that has occured.
 	 *
-	 * @return    array
+	 * @return	array
 	 */
 	public function error()
 	{
@@ -313,6 +327,7 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Execute the query
 	 *
 	 * @param    string $sql an SQL query
+	 *
 	 * @return    resource
 	 */
 	protected function _execute($sql)
@@ -326,7 +341,8 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Platform-dependant string escape
 	 *
 	 * @param    string
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _escape_str($str)
 	{
@@ -341,14 +357,15 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
 	{
 		$sql = 'SHOW TABLES';
 
 		if ($prefix_limit !== FALSE && $this->dbprefix !== '') {
-			return $sql . " LIKE '" . $this->escape_like_str($this->dbprefix) . "%'";
+			return $sql . " LIKE '" . $this->escape_like_str($this->dbprefix)."%'";
 		}
 
 		return $sql;
@@ -362,7 +379,8 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _list_columns($table = '')
 	{
@@ -377,12 +395,12 @@ class CI_DB_cubrid_driver extends CI_DB
 	 * Groups tables in FROM clauses if needed, so there is no confusion
 	 * about operator precedence.
 	 *
-	 * @return    string
+	 * @return	string
 	 */
 	protected function _from_tables()
 	{
 		if (!empty($this->qb_join) && count($this->qb_from) > 1) {
-			return '(' . implode(', ', $this->qb_from) . ')';
+			return '(' . implode(', ', $this->qb_from).')';
 		}
 
 		return implode(', ', $this->qb_from);
@@ -393,7 +411,7 @@ class CI_DB_cubrid_driver extends CI_DB
 	/**
 	 * Close DB Connection
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	protected function _close()
 	{

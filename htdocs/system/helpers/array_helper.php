@@ -59,9 +59,10 @@ if (!function_exists('element')) {
 	 * @param    string
 	 * @param    array
 	 * @param    mixed
+	 *
 	 * @return    mixed    depends on what the array contains
 	 */
-	function element($item, $array, $default = NULL)
+	function element($item, array $array, $default = NULL)
 	{
 		return array_key_exists($item, $array) ? $array[$item] : $default;
 	}
@@ -69,11 +70,13 @@ if (!function_exists('element')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('random_element')) {
+if (!function_exists('random_element'))
+{
 	/**
 	 * Random Element - Takes an array as input and returns a random element
 	 *
 	 * @param    array
+	 *
 	 * @return    mixed    depends on what the array contains
 	 */
 	function random_element($array)
@@ -84,7 +87,8 @@ if (!function_exists('random_element')) {
 
 // --------------------------------------------------------------------
 
-if (!function_exists('elements')) {
+if (!function_exists('elements'))
+{
 	/**
 	 * Elements
 	 *
@@ -94,15 +98,17 @@ if (!function_exists('elements')) {
 	 * @param    array
 	 * @param    array
 	 * @param    mixed
+	 *
 	 * @return    mixed    depends on what the array contains
 	 */
-	function elements($items, $array, $default = NULL)
+	function elements($items, array $array, $default = NULL)
 	{
 		$return = array();
 
 		is_array($items) OR $items = array($items);
 
-		foreach ($items as $item) {
+		foreach ($items as $item)
+		{
 			$return[$item] = array_key_exists($item, $array) ? $array[$item] : $default;
 		}
 

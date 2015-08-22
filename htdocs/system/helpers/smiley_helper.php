@@ -60,6 +60,7 @@ if (!function_exists('smiley_js')) {
 	 * @param    mixed    alias name or array of alias->field_id pairs
 	 * @param    string    field_id if alias name was passed in
 	 * @param    bool
+	 *
 	 * @return    array
 	 */
 	function smiley_js($alias = '', $field_id = '', $inline = TRUE)
@@ -126,7 +127,8 @@ EOF;
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('get_clickable_smileys')) {
+if (!function_exists('get_clickable_smileys'))
+{
 	/**
 	 * Get Clickable Smileys
 	 *
@@ -135,22 +137,26 @@ if (!function_exists('get_clickable_smileys')) {
 	 *
 	 * @param    string    the URL to the folder containing the smiley images
 	 * @param    array
+	 *
 	 * @return    array
 	 */
 	function get_clickable_smileys($image_url, $alias = '')
 	{
 		// For backward compatibility with js_insert_smiley
-		if (is_array($alias)) {
+		if (is_array($alias))
+		{
 			$smileys = $alias;
-		} elseif (FALSE === ($smileys = _get_smiley_array())) {
+		} elseif (FALSE === ($smileys = _get_smiley_array()))
+		{
 			return FALSE;
 		}
 
 		// Add a trailing slash to the file path if needed
-		$image_url = rtrim($image_url, '/') . '/';
+		$image_url = rtrim($image_url, '/') .'/';
 
 		$used = array();
-		foreach ($smileys as $key => $val) {
+		foreach ($smileys as $key => $val)
+		{
 			// Keep duplicates from being used, which can happen if the
 			// mapping array contains multiple identical replacements. For example:
 			// :-) and :) might be replaced with the same image so both smileys
@@ -169,7 +175,8 @@ if (!function_exists('get_clickable_smileys')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('parse_smileys')) {
+if (!function_exists('parse_smileys'))
+{
 	/**
 	 * Parse Smileys
 	 *
@@ -178,16 +185,18 @@ if (!function_exists('parse_smileys')) {
 	 * @param    string    the text to be parsed
 	 * @param    string    the URL to the folder containing the smiley images
 	 * @param    array
+	 *
 	 * @return    string
 	 */
 	function parse_smileys($str = '', $image_url = '', $smileys = NULL)
 	{
-		if ($image_url === '' OR (!is_array($smileys) && FALSE === ($smileys = _get_smiley_array()))) {
+		if ($image_url === '' OR (!is_array($smileys) && FALSE === ($smileys = _get_smiley_array())))
+		{
 			return $str;
 		}
 
 		// Add a trailing slash to the file path if needed
-		$image_url = rtrim($image_url, '/') . '/';
+		$image_url = rtrim($image_url, '/'). '/';
 
 		foreach ($smileys as $key => $val) {
 			$str = str_replace($key, '<img src="' . $image_url . $smileys[$key][0] . '" alt="' . $smileys[$key][3] . '" style="width: ' . $smileys[$key][1] . '; height: ' . $smileys[$key][2] . '; border: 0;" />', $str);
@@ -199,13 +208,14 @@ if (!function_exists('parse_smileys')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('_get_smiley_array')) {
+if (!function_exists('_get_smiley_array'))
+{
 	/**
 	 * Get Smiley Array
 	 *
 	 * Fetches the config/smiley.php file
 	 *
-	 * @return    mixed
+	 * @return	mixed
 	 */
 	function _get_smiley_array()
 	{
@@ -220,7 +230,8 @@ if (!function_exists('_get_smiley_array')) {
 				include(APPPATH . 'config/' . ENVIRONMENT . '/smileys.php');
 			}
 
-			if (empty($smileys) OR !is_array($smileys)) {
+			if (empty($smileys) OR !is_array($smileys))
+			{
 				$_smileys = array();
 				return FALSE;
 			}

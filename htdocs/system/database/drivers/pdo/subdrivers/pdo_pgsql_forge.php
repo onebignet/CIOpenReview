@@ -60,15 +60,15 @@ class CI_DB_pdo_pgsql_forge extends CI_DB_pdo_forge
 	 * @var    array
 	 */
 	protected $_unsigned = array(
-		'INT2' => 'INTEGER',
+		'INT2'     => 'INTEGER',
 		'SMALLINT' => 'INTEGER',
-		'INT' => 'BIGINT',
-		'INT4' => 'BIGINT',
-		'INTEGER' => 'BIGINT',
-		'INT8' => 'NUMERIC',
-		'BIGINT' => 'NUMERIC',
-		'REAL' => 'DOUBLE PRECISION',
-		'FLOAT' => 'DOUBLE PRECISION'
+		'INT'      => 'BIGINT',
+		'INT4'     => 'BIGINT',
+		'INTEGER'  => 'BIGINT',
+		'INT8'     => 'NUMERIC',
+		'BIGINT'   => 'NUMERIC',
+		'REAL'     => 'DOUBLE PRECISION',
+		'FLOAT'    => 'DOUBLE PRECISION',
 	);
 
 	/**
@@ -84,6 +84,7 @@ class CI_DB_pdo_pgsql_forge extends CI_DB_pdo_forge
 	 * Class constructor
 	 *
 	 * @param    object &$db Database object
+	 *
 	 * @return    void
 	 */
 	public function __construct(&$db)
@@ -102,12 +103,14 @@ class CI_DB_pdo_pgsql_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    string $alter_type ALTER type
 	 * @param    string $table Table name
-	 * @param    mixed $field Column definition
+	 * @param    mixed  $field Column definition
+	 *
 	 * @return    string|string[]
 	 */
 	protected function _alter_table($alter_type, $table, $field)
 	{
-		if (in_array($alter_type, array('DROP', 'ADD'), TRUE)) {
+		if (in_array($alter_type, array('DROP', 'ADD'), TRUE))
+		{
 			return parent::_alter_table($alter_type, $table, $field);
 		}
 
@@ -146,7 +149,7 @@ class CI_DB_pdo_pgsql_forge extends CI_DB_pdo_forge
 		}
 
 		return $sqls;
-	}
+ 	}
 
 	// --------------------------------------------------------------------
 
@@ -156,16 +159,19 @@ class CI_DB_pdo_pgsql_forge extends CI_DB_pdo_forge
 	 * Performs a data type mapping between different databases.
 	 *
 	 * @param    array &$attributes
+	 *
 	 * @return    void
 	 */
 	protected function _attr_type(&$attributes)
 	{
 		// Reset field lenghts for data types that don't support it
-		if (isset($attributes['CONSTRAINT']) && stripos($attributes['TYPE'], 'int') !== FALSE) {
+		if (isset($attributes['CONSTRAINT']) && stripos($attributes['TYPE'], 'int') !== FALSE)
+		{
 			$attributes['CONSTRAINT'] = NULL;
 		}
 
-		switch (strtoupper($attributes['TYPE'])) {
+		switch (strtoupper($attributes['TYPE']))
+		{
 			case 'TINYINT':
 				$attributes['TYPE'] = 'SMALLINT';
 				$attributes['UNSIGNED'] = FALSE;
@@ -186,11 +192,13 @@ class CI_DB_pdo_pgsql_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    array &$attributes
 	 * @param    array &$field
-	 * @return    void
+	 *
+	 * @return	void
 	 */
 	protected function _attr_auto_increment(&$attributes, &$field)
 	{
-		if (!empty($attributes['AUTO_INCREMENT']) && $attributes['AUTO_INCREMENT'] === TRUE) {
+		if (!empty($attributes['AUTO_INCREMENT']) && $attributes['AUTO_INCREMENT'] === TRUE)
+		{
 			$field['type'] = ($field['type'] === 'NUMERIC')
 				? 'BIGSERIAL'
 				: 'SERIAL';

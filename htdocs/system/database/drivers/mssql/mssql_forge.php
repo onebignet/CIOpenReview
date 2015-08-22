@@ -69,10 +69,10 @@ class CI_DB_mssql_forge extends CI_DB_forge
 	 * @var    array
 	 */
 	protected $_unsigned = array(
-		'TINYINT' => 'SMALLINT',
+		'TINYINT'  => 'SMALLINT',
 		'SMALLINT' => 'INT',
-		'INT' => 'BIGINT',
-		'REAL' => 'FLOAT'
+		'INT'      => 'BIGINT',
+		'REAL'     => 'FLOAT',
 	);
 
 	// --------------------------------------------------------------------
@@ -82,7 +82,8 @@ class CI_DB_mssql_forge extends CI_DB_forge
 	 *
 	 * @param    string $alter_type ALTER type
 	 * @param    string $table Table name
-	 * @param    mixed $field Column definition
+	 * @param    mixed  $field Column definition
+	 *
 	 * @return    string|string[]
 	 */
 	protected function _alter_table($alter_type, $table, $field)
@@ -108,11 +109,13 @@ class CI_DB_mssql_forge extends CI_DB_forge
 	 * Performs a data type mapping between different databases.
 	 *
 	 * @param    array &$attributes
+	 *
 	 * @return    void
 	 */
 	protected function _attr_type(&$attributes)
 	{
-		switch (strtoupper($attributes['TYPE'])) {
+		switch (strtoupper($attributes['TYPE']))
+		{
 			case 'MEDIUMINT':
 				$attributes['TYPE'] = 'INTEGER';
 				$attributes['UNSIGNED'] = FALSE;
@@ -132,11 +135,13 @@ class CI_DB_mssql_forge extends CI_DB_forge
 	 *
 	 * @param    array &$attributes
 	 * @param    array &$field
+	 *
 	 * @return    void
 	 */
 	protected function _attr_auto_increment(&$attributes, &$field)
 	{
-		if (!empty($attributes['AUTO_INCREMENT']) && $attributes['AUTO_INCREMENT'] === TRUE && stripos($field['type'], 'int') !== FALSE) {
+		if (!empty($attributes['AUTO_INCREMENT']) && $attributes['AUTO_INCREMENT'] === TRUE && stripos($field['type'], 'int') !== FALSE)
+		{
 			$field['auto_increment'] = ' IDENTITY(1,1)';
 		}
 	}

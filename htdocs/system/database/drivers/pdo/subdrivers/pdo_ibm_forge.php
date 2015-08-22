@@ -61,8 +61,8 @@ class CI_DB_pdo_ibm_forge extends CI_DB_pdo_forge
 	 */
 	protected $_unsigned = array(
 		'SMALLINT' => 'INTEGER',
-		'INT' => 'BIGINT',
-		'INTEGER' => 'BIGINT'
+		'INT'      => 'BIGINT',
+		'INTEGER'  => 'BIGINT',
 	);
 
 	/**
@@ -79,7 +79,8 @@ class CI_DB_pdo_ibm_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    string $alter_type ALTER type
 	 * @param    string $table Table name
-	 * @param    mixed $field Column definition
+	 * @param    mixed  $field Column definition
+	 *
 	 * @return    string|string[]
 	 */
 	protected function _alter_table($alter_type, $table, $field)
@@ -99,11 +100,13 @@ class CI_DB_pdo_ibm_forge extends CI_DB_pdo_forge
 	 * Performs a data type mapping between different databases.
 	 *
 	 * @param    array &$attributes
+	 *
 	 * @return    void
 	 */
 	protected function _attr_type(&$attributes)
 	{
-		switch (strtoupper($attributes['TYPE'])) {
+		switch (strtoupper($attributes['TYPE']))
+		{
 			case 'TINYINT':
 				$attributes['TYPE'] = 'SMALLINT';
 				$attributes['UNSIGNED'] = FALSE;
@@ -124,11 +127,13 @@ class CI_DB_pdo_ibm_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    array &$attributes
 	 * @param    array &$field
+	 *
 	 * @return    void
 	 */
 	protected function _attr_unique(&$attributes, &$field)
 	{
-		if (!empty($attributes['UNIQUE']) && $attributes['UNIQUE'] === TRUE) {
+		if (!empty($attributes['UNIQUE']) && $attributes['UNIQUE'] === TRUE)
+		{
 			$field['unique'] = ' UNIQUE';
 
 			// UNIQUE must be used with NOT NULL
@@ -143,7 +148,8 @@ class CI_DB_pdo_ibm_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    array &$attributes
 	 * @param    array &$field
-	 * @return    void
+	 *
+	 * @return	void
 	 */
 	protected function _attr_auto_increment(&$attributes, &$field)
 	{

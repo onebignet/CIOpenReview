@@ -81,6 +81,7 @@ abstract class CI_Session_driver implements SessionHandlerInterface
 	 * Class constructor
 	 *
 	 * @param    array $params Configuration parameters
+	 *
 	 * @return    void
 	 */
 	public function __construct(&$params)
@@ -121,6 +122,7 @@ abstract class CI_Session_driver implements SessionHandlerInterface
 	 * do acquire a lock.
 	 *
 	 * @param    string $session_id
+	 *
 	 * @return    bool
 	 */
 	protected function _get_lock($session_id)
@@ -138,7 +140,8 @@ abstract class CI_Session_driver implements SessionHandlerInterface
 	 */
 	protected function _release_lock()
 	{
-		if ($this->_lock) {
+		if ($this->_lock)
+		{
 			$this->_lock = FALSE;
 		}
 

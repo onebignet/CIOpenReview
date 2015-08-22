@@ -55,7 +55,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @var    string
  *
  */
-define('CI_VERSION', '3.0.0');
+define('CI_VERSION', '3.0.1');
 
 /*
  * ------------------------------------------------------
@@ -164,7 +164,7 @@ if ($composer_autoload = config_item('composer_autoload')) {
 	} else {
 		log_message('error', 'Could not find the specified $config[\'composer_autoload\'] path: ' . $composer_autoload);
 	}
-}
+	}
 
 /*
  * ------------------------------------------------------
@@ -206,7 +206,7 @@ if (isset($assign_to_config) && is_array($assign_to_config)) {
 	foreach ($assign_to_config as $key => $value) {
 		$CFG->set_item($key, $value);
 	}
-}
+	}
 
 /*
  * ------------------------------------------------------
@@ -375,13 +375,13 @@ $class = ucfirst($RTR->class);
 $method = $RTR->method;
 
 if (empty($class) OR !file_exists(APPPATH . 'controllers/' . $RTR->directory . $class . '.php')) {
-	$e404 = TRUE;
-} else {
+		$e404 = TRUE;
+	} else {
 	require_once(APPPATH . 'controllers/' . $RTR->directory . $class . '.php');
 
 	if (!class_exists($class, FALSE) OR $method[0] === '_' OR method_exists('CI_Controller', $method)) {
 		$e404 = TRUE;
-	} elseif (method_exists($class, '_remap')) {
+		} elseif (method_exists($class, '_remap')) {
 		$params = array($method, array_slice($URI->rsegments, 2));
 		$method = '_remap';
 	}
@@ -406,17 +406,17 @@ if ($e404) {
 			if (file_exists(APPPATH . 'controllers/' . $RTR->directory . $error_class . '.php')) {
 				require_once(APPPATH . 'controllers/' . $RTR->directory . $error_class . '.php');
 				$e404 = !class_exists($error_class, FALSE);
-			} // Were we in a directory? If so, check for a global override
+				} // Were we in a directory? If so, check for a global override
 			elseif (!empty($RTR->directory) && file_exists(APPPATH . 'controllers/' . $error_class . '.php')) {
 				require_once(APPPATH . 'controllers/' . $error_class . '.php');
 				if (($e404 = !class_exists($error_class, FALSE)) === FALSE) {
 					$RTR->directory = '';
 				}
 			}
-		} else {
+			} else {
 			$e404 = FALSE;
 		}
-	}
+		}
 
 	// Did we reset the $e404 flag? If so, set the rsegments, starting from index 1
 	if (!$e404) {
@@ -425,12 +425,12 @@ if ($e404) {
 
 		$URI->rsegments = array(
 			1 => $class,
-			2 => $method
+			2 => $method,
 		);
 	} else {
 		show_404($RTR->directory . $class . '/' . $method);
 	}
-}
+	}
 
 if ($method !== '_remap') {
 	$params = array_slice($URI->rsegments, 2);

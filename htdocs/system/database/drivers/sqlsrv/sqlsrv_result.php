@@ -62,6 +62,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
 	 * Constructor
 	 *
 	 * @param    object $driver_object
+	 *
 	 * @return    void
 	 */
 	public function __construct(&$driver_object)
@@ -180,6 +181,7 @@ class CI_DB_sqlsrv_result extends CI_DB_result
 	 * Returns the result set as an object
 	 *
 	 * @param    string $class_name
+	 *
 	 * @return    object
 	 */
 	protected function _fetch_object($class_name = 'stdClass')

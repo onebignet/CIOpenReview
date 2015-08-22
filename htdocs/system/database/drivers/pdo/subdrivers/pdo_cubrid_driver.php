@@ -82,6 +82,7 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 	 * Builds the DSN if not already set.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -103,11 +104,13 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
+	 *
 	 * @return    array
 	 */
 	public function field_data($table)
 	{
-		if (($query = $this->query('SHOW COLUMNS FROM ' . $this->protect_identifiers($table, TRUE, NULL, FALSE))) === FALSE) {
+		if (($query = $this->query('SHOW COLUMNS FROM ' . $this->protect_identifiers($table, TRUE, NULL, FALSE))) === FALSE)
+		{
 			return FALSE;
 		}
 		$query = $query->result_object();
@@ -137,6 +140,7 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
+	 *
 	 * @return    string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
@@ -144,7 +148,7 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 		$sql = 'SHOW TABLES';
 
 		if ($prefix_limit === TRUE && $this->dbprefix !== '') {
-			return $sql . " LIKE '" . $this->escape_like_str($this->dbprefix) . "%'";
+			return $sql . " LIKE '" . $this->escape_like_str($this->dbprefix)."%'";
 		}
 
 		return $sql;
@@ -158,6 +162,7 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
+	 *
 	 * @return    string
 	 */
 	protected function _list_columns($table = '')
@@ -173,14 +178,16 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific batch update string from the supplied data
 	 *
 	 * @param    string $table Table name
-	 * @param    array $values Update data
+	 * @param    array  $values Update data
 	 * @param    string $index WHERE key
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _update_batch($table, $values, $index)
 	{
 		$ids = array();
-		foreach ($values as $key => $val) {
+		foreach ($values as $key => $val)
+		{
 			$ids[] = $val[$index];
 
 			foreach (array_keys($val) as $field) {
@@ -194,7 +201,7 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 		foreach ($final as $k => $v) {
 			$cases .= $k . " = CASE \n"
 				. implode("\n", $v) . "\n"
-				. 'ELSE ' . $k . ' END), ';
+				. 'ELSE ' . $k .' END), ';
 		}
 
 		$this->where($index . ' IN(' . implode(',', $ids) . ')', NULL, FALSE);
@@ -213,11 +220,12 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'TRUNCATE ' . $table;
+		return 'TRUNCATE '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -228,12 +236,12 @@ class CI_DB_pdo_cubrid_driver extends CI_DB_pdo_driver
 	 * Groups tables in FROM clauses if needed, so there is no confusion
 	 * about operator precedence.
 	 *
-	 * @return    string
+	 * @return	string
 	 */
 	protected function _from_tables()
 	{
 		if (!empty($this->qb_join) && count($this->qb_from) > 1) {
-			return '(' . implode(', ', $this->qb_from) . ')';
+			return '(' . implode(', ', $this->qb_from).')';
 		}
 
 		return implode(', ', $this->qb_from);

@@ -61,6 +61,7 @@ class CI_DB_pdo_odbc_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    array &$attributes
 	 * @param    array &$field
+	 *
 	 * @return    void
 	 */
 	protected function _attr_auto_increment(&$attributes, &$field)

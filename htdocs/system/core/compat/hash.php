@@ -61,8 +61,10 @@ if (!function_exists('hash_equals')) {
 	 * hash_equals()
 	 *
 	 * @link    http://php.net/hash_equals
+	 *
 	 * @param    string $known_string
 	 * @param    string $user_string
+	 *
 	 * @return    bool
 	 */
 	function hash_equals($known_string, $user_string)
@@ -73,12 +75,14 @@ if (!function_exists('hash_equals')) {
 		} elseif (!is_string($user_string)) {
 			trigger_error('hash_equals(): Expected user_string to be a string, ' . strtolower(gettype($user_string)) . ' given', E_USER_WARNING);
 			return FALSE;
-		} elseif (($length = strlen($known_string)) !== strlen($user_string)) {
+		} elseif (($length = strlen($known_string)) !== strlen($user_string))
+		{
 			return FALSE;
 		}
 
 		$diff = 0;
-		for ($i = 0; $i < $length; $i++) {
+		for ($i = 0; $i < $length; $i++)
+		{
 			$diff |= ord($known_string[$i]) ^ ord($user_string[$i]);
 		}
 
@@ -88,23 +92,27 @@ if (!function_exists('hash_equals')) {
 
 // ------------------------------------------------------------------------
 
-if (is_php('5.5')) {
+if (is_php('5.5'))
+{
 	return;
 }
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('hash_pbkdf2')) {
+if (!function_exists('hash_pbkdf2'))
+{
 	/**
 	 * hash_pbkdf2()
 	 *
 	 * @link    http://php.net/hash_pbkdf2
+	 *
 	 * @param    string $algo
 	 * @param    string $password
 	 * @param    string $salt
-	 * @param    int $iterations
-	 * @param    int $length
-	 * @param    bool $raw_output
+	 * @param    int    $iterations
+	 * @param    int    $length
+	 * @param    bool   $raw_output
+	 *
 	 * @return    string
 	 */
 	function hash_pbkdf2($algo, $password, $salt, $iterations, $length = 0, $raw_output = FALSE)
@@ -151,15 +159,63 @@ if (!function_exists('hash_pbkdf2')) {
 		}
 
 		$hash_length = strlen(hash($algo, NULL, TRUE));
-		if (empty($length)) {
-			$length = $hash_length;
+		empty($length) && $length = $hash_length;
+
+		// Pre-hash password inputs longer than the algorithm's block size
+		// (i.e. prepare HMAC key) to mitigate potential DoS attacks.
+		static $block_sizes;
+		empty($block_sizes) && $block_sizes = array(
+			'gost'       => 32,
+			'haval128,3' => 128,
+			'haval160,3' => 128,
+			'haval192,3' => 128,
+			'haval224,3' => 128,
+			'haval256,3' => 128,
+			'haval128,4' => 128,
+			'haval160,4' => 128,
+			'haval192,4' => 128,
+			'haval224,4' => 128,
+			'haval256,4' => 128,
+			'haval128,5' => 128,
+			'haval160,5' => 128,
+			'haval192,5' => 128,
+			'haval224,5' => 128,
+			'haval256,5' => 128,
+			'md2'        => 16,
+			'md4'        => 64,
+			'md5'        => 64,
+			'ripemd128'  => 64,
+			'ripemd160'  => 64,
+			'ripemd256'  => 64,
+			'ripemd320'  => 64,
+			'salsa10'    => 64,
+			'salsa20'    => 64,
+			'sha1'       => 64,
+			'sha224'     => 64,
+			'sha256'     => 64,
+			'sha384'     => 128,
+			'sha512'     => 128,
+			'snefru'     => 32,
+			'snefru256'  => 32,
+			'tiger128,3' => 64,
+			'tiger160,3' => 64,
+			'tiger192,3' => 64,
+			'tiger128,4' => 64,
+			'tiger160,4' => 64,
+			'tiger192,4' => 64,
+			'whirlpool'  => 64,
+		);
+
+		if (isset($block_sizes[$algo]) && strlen($password) > $block_sizes[$algo]) {
+			$password = hash($algo, $password, TRUE);
 		}
 
 		$hash = '';
 		// Note: Blocks are NOT 0-indexed
 		for ($bc = ceil($length / $hash_length), $bi = 1; $bi <= $bc; $bi++) {
 			$key = $derived_key = hash_hmac($algo, $salt . pack('N', $bi), $password, TRUE);
-			for ($i = 1; $i < $iterations; $i++) {
+			for ($i = 1; $i < $iterations; $i++)
+			{
 				$derived_key ^= $key = hash_hmac($algo, $key, $password, TRUE);
 			}
 

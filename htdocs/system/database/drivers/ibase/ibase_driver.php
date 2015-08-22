@@ -82,6 +82,7 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Non-persistent database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    resource
 	 */
 	public function db_connect($persistent = FALSE)
@@ -121,12 +122,14 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Begin Transaction
 	 *
 	 * @param    bool $test_mode
+	 *
 	 * @return    bool
 	 */
 	public function trans_begin($test_mode = FALSE)
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -150,7 +153,8 @@ class CI_DB_ibase_driver extends CI_DB
 	public function trans_commit()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans->depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans->depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -167,7 +171,8 @@ class CI_DB_ibase_driver extends CI_DB
 	public function trans_rollback()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -179,7 +184,7 @@ class CI_DB_ibase_driver extends CI_DB
 	/**
 	 * Affected Rows
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function affected_rows()
 	{
@@ -192,8 +197,9 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Insert ID
 	 *
 	 * @param    string $generator_name
-	 * @param    int $inc_by
-	 * @return    int
+	 * @param    int    $inc_by
+	 *
+	 * @return	int
 	 */
 	public function insert_id($generator_name, $inc_by = 0)
 	{
@@ -207,7 +213,8 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
-	 * @return    array
+	 *
+	 * @return	array
 	 */
 	public function field_data($table)
 	{
@@ -233,7 +240,7 @@ class CI_DB_ibase_driver extends CI_DB
 				"rfields"."RDB$DEFAULT_VALUE" AS "default"
 			FROM "RDB$RELATION_FIELDS" "rfields"
 				JOIN "RDB$FIELDS" "fields" ON "rfields"."RDB$FIELD_SOURCE" = "fields"."RDB$FIELD_NAME"
-			WHERE "rfields"."RDB$RELATION_NAME" = ' . $this->escape($table) . '
+			WHERE "rfields"."RDB$RELATION_NAME" = ' . $this->escape($table).'
 			ORDER BY "rfields"."RDB$FIELD_POSITION"';
 
 		return (($query = $this->query($sql)) !== FALSE)
@@ -249,7 +256,7 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Returns an array containing code and message of the last
 	 * database error that has occured.
 	 *
-	 * @return    array
+	 * @return	array
 	 */
 	public function error()
 	{
@@ -262,6 +269,7 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Execute the query
 	 *
 	 * @param    string $sql an SQL query
+	 *
 	 * @return    resource
 	 */
 	protected function _execute($sql)
@@ -277,7 +285,8 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
 	{
@@ -299,7 +308,8 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _list_columns($table = '')
 	{
@@ -314,8 +324,9 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
-	 * @return    string
+	 * @param    array  $values
+	 *
+	 *@return	string
 	 */
 	protected function _update($table, $values)
 	{
@@ -334,11 +345,12 @@ class CI_DB_ibase_driver extends CI_DB
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'DELETE FROM ' . $table;
+		return 'DELETE FROM '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -349,7 +361,8 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _delete($table)
 	{
@@ -365,7 +378,8 @@ class CI_DB_ibase_driver extends CI_DB
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql SQL Query
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _limit($sql)
 	{
@@ -373,12 +387,14 @@ class CI_DB_ibase_driver extends CI_DB
 		if (stripos($this->version(), 'firebird') !== FALSE) {
 			$select = 'FIRST ' . $this->qb_limit
 				. ($this->qb_offset ? ' SKIP ' . $this->qb_offset : '');
-		} else {
+		}
+		else
+		{
 			$select = 'ROWS '
 				. ($this->qb_offset ? $this->qb_offset . ' TO ' . ($this->qb_limit + $this->qb_offset) : $this->qb_limit);
 		}
 
-		return preg_replace('`SELECT`i', 'SELECT ' . $select, $sql, 1);
+		return preg_replace('`SELECT`i', 'SELECT '.$select, $sql, 1);
 	}
 
 	// --------------------------------------------------------------------
@@ -386,7 +402,7 @@ class CI_DB_ibase_driver extends CI_DB
 	/**
 	 * Close DB Connection
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	protected function _close()
 	{

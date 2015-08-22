@@ -319,6 +319,7 @@ class CI_Pagination
 	 * Constructor
 	 *
 	 * @param    array $params Initialization parameters
+	 *
 	 * @return    void
 	 */
 	public function __construct($params = array())
@@ -341,18 +342,22 @@ class CI_Pagination
 	 * Initialize Preferences
 	 *
 	 * @param    array $params Initialization parameters
+	 *
 	 * @return    CI_Pagination
 	 */
 	public function initialize(array $params = array())
 	{
-		if (isset($params['attributes']) && is_array($params['attributes'])) {
+		isset($params['attributes']) OR $params['attributes'] = array();
+		if (is_array($params['attributes']))
+		{
 			$this->_parse_attributes($params['attributes']);
 			unset($params['attributes']);
 		}
 
 		// Deprecated legacy support for the anchor_class option
 		// Should be removed in CI 3.1+
-		if (isset($params['anchor_class'])) {
+		if (isset($params['anchor_class']))
+		{
 			empty($params['anchor_class']) OR $attributes['class'] = $params['anchor_class'];
 			unset($params['anchor_class']);
 		}
@@ -363,11 +368,13 @@ class CI_Pagination
 			}
 		}
 
-		if ($this->CI->config->item('enable_query_strings') === TRUE) {
+		if ($this->CI->config->item('enable_query_strings') === TRUE)
+		{
 			$this->page_query_string = TRUE;
 		}
 
-		if ($this->use_global_url_suffix === TRUE) {
+		if ($this->use_global_url_suffix === TRUE)
+		{
 			$this->suffix = $this->CI->config->item('url_suffix');
 		}
 
@@ -385,7 +392,8 @@ class CI_Pagination
 	{
 		// If our item count or per-page total is zero there is no need to continue.
 		// Note: DO NOT change the operator to === here!
-		if ($this->total_rows == 0 OR $this->per_page == 0) {
+		if ($this->total_rows == 0 OR $this->per_page == 0)
+		{
 			return '';
 		}
 
@@ -393,25 +401,29 @@ class CI_Pagination
 		$num_pages = (int)ceil($this->total_rows / $this->per_page);
 
 		// Is there only one page? Hm... nothing more to do here then.
-		if ($num_pages === 1) {
+		if ($num_pages === 1)
+		{
 			return '';
 		}
 
 		// Check the user defined number of links.
 		$this->num_links = (int)$this->num_links;
 
-		if ($this->num_links < 0) {
+		if ($this->num_links < 0)
+		{
 			show_error('Your number of links must be a non-negative number.');
 		}
 
 		// Keep any existing query string items.
 		// Note: Has nothing to do with any other query string option.
-		if ($this->reuse_query_string === TRUE) {
+		if ($this->reuse_query_string === TRUE)
+		{
 			$get = $this->CI->input->get();
 
 			// Unset the controll, method, old-school routing options
 			unset($get['c'], $get['m'], $get[$this->query_string_segment]);
-		} else {
+		} else
+		{
 			$get = array();
 		}
 
@@ -424,7 +436,8 @@ class CI_Pagination
 		$query_string_sep = (strpos($base_url, '?') === FALSE) ? '?' : '&amp;';
 
 		// Are we using query strings?
-		if ($this->page_query_string === TRUE) {
+		if ($this->page_query_string === TRUE)
+		{
 			// If a custom first_url hasn't been specified, we'll create one from
 			// the base_url, but without the page item.
 			if ($first_url === '') {
@@ -439,7 +452,8 @@ class CI_Pagination
 			// Add the page segment to the end of the query string, where the
 			// page number will be appended.
 			$base_url .= $query_string_sep . http_build_query(array_merge($get, array($this->query_string_segment => '')));
-		} else {
+		} else
+		{
 			// Standard segment mode.
 			// Generate our saved query string to append later after the page number.
 			if (!empty($get)) {
@@ -457,16 +471,18 @@ class CI_Pagination
 				$first_url = $base_url . $query_string;
 			}
 
-			$base_url = rtrim($base_url, '/') . '/';
+			$base_url = rtrim($base_url, '/') .'/';
 		}
 
 		// Determine the current page number.
 		$base_page = ($this->use_page_numbers) ? 1 : 0;
 
 		// Are we using query strings?
-		if ($this->page_query_string === TRUE) {
+		if ($this->page_query_string === TRUE)
+		{
 			$this->cur_page = $this->CI->input->get($this->query_string_segment);
-		} else {
+		} else
+		{
 			// Default to the last segment number if one hasn't been defined.
 			if ($this->uri_segment === 0) {
 				$this->uri_segment = count($this->CI->uri->segment_array());
@@ -481,9 +497,11 @@ class CI_Pagination
 		}
 
 		// If something isn't quite right, back to the default base page.
-		if (!ctype_digit($this->cur_page) OR ($this->use_page_numbers && (int)$this->cur_page === 0)) {
+		if (!ctype_digit($this->cur_page) OR ($this->use_page_numbers && (int)$this->cur_page === 0))
+		{
 			$this->cur_page = $base_page;
-		} else {
+		} else
+		{
 			// Make sure we're using integers for comparisons later.
 			$this->cur_page = (int)$this->cur_page;
 		}
@@ -494,7 +512,8 @@ class CI_Pagination
 			if ($this->cur_page > $num_pages) {
 				$this->cur_page = $num_pages;
 			}
-		} elseif ($this->cur_page > $this->total_rows) {
+		} elseif ($this->cur_page > $this->total_rows)
+		{
 			$this->cur_page = ($num_pages - 1) * $this->per_page;
 		}
 
@@ -515,7 +534,8 @@ class CI_Pagination
 		$output = '';
 
 		// Render the "First" link.
-		if ($this->first_link !== FALSE && $this->cur_page > ($this->num_links + 1 + !$this->num_links)) {
+		if ($this->first_link !== FALSE && $this->cur_page > ($this->num_links + 1 + !$this->num_links))
+		{
 			// Take the general parameters, and squeeze this pagination-page attr in for JS frameworks.
 			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, 1);
 
@@ -524,7 +544,8 @@ class CI_Pagination
 		}
 
 		// Render the "Previous" link.
-		if ($this->prev_link !== FALSE && $this->cur_page !== 1) {
+		if ($this->prev_link !== FALSE && $this->cur_page !== 1)
+		{
 			$i = ($this->use_page_numbers) ? $uri_page_number - 1 : $uri_page_number - $this->per_page;
 
 			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, (int)$i);
@@ -542,7 +563,8 @@ class CI_Pagination
 		}
 
 		// Render the pages
-		if ($this->display_pages !== FALSE) {
+		if ($this->display_pages !== FALSE)
+		{
 			// Write the digit links
 			for ($loop = $start - 1; $loop <= $end; $loop++) {
 				$i = ($this->use_page_numbers) ? $loop : ($loop * $this->per_page) - $this->per_page;
@@ -567,7 +589,8 @@ class CI_Pagination
 		}
 
 		// Render the "next" link
-		if ($this->next_link !== FALSE && $this->cur_page < $num_pages) {
+		if ($this->next_link !== FALSE && $this->cur_page < $num_pages)
+		{
 			$i = ($this->use_page_numbers) ? $this->cur_page + 1 : $this->cur_page * $this->per_page;
 
 			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, (int)$i);
@@ -577,7 +600,8 @@ class CI_Pagination
 		}
 
 		// Render the "Last" link
-		if ($this->last_link !== FALSE && ($this->cur_page + $this->num_links + !$this->num_links) < $num_pages) {
+		if ($this->last_link !== FALSE && ($this->cur_page + $this->num_links + !$this->num_links) < $num_pages)
+		{
 			$i = ($this->use_page_numbers) ? $num_pages : ($num_pages * $this->per_page) - $this->per_page;
 
 			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, (int)$i);
@@ -588,7 +612,7 @@ class CI_Pagination
 
 		// Kill double slashes. Note: Sometimes we can end up with a double slash
 		// in the penultimate link so we'll kill all double slashes.
-		$output = preg_replace('#([^:])//+#', '\\1/', $output);
+		$output = preg_replace('#([^:"])//+#', '\\1/', $output);
 
 		// Add the wrapper HTML if exists
 		return $this->full_tag_open . $output . $this->full_tag_close;
@@ -600,6 +624,7 @@ class CI_Pagination
 	 * Parse attributes
 	 *
 	 * @param    array $attributes
+	 *
 	 * @return    void
 	 */
 	protected function _parse_attributes($attributes)
@@ -612,7 +637,7 @@ class CI_Pagination
 
 		$this->_attributes = '';
 		foreach ($attributes as $key => $value) {
-			$this->_attributes .= ' ' . $key . '="' . $value . '"';
+			$this->_attributes .= ' ' . $key . '="' . $value.'"';
 		}
 	}
 
@@ -622,14 +647,18 @@ class CI_Pagination
 	 * Add "rel" attribute
 	 *
 	 * @link    http://www.w3.org/TR/html5/links.html#linkTypes
+	 *
 	 * @param    string $type
+	 *
 	 * @return    string
 	 */
 	protected function _attr_rel($type)
 	{
-		if (isset($this->_link_types[$type])) {
+		if (isset($this->_link_types[$type]))
+		{
 			unset($this->_link_types[$type]);
-			return ' rel="' . $type . '"';
+
+			return ' rel="' .$type.'"';
 		}
 
 		return '';

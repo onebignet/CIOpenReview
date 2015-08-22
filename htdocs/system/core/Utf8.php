@@ -83,6 +83,7 @@ class CI_Utf8
 	 * Ensures strings contain only valid UTF-8 characters.
 	 *
 	 * @param    string $str String to clean
+	 *
 	 * @return    string
 	 */
 	public function clean_string($str)
@@ -108,6 +109,7 @@ class CI_Utf8
 	 * problems in XML.
 	 *
 	 * @param    string $str String to clean
+	 *
 	 * @return    string
 	 */
 	public function safe_ascii_for_xml($str)
@@ -124,13 +126,16 @@ class CI_Utf8
 	 *
 	 * @param    string $str Input string
 	 * @param    string $encoding Input encoding
+	 *
 	 * @return    string    $str encoded in UTF-8 or FALSE on failure
 	 */
 	public function convert_to_utf8($str, $encoding)
 	{
-		if (MB_ENABLED) {
+		if (MB_ENABLED)
+		{
 			return mb_convert_encoding($str, 'UTF-8', $encoding);
-		} elseif (ICONV_ENABLED) {
+		} elseif (ICONV_ENABLED)
+		{
 			return @iconv($encoding, 'UTF-8', $str);
 		}
 
@@ -145,7 +150,8 @@ class CI_Utf8
 	 * Tests if a string is standard 7-bit ASCII or not.
 	 *
 	 * @param    string $str String to check
-	 * @return    bool
+	 *
+	 * @return	bool
 	 */
 	public function is_ascii($str)
 	{

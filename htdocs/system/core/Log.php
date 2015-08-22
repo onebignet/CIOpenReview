@@ -151,6 +151,7 @@ class CI_Log
 	 *
 	 * @param    string    the error level: 'error', 'debug' or 'info'
 	 * @param    string    the error message
+	 *
 	 * @return    bool
 	 */
 	public function write_log($level, $msg)

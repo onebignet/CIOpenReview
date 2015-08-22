@@ -109,8 +109,9 @@ class CI_Config
 	 * Load Config File
 	 *
 	 * @param    string $file Configuration file name
-	 * @param    bool $use_sections Whether configuration values should be loaded into their own section
-	 * @param    bool $fail_gracefully Whether to just return FALSE or display an error message
+	 * @param    bool   $use_sections Whether configuration values should be loaded into their own section
+	 * @param    bool   $fail_gracefully Whether to just return FALSE or display an error message
+	 *
 	 * @return    bool    TRUE if the file was loaded correctly or FALSE on failure
 	 */
 	public function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE)
@@ -170,11 +171,13 @@ class CI_Config
 	 *
 	 * @param    string $item Config item name
 	 * @param    string $index Index name
+	 *
 	 * @return    string|null    The configuration item or NULL if the item doesn't exist
 	 */
 	public function item($item, $index = '')
 	{
-		if ($index == '') {
+		if ($index == '')
+		{
 			return isset($this->config[$item]) ? $this->config[$item] : NULL;
 		}
 
@@ -187,17 +190,20 @@ class CI_Config
 	 * Fetch a config file item with slash appended (if not empty)
 	 *
 	 * @param    string $item Config item name
+	 *
 	 * @return    string|null    The configuration item or NULL if the item doesn't exist
 	 */
 	public function slash_item($item)
 	{
-		if (!isset($this->config[$item])) {
+		if (!isset($this->config[$item]))
+		{
 			return NULL;
-		} elseif (trim($this->config[$item]) === '') {
+		} elseif (trim($this->config[$item]) === '')
+		{
 			return '';
 		}
 
-		return rtrim($this->config[$item], '/') . '/';
+		return rtrim($this->config[$item], '/').'/';
 	}
 
 	// --------------------------------------------------------------------
@@ -210,8 +216,9 @@ class CI_Config
 	 * @uses    CI_Config::_uri_string()
 	 *
 	 * @param    string|string[] $uri URI string or an array of segments
-	 * @param    string $protocol
-	 * @return    string
+	 * @param    string          $protocol
+	 *
+	 * @return	string
 	 */
 	public function site_url($uri = '', $protocol = NULL)
 	{
@@ -227,23 +234,25 @@ class CI_Config
 
 		$uri = $this->_uri_string($uri);
 
-		if ($this->item('enable_query_strings') === FALSE) {
+		if ($this->item('enable_query_strings') === FALSE)
+		{
 			$suffix = isset($this->config['url_suffix']) ? $this->config['url_suffix'] : '';
 
 			if ($suffix !== '') {
 				if (($offset = strpos($uri, '?')) !== FALSE) {
 					$uri = substr($uri, 0, $offset) . $suffix . substr($uri, $offset);
-				} else {
+				} else
+				{
 					$uri .= $suffix;
 				}
 			}
 
-			return $base_url . $this->slash_item('index_page') . $uri;
+			return $base_url . $this->slash_item('index_page').$uri;
 		} elseif (strpos($uri, '?') === FALSE) {
 			$uri = '?' . $uri;
 		}
 
-		return $base_url . $this->item('index_page') . $uri;
+		return $base_url . $this->item('index_page').$uri;
 	}
 
 	// -------------------------------------------------------------
@@ -256,8 +265,9 @@ class CI_Config
 	 * @uses    CI_Config::_uri_string()
 	 *
 	 * @param    string|string[] $uri URI string or an array of segments
-	 * @param    string $protocol
-	 * @return    string
+	 * @param    string          $protocol
+	 *
+	 * @return	string
 	 */
 	public function base_url($uri = '', $protocol = NULL)
 	{
@@ -276,12 +286,13 @@ class CI_Config
 	 * System URL
 	 *
 	 * @deprecated    3.0.0    Encourages insecure practices
-	 * @return    string
+	 * @return	string
 	 */
 	public function system_url()
 	{
 		$x = explode('/', preg_replace('|/*(.+?)/*$|', '\\1', BASEPATH));
-		return $this->slash_item('base_url') . end($x) . '/';
+
+		return $this->slash_item('base_url') . end($x).'/';
 	}
 
 	// --------------------------------------------------------------------
@@ -291,7 +302,8 @@ class CI_Config
 	 *
 	 * @param    string $item Config item key
 	 * @param    string $value Config item value
-	 * @return    void
+	 *
+	 * @return	void
 	 */
 	public function set_item($item, $value)
 	{
@@ -307,16 +319,19 @@ class CI_Config
 	 * @used-by    CI_Config::base_url()
 	 *
 	 * @param    string|string[] $uri URI string or an array of segments
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _uri_string($uri)
 	{
 		if ($this->item('enable_query_strings') === FALSE) {
-			if (is_array($uri)) {
+			if (is_array($uri))
+			{
 				$uri = implode('/', $uri);
 			}
 			return trim($uri, '/');
-		} elseif (is_array($uri)) {
+		} elseif (is_array($uri))
+		{
 			return http_build_query($uri);
 		}
 

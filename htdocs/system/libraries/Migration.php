@@ -112,6 +112,7 @@ class CI_Migration
 	 * Initialize Migration Class
 	 *
 	 * @param    array $config
+	 *
 	 * @return    void
 	 */
 	public function __construct($config = array())
@@ -185,14 +186,16 @@ class CI_Migration
 	 * choice
 	 *
 	 * @param    string $target_version Target schema version
-	 * @return    mixed    TRUE if already latest, FALSE if failed, string if upgraded
+	 *
+	 * @return    mixed    TRUE if no migrations are found, current version string on success, FALSE on failure
 	 */
 	public function version($target_version)
 	{
 		// Note: We use strings, so that timestamp versions work on 32-bit systems
 		$current_version = $this->_get_version();
 
-		if ($this->_migration_type === 'sequential') {
+		if ($this->_migration_type === 'sequential')
+		{
 			$target_version = sprintf('%03d', $target_version);
 		} else {
 			$target_version = (string)$target_version;
@@ -200,28 +203,33 @@ class CI_Migration
 
 		$migrations = $this->find_migrations();
 
-		if ($target_version > 0 && !isset($migrations[$target_version])) {
+		if ($target_version > 0 && !isset($migrations[$target_version]))
+		{
 			$this->_error_string = sprintf($this->lang->line('migration_not_found'), $target_version);
 			return FALSE;
 		}
 
-		if ($target_version > $current_version) {
+		if ($target_version > $current_version)
+		{
 			// Moving Up
 			$method = 'up';
-		} else {
+		} else
+		{
 			// Moving Down, apply in reverse order
 			$method = 'down';
 			krsort($migrations);
 		}
 
-		if (empty($migrations)) {
+		if (empty($migrations))
+		{
 			return TRUE;
 		}
 
 		$previous = FALSE;
 
 		// Validate all available migrations, and run the ones within our target range
-		foreach ($migrations as $number => $file) {
+		foreach ($migrations as $number => $file)
+		{
 			// Check for sequence gaps
 			if ($this->_migration_type === 'sequential' && $previous !== FALSE && abs($number - $previous) > 1) {
 				$this->_error_string = sprintf($this->lang->line('migration_sequence_gap'), $number);
@@ -259,7 +267,8 @@ class CI_Migration
 
 		// This is necessary when moving down, since the the last migration applied
 		// will be the down() method for the next migration up from the target
-		if ($current_version <> $target_version) {
+		if ($current_version <> $target_version)
+		{
 			$current_version = $target_version;
 			$this->_update_version($current_version);
 		}
@@ -274,13 +283,14 @@ class CI_Migration
 	/**
 	 * Sets the schema to the latest migration
 	 *
-	 * @return    mixed    TRUE if already latest, FALSE if failed, string if upgraded
+	 * @return    mixed    Current version string on success, FALSE on failure
 	 */
 	public function latest()
 	{
 		$migrations = $this->find_migrations();
 
-		if (empty($migrations)) {
+		if (empty($migrations))
+		{
 			$this->_error_string = $this->lang->line('migration_none_found');
 			return FALSE;
 		}
@@ -297,7 +307,7 @@ class CI_Migration
 	/**
 	 * Sets the schema to the migration version set in config
 	 *
-	 * @return    mixed    TRUE if already current, FALSE if failed, string if upgraded
+	 * @return    mixed    TRUE if no migrations are found, current version string on success, FALSE on failure
 	 */
 	public function current()
 	{
@@ -328,7 +338,8 @@ class CI_Migration
 		$migrations = array();
 
 		// Load all *_*.php files in the migrations path
-		foreach (glob($this->_migration_path . '*_*.php') as $file) {
+		foreach (glob($this->_migration_path . '*_*.php') as $file)
+		{
 			$name = basename($file, '.php');
 
 			// Filter out non-migration files
@@ -355,6 +366,7 @@ class CI_Migration
 	 * Enable the use of CI super-global
 	 *
 	 * @param    string $var
+	 *
 	 * @return    mixed
 	 */
 	public function __get($var)
@@ -368,6 +380,7 @@ class CI_Migration
 	 * Extracts the migration number from a filename
 	 *
 	 * @param    string $migration
+	 *
 	 * @return    string    Numeric portion of a migration filename
 	 */
 	protected function _get_migration_number($migration)
@@ -382,6 +395,7 @@ class CI_Migration
 	 * Extracts the migration class name from a filename
 	 *
 	 * @param    string $migration
+	 *
 	 * @return    string    text portion of a migration filename
 	 */
 	protected function _get_migration_name($migration)
@@ -410,7 +424,8 @@ class CI_Migration
 	 * Stores the current schema version
 	 *
 	 * @param    string $migration Migration reached
-	 * @return    void
+	 *
+	 * @return	void
 	 */
 	protected function _update_version($migration)
 	{

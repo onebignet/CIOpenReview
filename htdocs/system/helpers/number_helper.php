@@ -55,6 +55,7 @@ if (!function_exists('byte_format')) {
 	 *
 	 * @param    mixed    will be cast as int
 	 * @param    int
+	 *
 	 * @return    string
 	 */
 	function byte_format($num, $precision = 1)
@@ -76,6 +77,7 @@ if (!function_exists('byte_format')) {
 			$unit = $CI->lang->line('kilobyte_abbr');
 		} else {
 			$unit = $CI->lang->line('bytes');
+
 			return number_format($num) . ' ' . $unit;
 		}
 

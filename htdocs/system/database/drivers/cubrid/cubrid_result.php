@@ -138,6 +138,7 @@ class CI_DB_cubrid_result extends CI_DB_result
 	 * result set starts at zero.
 	 *
 	 * @param    int $n
+	 *
 	 * @return    bool
 	 */
 	public function data_seek($n = 0)
@@ -167,6 +168,7 @@ class CI_DB_cubrid_result extends CI_DB_result
 	 * Returns the result set as an object
 	 *
 	 * @param    string $class_name
+	 *
 	 * @return    object
 	 */
 	protected function _fetch_object($class_name = 'stdClass')

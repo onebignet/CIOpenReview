@@ -83,6 +83,7 @@ class CI_DB_oci8_result extends CI_DB_result
 	 * Class constructor
 	 *
 	 * @param    object &$driver_object
+	 *
 	 * @return    void
 	 */
 	public function __construct(&$driver_object)
@@ -200,6 +201,7 @@ class CI_DB_oci8_result extends CI_DB_result
 	 * Returns the result set as an object
 	 *
 	 * @param    string $class_name
+	 *
 	 * @return    object
 	 */
 	protected function _fetch_object($class_name = 'stdClass')
@@ -208,12 +210,14 @@ class CI_DB_oci8_result extends CI_DB_result
 			? oci_fetch_object($this->curs_id)
 			: oci_fetch_object($this->stmt_id);
 
-		if ($class_name === 'stdClass' OR !$row) {
+		if ($class_name === 'stdClass' OR !$row)
+		{
 			return $row;
 		}
 
 		$class_name = new $class_name();
-		foreach ($row as $key => $value) {
+		foreach ($row as $key => $value)
+		{
 			$class_name->$key = $value;
 		}
 

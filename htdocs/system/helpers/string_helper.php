@@ -65,6 +65,7 @@ if (!function_exists('trim_slashes')) {
 	 * @deprecated    3.0.0    This is just an alias for PHP's native trim()
 	 *
 	 * @param    string
+	 *
 	 * @return    string
 	 */
 	function trim_slashes($str)
@@ -75,22 +76,26 @@ if (!function_exists('trim_slashes')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('strip_slashes')) {
+if (!function_exists('strip_slashes'))
+{
 	/**
 	 * Strip Slashes
 	 *
 	 * Removes slashes contained in a string or in an array
 	 *
 	 * @param    mixed    string or array
+	 *
 	 * @return    mixed    string or array
 	 */
 	function strip_slashes($str)
 	{
-		if (!is_array($str)) {
+		if (!is_array($str))
+		{
 			return stripslashes($str);
 		}
 
-		foreach ($str as $key => $val) {
+		foreach ($str as $key => $val)
+		{
 			$str[$key] = strip_slashes($val);
 		}
 
@@ -100,13 +105,15 @@ if (!function_exists('strip_slashes')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('strip_quotes')) {
+if (!function_exists('strip_quotes'))
+{
 	/**
 	 * Strip Quotes
 	 *
 	 * Removes single and double quotes from a string
 	 *
 	 * @param    string
+	 *
 	 * @return    string
 	 */
 	function strip_quotes($str)
@@ -117,13 +124,15 @@ if (!function_exists('strip_quotes')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('quotes_to_entities')) {
+if (!function_exists('quotes_to_entities'))
+{
 	/**
 	 * Quotes to Entities
 	 *
 	 * Converts single and double quotes to entities
 	 *
 	 * @param    string
+	 *
 	 * @return    string
 	 */
 	function quotes_to_entities($str)
@@ -134,7 +143,8 @@ if (!function_exists('quotes_to_entities')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('reduce_double_slashes')) {
+if (!function_exists('reduce_double_slashes'))
+{
 	/**
 	 * Reduce Double Slashes
 	 *
@@ -148,7 +158,8 @@ if (!function_exists('reduce_double_slashes')) {
 	 * http://www.some-site.com/index.php
 	 *
 	 * @param    string
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	function reduce_double_slashes($str)
 	{
@@ -158,7 +169,8 @@ if (!function_exists('reduce_double_slashes')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('reduce_multiples')) {
+if (!function_exists('reduce_multiples'))
+{
 	/**
 	 * Reduce Multiples
 	 *
@@ -173,7 +185,8 @@ if (!function_exists('reduce_multiples')) {
 	 * @param    string
 	 * @param    string    the character you wish to reduce
 	 * @param    bool    TRUE/FALSE - whether to trim the character from the beginning/end
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	function reduce_multiples($str, $character = ',', $trim = FALSE)
 	{
@@ -184,7 +197,8 @@ if (!function_exists('reduce_multiples')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('random_string')) {
+if (!function_exists('random_string'))
+{
 	/**
 	 * Create a Random String
 	 *
@@ -192,18 +206,21 @@ if (!function_exists('random_string')) {
 	 *
 	 * @param    string    type of random string.  basic, alpha, alnum, numeric, nozero, unique, md5, encrypt and sha1
 	 * @param    int    number of characters
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	function random_string($type = 'alnum', $len = 8)
 	{
-		switch ($type) {
+		switch ($type)
+		{
 			case 'basic':
 				return mt_rand();
 			case 'alnum':
 			case 'numeric':
 			case 'nozero':
 			case 'alpha':
-				switch ($type) {
+				switch ($type)
+				{
 					case 'alpha':
 						$pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 						break;
@@ -230,38 +247,44 @@ if (!function_exists('random_string')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('increment_string')) {
+if (!function_exists('increment_string'))
+{
 	/**
 	 * Add's _1 to a string or increment the ending number to allow _2, _3, etc
 	 *
 	 * @param    string    required
 	 * @param    string    What should the duplicate number be appended with
 	 * @param    string    Which number should be used for the first dupe increment
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	function increment_string($str, $separator = '_', $first = 1)
 	{
-		preg_match('/(.+)' . $separator . '([0-9]+)$/', $str, $match);
-		return isset($match[2]) ? $match[1] . $separator . ($match[2] + 1) : $str . $separator . $first;
+		preg_match('/(.+)' . preg_quote($separator, '/') . '([0-9]+)$/', $str, $match);
+
+		return isset($match[2]) ? $match[1] . $separator . ($match[2] + 1) : $str . $separator.$first;
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('alternator')) {
+if (!function_exists('alternator'))
+{
 	/**
 	 * Alternator
 	 *
 	 * Allows strings to be alternated. See docs...
 	 *
 	 * @param    string (as many parameters as needed)
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	function alternator($args)
 	{
 		static $i;
 
-		if (func_num_args() === 0) {
+		if (func_num_args() === 0)
+		{
 			$i = 0;
 			return '';
 		}
@@ -272,7 +295,8 @@ if (!function_exists('alternator')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('repeater')) {
+if (!function_exists('repeater'))
+{
 	/**
 	 * Repeater function
 	 *
@@ -280,8 +304,9 @@ if (!function_exists('repeater')) {
 	 * @deprecated    3.0.0    This is just an alias for PHP's native str_repeat()
 	 *
 	 * @param    string $data String to repeat
-	 * @param    int $num Number of repeats
-	 * @return    string
+	 * @param    int    $num Number of repeats
+	 *
+*@return	string
 	 */
 	function repeater($data, $num = 1)
 	{

@@ -46,7 +46,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage    Libraries
  * @category    Libraries
  * @author        EllisLab Dev Team
- * @link        http://codeigniter.com/user_guide/libraries/encryption.html
+ * @link        http://codeigniter.com/user_guide/general/hooks.html
  */
 class CI_Hooks
 {
@@ -125,6 +125,7 @@ class CI_Hooks
 	 * @uses    CI_Hooks::_run_hook()
 	 *
 	 * @param    string $which Hook name
+	 *
 	 * @return    bool    TRUE on success or FALSE on failure
 	 */
 	public function call_hook($which = '')
@@ -152,18 +153,21 @@ class CI_Hooks
 	 * Runs a particular hook
 	 *
 	 * @param    array $data Hook details
+	 *
 	 * @return    bool    TRUE on success or FALSE on failure
 	 */
 	protected function _run_hook($data)
 	{
 		// Closures/lambda functions and array($object, 'method') callables
-		if (is_callable($data)) {
+		if (is_callable($data))
+		{
 			is_array($data)
 				? $data[0]->{$data[1]}()
 				: $data();
 
 			return TRUE;
-		} elseif (!is_array($data)) {
+		} elseif (!is_array($data))
+		{
 			return FALSE;
 		}
 
@@ -173,7 +177,8 @@ class CI_Hooks
 
 		// If the script being called happens to have the same
 		// hook call within it a loop can happen
-		if ($this->_in_progress === TRUE) {
+		if ($this->_in_progress === TRUE)
+		{
 			return;
 		}
 
@@ -181,13 +186,15 @@ class CI_Hooks
 		// Set file path
 		// -----------------------------------
 
-		if (!isset($data['filepath'], $data['filename'])) {
+		if (!isset($data['filepath'], $data['filename']))
+		{
 			return FALSE;
 		}
 
 		$filepath = APPPATH . $data['filepath'] . '/' . $data['filename'];
 
-		if (!file_exists($filepath)) {
+		if (!file_exists($filepath))
+		{
 			return FALSE;
 		}
 
@@ -196,7 +203,8 @@ class CI_Hooks
 		$function = empty($data['function']) ? FALSE : $data['function'];
 		$params = isset($data['params']) ? $data['params'] : '';
 
-		if (empty($function)) {
+		if (empty($function))
+		{
 			return FALSE;
 		}
 
@@ -204,7 +212,8 @@ class CI_Hooks
 		$this->_in_progress = TRUE;
 
 		// Call the requested class and/or function
-		if ($class !== FALSE) {
+		if ($class !== FALSE)
+		{
 			// The object is stored?
 			if (isset($this->_objects[$class])) {
 				if (method_exists($this->_objects[$class], $function)) {
@@ -223,7 +232,8 @@ class CI_Hooks
 				$this->_objects[$class] = new $class();
 				$this->_objects[$class]->$function($params);
 			}
-		} else {
+		} else
+		{
 			function_exists($function) OR require_once($filepath);
 
 			if (!function_exists($function)) {

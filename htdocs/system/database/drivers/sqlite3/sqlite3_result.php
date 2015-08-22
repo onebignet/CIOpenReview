@@ -91,10 +91,10 @@ class CI_DB_sqlite3_result extends CI_DB_result
 	{
 		static $data_types = array(
 			SQLITE3_INTEGER => 'integer',
-			SQLITE3_FLOAT => 'float',
-			SQLITE3_TEXT => 'text',
-			SQLITE3_BLOB => 'blob',
-			SQLITE3_NULL => 'null'
+			SQLITE3_FLOAT   => 'float',
+			SQLITE3_TEXT    => 'text',
+			SQLITE3_BLOB    => 'blob',
+			SQLITE3_NULL    => 'null',
 		);
 
 		$retval = array();
@@ -136,6 +136,7 @@ class CI_DB_sqlite3_result extends CI_DB_result
 	 * result set starts at zero.
 	 *
 	 * @param    int $n (ignored)
+	 *
 	 * @return    array
 	 */
 	public function data_seek($n = 0)
@@ -166,19 +167,22 @@ class CI_DB_sqlite3_result extends CI_DB_result
 	 * Returns the result set as an object
 	 *
 	 * @param    string $class_name
+	 *
 	 * @return    object
 	 */
 	protected function _fetch_object($class_name = 'stdClass')
 	{
 		// No native support for fetching rows as objects
-		if (($row = $this->result_id->fetchArray(SQLITE3_ASSOC)) === FALSE) {
+		if (($row = $this->result_id->fetchArray(SQLITE3_ASSOC)) === FALSE)
+		{
 			return FALSE;
 		} elseif ($class_name === 'stdClass') {
 			return (object)$row;
 		}
 
 		$class_name = new $class_name();
-		foreach (array_keys($row) as $key) {
+		foreach (array_keys($row) as $key)
+		{
 			$class_name->$key = $row[$key];
 		}
 

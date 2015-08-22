@@ -64,6 +64,7 @@ if (!function_exists('set_cookie')) {
 	 * @param    string    the cookie prefix
 	 * @param    bool    true makes the cookie secure
 	 * @param    bool    true makes the cookie accessible via http(s) only (no javascript)
+	 *
 	 * @return    void
 	 */
 	function set_cookie($name, $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE)
@@ -75,25 +76,29 @@ if (!function_exists('set_cookie')) {
 
 // --------------------------------------------------------------------
 
-if (!function_exists('get_cookie')) {
+if (!function_exists('get_cookie'))
+{
 	/**
 	 * Fetch an item from the COOKIE array
 	 *
 	 * @param    string
 	 * @param    bool
+	 *
 	 * @return    mixed
 	 */
 	function get_cookie($index, $xss_clean = NULL)
 	{
 		is_bool($xss_clean) OR $xss_clean = (config_item('global_xss_filtering') === TRUE);
 		$prefix = isset($_COOKIE[$index]) ? '' : config_item('cookie_prefix');
+
 		return get_instance()->input->cookie($prefix . $index, $xss_clean);
 	}
 }
 
 // --------------------------------------------------------------------
 
-if (!function_exists('delete_cookie')) {
+if (!function_exists('delete_cookie'))
+{
 	/**
 	 * Delete a COOKIE
 	 *
@@ -101,6 +106,7 @@ if (!function_exists('delete_cookie')) {
 	 * @param    string    the cookie domain. Usually: .yourdomain.com
 	 * @param    string    the cookie path
 	 * @param    string    the cookie prefix
+	 *
 	 * @return    void
 	 */
 	function delete_cookie($name, $domain = '', $path = '/', $prefix = '')

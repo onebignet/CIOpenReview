@@ -76,6 +76,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * Class constructor
 	 *
 	 * @param    array $params Configuration parameters
+	 *
 	 * @return    void
 	 */
 	public function __construct(&$params)
@@ -100,6 +101,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 *
 	 * @param    string $save_path Server path(s)
 	 * @param    string $name Session cookie name, unused
+	 *
 	 * @return    bool
 	 */
 	public function open($save_path, $name)
@@ -111,13 +113,15 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 			$server_list[] = $server['host'] . ':' . $server['port'];
 		}
 
-		if (!preg_match_all('#,?([^,:]+)\:(\d{1,5})(?:\:(\d+))?#', $this->_config['save_path'], $matches, PREG_SET_ORDER)) {
+		if (!preg_match_all('#,?([^,:]+)\:(\d{1,5})(?:\:(\d+))?#', $this->_config['save_path'], $matches, PREG_SET_ORDER))
+		{
 			$this->_memcached = NULL;
 			log_message('error', 'Session: Invalid Memcached save path format: ' . $this->_config['save_path']);
 			return FALSE;
 		}
 
-		foreach ($matches as $match) {
+		foreach ($matches as $match)
+		{
 			// If Memcached already has this server (or if the port is invalid), skip it
 			if (in_array($match[1] . ':' . $match[2], $server_list, TRUE)) {
 				log_message('debug', 'Session: Memcached server pool already has ' . $match[1] . ':' . $match[2]);
@@ -131,7 +135,8 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 			}
 		}
 
-		if (empty($server_list)) {
+		if (empty($server_list))
+		{
 			log_message('error', 'Session: Memcached server pool is empty.');
 			return FALSE;
 		}
@@ -147,11 +152,13 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * Reads session data and acquires a lock
 	 *
 	 * @param    string $session_id Session ID
+	 *
 	 * @return    string    Serialized session data
 	 */
 	public function read($session_id)
 	{
-		if (isset($this->_memcached) && $this->_get_lock($session_id)) {
+		if (isset($this->_memcached) && $this->_get_lock($session_id))
+		{
 			// Needed by write() to detect session_regenerate_id() calls
 			$this->_session_id = $session_id;
 
@@ -172,15 +179,18 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 *
 	 * @param    string $session_id Session ID
 	 * @param    string $session_data Serialized session data
-	 * @return    bool
+	 *
+	 * @return	bool
 	 */
 	public function write($session_id, $session_data)
 	{
-		if (!isset($this->_memcached)) {
+		if (!isset($this->_memcached))
+		{
 			return FALSE;
 		} // Was the ID regenerated?
 		elseif ($session_id !== $this->_session_id) {
-			if (!$this->_release_lock() OR !$this->_get_lock($session_id)) {
+			if (!$this->_release_lock() OR !$this->_get_lock($session_id))
+			{
 				return FALSE;
 			}
 
@@ -188,10 +198,12 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 			$this->_session_id = $session_id;
 		}
 
-		if (isset($this->_lock_key)) {
+		if (isset($this->_lock_key))
+		{
 			$this->_memcached->replace($this->_lock_key, time(), 300);
 			if ($this->_fingerprint !== ($fingerprint = md5($session_data))) {
-				if ($this->_memcached->set($this->_key_prefix . $session_id, $session_data, $this->_config['expiration'])) {
+				if ($this->_memcached->set($this->_key_prefix . $session_id, $session_data, $this->_config['expiration']))
+				{
 					$this->_fingerprint = $fingerprint;
 					return TRUE;
 				}
@@ -212,13 +224,15 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 *
 	 * Releases locks and closes connection.
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function close()
 	{
-		if (isset($this->_memcached)) {
+		if (isset($this->_memcached))
+		{
 			isset($this->_lock_key) && $this->_memcached->delete($this->_lock_key);
-			if (!$this->_memcached->quit()) {
+			if (!$this->_memcached->quit())
+			{
 				return FALSE;
 			}
 
@@ -237,7 +251,8 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * Destroys the current session.
 	 *
 	 * @param    string $session_id Session ID
-	 * @return    bool
+	 *
+	 * @return	bool
 	 */
 	public function destroy($session_id)
 	{
@@ -257,7 +272,8 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * Deletes expired sessions
 	 *
 	 * @param    int $maxlifetime Maximum lifetime of sessions
-	 * @return    bool
+	 *
+	 * @return	bool
 	 */
 	public function gc($maxlifetime)
 	{
@@ -273,31 +289,34 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * Acquires an (emulated) lock.
 	 *
 	 * @param    string $session_id Session ID
-	 * @return    bool
+	 *
+	 *@return	bool
 	 */
 	protected function _get_lock($session_id)
 	{
-		if (isset($this->_lock_key)) {
+		if (isset($this->_lock_key))
+		{
 			return $this->_memcached->replace($this->_lock_key, time(), 300);
 		}
 
 		// 30 attempts to obtain a lock, in case another request already has it
-		$lock_key = $this->_key_prefix . $session_id . ':lock';
+		$lock_key = $this->_key_prefix . $session_id.':lock';
 		$attempt = 0;
 		do {
-			if ($this->_memcached->get($lock_key)) {
+			if ($this->_memcached->get($lock_key))
+			{
 				sleep(1);
 				continue;
 			}
 
 			if (!$this->_memcached->set($lock_key, time(), 300)) {
-				log_message('error', 'Session: Error while trying to obtain lock for ' . $this->_key_prefix . $session_id);
+				log_message('error', 'Session: Error while trying to obtain lock for ' . $this->_key_prefix.$session_id);
 				return FALSE;
 			}
 
 			$this->_lock_key = $lock_key;
 			break;
-		} while ($attempt++ < 30);
+		} while (++$attempt < 30);
 
 		if ($attempt === 30) {
 			log_message('error', 'Session: Unable to obtain lock for ' . $this->_key_prefix . $session_id . ' after 30 attempts, aborting.');
@@ -315,7 +334,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 *
 	 * Releases a previously acquired lock
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	protected function _release_lock()
 	{

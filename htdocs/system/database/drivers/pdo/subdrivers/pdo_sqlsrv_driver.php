@@ -87,6 +87,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Builds the DSN if not already set.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -139,17 +140,20 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    object
 	 */
 	public function db_connect($persistent = FALSE)
 	{
-		if (!empty($this->char_set) && preg_match('/utf[^8]*8/i', $this->char_set)) {
+		if (!empty($this->char_set) && preg_match('/utf[^8]*8/i', $this->char_set))
+		{
 			$this->options[PDO::SQLSRV_ENCODING_UTF8] = 1;
 		}
 
 		$this->conn_id = parent::db_connect($persistent);
 
-		if (!is_object($this->conn_id) OR is_bool($this->_quoted_identifier)) {
+		if (!is_object($this->conn_id) OR is_bool($this->_quoted_identifier))
+		{
 			return $this->conn_id;
 		}
 
@@ -168,6 +172,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
+	 *
 	 * @return    array
 	 */
 	public function field_data($table)
@@ -176,7 +181,8 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 			FROM INFORMATION_SCHEMA.Columns
 			WHERE UPPER(TABLE_NAME) = ' . $this->escape(strtoupper($table));
 
-		if (($query = $this->query($sql)) === FALSE) {
+		if (($query = $this->query($sql)) === FALSE)
+		{
 			return FALSE;
 		}
 		$query = $query->result_object();
@@ -201,6 +207,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
+	 *
 	 * @return    string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
@@ -225,7 +232,8 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _list_columns($table = '')
 	{
@@ -242,8 +250,9 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
-	 * @return    string
+	 * @param    array  $values
+	 *
+	 * @return	string
 	 */
 	protected function _update($table, $values)
 	{
@@ -260,7 +269,8 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _delete($table)
 	{
@@ -279,31 +289,37 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql SQL Query
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _limit($sql)
 	{
 		// As of SQL Server 2012 (11.0.*) OFFSET is supported
-		if (version_compare($this->version(), '11', '>=')) {
+		if (version_compare($this->version(), '11', '>='))
+		{
 			// SQL Server OFFSET-FETCH can be used only with the ORDER BY clause
 			empty($this->qb_orderby) && $sql .= ' ORDER BY 1';
 
-			return $sql . ' OFFSET ' . (int)$this->qb_offset . ' ROWS FETCH NEXT ' . $this->qb_limit . ' ROWS ONLY';
+			return $sql . ' OFFSET ' . (int)$this->qb_offset . ' ROWS FETCH NEXT ' . $this->qb_limit.' ROWS ONLY';
 		}
 
 		$limit = $this->qb_offset + $this->qb_limit;
 
 		// An ORDER BY clause is required for ROW_NUMBER() to work
-		if ($this->qb_offset && !empty($this->qb_orderby)) {
+		if ($this->qb_offset && !empty($this->qb_orderby))
+		{
 			$orderby = $this->_compile_order_by();
 
 			// We have to strip the ORDER BY clause
 			$sql = trim(substr($sql, 0, strrpos($sql, $orderby)));
 
 			// Get the fields to select from our subquery, so that we can avoid CI_rownum appearing in the actual results
-			if (count($this->qb_select) === 0) {
+			if (count($this->qb_select) === 0)
+			{
 				$select = '*'; // Inevitable
-			} else {
+			}
+			else
+			{
 				// Use only field names and their aliases, everything else is out of our scope.
 				$select = array();
 				$field_regexp = ($this->_quoted_identifier)
@@ -318,10 +334,10 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 			return 'SELECT ' . $select . " FROM (\n\n"
 			. preg_replace('/^(SELECT( DISTINCT)?)/i', '\\1 ROW_NUMBER() OVER(' . trim($orderby) . ') AS ' . $this->escape_identifiers('CI_rownum') . ', ', $sql)
 			. "\n\n) " . $this->escape_identifiers('CI_subquery')
-			. "\nWHERE " . $this->escape_identifiers('CI_rownum') . ' BETWEEN ' . ($this->qb_offset + 1) . ' AND ' . $limit;
+			. "\nWHERE " . $this->escape_identifiers('CI_rownum') . ' BETWEEN ' . ($this->qb_offset + 1).' AND ' . $limit;
 		}
 
-		return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP ' . $limit . ' ', $sql);
+		return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP ' . $limit.' ', $sql);
 	}
 
 	// --------------------------------------------------------------------
@@ -332,14 +348,16 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific insert string from the supplied data.
 	 *
 	 * @param    string $table Table name
-	 * @param    array $keys INSERT keys
-	 * @param    array $values INSERT values
-	 * @return    string|bool
+	 * @param    array  $keys INSERT keys
+	 * @param    array  $values INSERT values
+	 *
+	 * @return	string|bool
 	 */
 	protected function _insert_batch($table, $keys, $values)
 	{
 		// Multiple-value inserts are only supported as of SQL Server 2008
-		if (version_compare($this->version(), '10', '>=')) {
+		if (version_compare($this->version(), '10', '>='))
+		{
 			return parent::_insert_batch($table, $keys, $values);
 		}
 

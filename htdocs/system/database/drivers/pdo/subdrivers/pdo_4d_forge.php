@@ -88,10 +88,10 @@ class CI_DB_pdo_4d_forge extends CI_DB_pdo_forge
 	 * @var    array
 	 */
 	protected $_unsigned = array(
-		'INT16' => 'INT',
+		'INT16'    => 'INT',
 		'SMALLINT' => 'INT',
-		'INT' => 'INT64',
-		'INT32' => 'INT64'
+		'INT'      => 'INT64',
+		'INT32'    => 'INT64',
 	);
 
 	/**
@@ -108,7 +108,8 @@ class CI_DB_pdo_4d_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    string $alter_type ALTER type
 	 * @param    string $table Table name
-	 * @param    mixed $field Column definition
+	 * @param    mixed  $field Column definition
+	 *
 	 * @return    string|string[]
 	 */
 	protected function _alter_table($alter_type, $table, $field)
@@ -127,6 +128,7 @@ class CI_DB_pdo_4d_forge extends CI_DB_pdo_forge
 	 * Process column
 	 *
 	 * @param    array $field
+	 *
 	 * @return    string
 	 */
 	protected function _process_column($field)
@@ -146,11 +148,13 @@ class CI_DB_pdo_4d_forge extends CI_DB_pdo_forge
 	 * Performs a data type mapping between different databases.
 	 *
 	 * @param    array &$attributes
+	 *
 	 * @return    void
 	 */
 	protected function _attr_type(&$attributes)
 	{
-		switch (strtoupper($attributes['TYPE'])) {
+		switch (strtoupper($attributes['TYPE']))
+		{
 			case 'TINYINT':
 				$attributes['TYPE'] = 'SMALLINT';
 				$attributes['UNSIGNED'] = FALSE;
@@ -177,11 +181,13 @@ class CI_DB_pdo_4d_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    array &$attributes
 	 * @param    array &$field
-	 * @return    void
+	 *
+	 * @return	void
 	 */
 	protected function _attr_unique(&$attributes, &$field)
 	{
-		if (!empty($attributes['UNIQUE']) && $attributes['UNIQUE'] === TRUE) {
+		if (!empty($attributes['UNIQUE']) && $attributes['UNIQUE'] === TRUE)
+		{
 			$field['unique'] = ' UNIQUE';
 
 			// UNIQUE must be used with NOT NULL
@@ -196,14 +202,17 @@ class CI_DB_pdo_4d_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    array &$attributes
 	 * @param    array &$field
-	 * @return    void
+	 *
+	 * @return	void
 	 */
 	protected function _attr_auto_increment(&$attributes, &$field)
 	{
 		if (!empty($attributes['AUTO_INCREMENT']) && $attributes['AUTO_INCREMENT'] === TRUE) {
-			if (stripos($field['type'], 'int') !== FALSE) {
+			if (stripos($field['type'], 'int') !== FALSE)
+			{
 				$field['auto_increment'] = ' AUTO_INCREMENT';
-			} elseif (strcasecmp($field['type'], 'UUID') === 0) {
+			} elseif (strcasecmp($field['type'], 'UUID') === 0)
+			{
 				$field['auto_increment'] = ' AUTO_GENERATE';
 			}
 		}

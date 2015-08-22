@@ -56,6 +56,7 @@ class CI_Cache_apc extends CI_Driver
 	 * if not, return FALSE
 	 *
 	 * @param    string
+	 *
 	 * @return    mixed    value that is stored/FALSE on failure
 	 */
 	public function get($id)
@@ -78,9 +79,10 @@ class CI_Cache_apc extends CI_Driver
 	 * Cache Save
 	 *
 	 * @param    string $id Cache ID
-	 * @param    mixed $data Data to store
-	 * @param    int $ttol Length of time (in seconds) to cache the data
-	 * @param    bool $raw Whether to store the raw value
+	 * @param    mixed  $data Data to store
+	 * @param    int    $ttol Length of time (in seconds) to cache the data
+	 * @param    bool   $raw Whether to store the raw value
+	 *
 	 * @return    bool    TRUE on success, FALSE on failure
 	 */
 	public function save($id, $data, $ttl = 60, $raw = FALSE)
@@ -100,6 +102,7 @@ class CI_Cache_apc extends CI_Driver
 	 * Delete from Cache
 	 *
 	 * @param    mixed    unique identifier of the item in the cache
+	 *
 	 * @return    bool    true on success/false on failure
 	 */
 	public function delete($id)
@@ -113,7 +116,8 @@ class CI_Cache_apc extends CI_Driver
 	 * Increment a raw value
 	 *
 	 * @param    string $id Cache ID
-	 * @param    int $offset Step/value to add
+	 * @param    int    $offset Step/value to add
+	 *
 	 * @return    mixed    New value on success or FALSE on failure
 	 */
 	public function increment($id, $offset = 1)
@@ -127,7 +131,8 @@ class CI_Cache_apc extends CI_Driver
 	 * Decrement a raw value
 	 *
 	 * @param    string $id Cache ID
-	 * @param    int $offset Step/value to reduce by
+	 * @param    int    $offset Step/value to reduce by
+	 *
 	 * @return    mixed    New value on success or FALSE on failure
 	 */
 	public function decrement($id, $offset = 1)
@@ -153,12 +158,13 @@ class CI_Cache_apc extends CI_Driver
 	 * Cache Info
 	 *
 	 * @param    string    user/filehits
+	 *
 	 * @return    mixed    array on success, false on failure
 	 */
 	public function cache_info($type = NULL)
 	{
 		return apc_cache_info($type);
-	}
+	 }
 
 	// ------------------------------------------------------------------------
 
@@ -166,6 +172,7 @@ class CI_Cache_apc extends CI_Driver
 	 * Get Cache Metadata
 	 *
 	 * @param    mixed    key to get cache metadata on
+	 *
 	 * @return    mixed    array on success/false on failure
 	 */
 	public function get_metadata($id)
@@ -173,7 +180,8 @@ class CI_Cache_apc extends CI_Driver
 		$success = FALSE;
 		$stored = apc_fetch($id, $success);
 
-		if ($success === FALSE OR count($stored) !== 3) {
+		if ($success === FALSE OR count($stored) !== 3)
+		{
 			return FALSE;
 		}
 
@@ -181,8 +189,8 @@ class CI_Cache_apc extends CI_Driver
 
 		return array(
 			'expire' => $time + $ttl,
-			'mtime' => $time,
-			'data' => unserialize($data)
+			'mtime'  => $time,
+			'data'   => unserialize($data),
 		);
 	}
 
@@ -193,11 +201,12 @@ class CI_Cache_apc extends CI_Driver
 	 *
 	 * Check to see if APC is available on this system, bail if it isn't.
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function is_supported()
 	{
-		if (!extension_loaded('apc') OR !ini_get('apc.enabled')) {
+		if (!extension_loaded('apc') OR !ini_get('apc.enabled'))
+		{
 			log_message('debug', 'The APC PHP extension must be loaded to use APC Cache.');
 			return FALSE;
 		}

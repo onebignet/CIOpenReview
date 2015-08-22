@@ -75,6 +75,7 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Validates the DSN string and/or detects the subdriver.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -113,13 +114,15 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    object
 	 */
 	public function db_connect($persistent = FALSE)
 	{
 		$this->options[PDO::ATTR_PERSISTENT] = $persistent;
 
-		try {
+		try
+		{
 			return new PDO($this->dsn, $this->username, $this->password, $this->options);
 		} catch (PDOException $e) {
 			if ($this->db_debug && empty($this->failover)) {
@@ -139,14 +142,17 @@ class CI_DB_pdo_driver extends CI_DB
 	 */
 	public function version()
 	{
-		if (isset($this->data_cache['version'])) {
+		if (isset($this->data_cache['version']))
+		{
 			return $this->data_cache['version'];
 		}
 
 		// Not all subdrivers support the getAttribute() method
-		try {
+		try
+		{
 			return $this->data_cache['version'] = $this->conn_id->getAttribute(PDO::ATTR_SERVER_VERSION);
-		} catch (PDOException $e) {
+		} catch (PDOException $e)
+		{
 			return parent::version();
 		}
 	}
@@ -157,12 +163,14 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Begin Transaction
 	 *
 	 * @param    bool $test_mode
+	 *
 	 * @return    bool
 	 */
 	public function trans_begin($test_mode = FALSE)
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -179,12 +187,13 @@ class CI_DB_pdo_driver extends CI_DB
 	/**
 	 * Commit Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_commit()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -196,12 +205,13 @@ class CI_DB_pdo_driver extends CI_DB
 	/**
 	 * Rollback Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_rollback()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -213,7 +223,7 @@ class CI_DB_pdo_driver extends CI_DB
 	/**
 	 * Affected Rows
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function affected_rows()
 	{
@@ -226,7 +236,8 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Insert ID
 	 *
 	 * @param    string $name
-	 * @return    int
+	 *
+	 * @return	int
 	 */
 	public function insert_id($name = NULL)
 	{
@@ -241,14 +252,15 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Returns an array containing code and message of the last
 	 * database error that has occured.
 	 *
-	 * @return    array
+	 * @return	array
 	 */
 	public function error()
 	{
 		$error = array('code' => '00000', 'message' => '');
 		$pdo_error = $this->conn_id->errorInfo();
 
-		if (empty($pdo_error[0])) {
+		if (empty($pdo_error[0]))
+		{
 			return $error;
 		}
 
@@ -266,7 +278,8 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Execute the query
 	 *
 	 * @param    string $sql SQL query
-	 * @return    mixed
+	 *
+	 * @return	mixed
 	 */
 	protected function _execute($sql)
 	{
@@ -279,7 +292,8 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Platform-dependant string escape
 	 *
 	 * @param    string
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _escape_str($str)
 	{
@@ -300,7 +314,8 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Generates a platform-specific query so that the column data can be retrieved
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _field_data($table)
 	{
@@ -315,32 +330,34 @@ class CI_DB_pdo_driver extends CI_DB
 	 * Generates a platform-specific batch update string from the supplied data
 	 *
 	 * @param    string $table Table name
-	 * @param    array $values Update data
+	 * @param    array  $values Update data
 	 * @param    string $index WHERE key
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _update_batch($table, $values, $index)
 	{
 		$ids = array();
-		foreach ($values as $key => $val) {
+		foreach ($values as $key => $val)
+		{
 			$ids[] = $val[$index];
 
 			foreach (array_keys($val) as $field) {
 				if ($field !== $index) {
-					$final[$field][] = 'WHEN ' . $index . ' = ' . $val[$index] . ' THEN ' . $val[$field];
+					$final[$field][] = 'WHEN ' . $index . ' = ' . $val[$index] . ' THEN '.$val[$field];
 				}
 			}
 		}
 
 		$cases = '';
 		foreach ($final as $k => $v) {
-			$cases .= $k . ' = CASE ' . "\n";
+			$cases .= $k .' = CASE ' . "\n";
 
 			foreach ($v as $row) {
 				$cases .= $row . "\n";
 			}
 
-			$cases .= 'ELSE ' . $k . ' END, ';
+			$cases .= 'ELSE '.$k . ' END, ';
 		}
 
 		$this->where($index . ' IN(' . implode(',', $ids) . ')', NULL, FALSE);
@@ -359,11 +376,12 @@ class CI_DB_pdo_driver extends CI_DB
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'TRUNCATE TABLE ' . $table;
+		return 'TRUNCATE TABLE '.$table;
 	}
 
 }

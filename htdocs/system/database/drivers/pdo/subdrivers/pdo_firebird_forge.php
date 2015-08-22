@@ -61,8 +61,8 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 	 */
 	protected $_unsigned = array(
 		'SMALLINT' => 'INTEGER',
-		'INTEGER' => 'INT64',
-		'FLOAT' => 'DOUBLE PRECISION'
+		'INTEGER'  => 'INT64',
+		'FLOAT'    => 'DOUBLE PRECISION',
 	);
 
 	/**
@@ -78,6 +78,7 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 	 * Create database
 	 *
 	 * @param    string $db_name
+	 *
 	 * @return    string
 	 */
 	public function create_database($db_name)
@@ -96,13 +97,16 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 	 * Drop database
 	 *
 	 * @param    string $db_name (ignored)
+	 *
 	 * @return    bool
 	 */
 	public function drop_database($db_name = '')
 	{
-		if (!ibase_drop_db($this->conn_id)) {
+		if (!ibase_drop_db($this->conn_id))
+		{
 			return ($this->db->db_debug) ? $this->db->display_error('db_unable_to_drop') : FALSE;
-		} elseif (!empty($this->db->data_cache['db_names'])) {
+		} elseif (!empty($this->db->data_cache['db_names']))
+		{
 			$key = array_search(strtolower($this->db->database), array_map('strtolower', $this->db->data_cache['db_names']), TRUE);
 			if ($key !== FALSE) {
 				unset($this->db->data_cache['db_names'][$key]);
@@ -119,19 +123,22 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    string $alter_type ALTER type
 	 * @param    string $table Table name
-	 * @param    mixed $field Column definition
+	 * @param    mixed  $field Column definition
+	 *
 	 * @return    string|string[]
 	 */
 	protected function _alter_table($alter_type, $table, $field)
 	{
-		if (in_array($alter_type, array('DROP', 'ADD'), TRUE)) {
+		if (in_array($alter_type, array('DROP', 'ADD'), TRUE))
+		{
 			return parent::_alter_table($alter_type, $table, $field);
 		}
 
 		$sql = 'ALTER TABLE ' . $this->db->escape_identifiers($table);
 		$sqls = array();
 		for ($i = 0, $c = count($field); $i < $c; $i++) {
-			if ($field[$i]['_literal'] !== FALSE) {
+			if ($field[$i]['_literal'] !== FALSE)
+			{
 				return FALSE;
 			}
 
@@ -145,7 +152,8 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 					. ' SET DEFAULT ' . $field[$i]['default'];
 			}
 
-			if (isset($field[$i]['null'])) {
+			if (isset($field[$i]['null']))
+			{
 				$sqls[] = 'UPDATE "RDB$RELATION_FIELDS" SET "RDB$NULL_FLAG" = '
 					. ($field[$i]['null'] === TRUE ? 'NULL' : '1')
 					. ' WHERE "RDB$FIELD_NAME" = ' . $this->db->escape($field[$i]['name'])
@@ -159,7 +167,7 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 		}
 
 		return $sqls;
-	}
+ 	}
 
 	// --------------------------------------------------------------------
 
@@ -167,6 +175,7 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 	 * Process column
 	 *
 	 * @param    array $field
+	 *
 	 * @return    string
 	 */
 	protected function _process_column($field)
@@ -186,11 +195,13 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 	 * Performs a data type mapping between different databases.
 	 *
 	 * @param    array &$attributes
-	 * @return    void
+	 *
+	 * @return	void
 	 */
 	protected function _attr_type(&$attributes)
 	{
-		switch (strtoupper($attributes['TYPE'])) {
+		switch (strtoupper($attributes['TYPE']))
+		{
 			case 'TINYINT':
 				$attributes['TYPE'] = 'SMALLINT';
 				$attributes['UNSIGNED'] = FALSE;
@@ -204,9 +215,9 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 				return;
 			case 'BIGINT':
 				$attributes['TYPE'] = 'INT64';
+
 				return;
-			default:
-				return;
+			default: return;
 		}
 	}
 
@@ -217,7 +228,8 @@ class CI_DB_pdo_firebird_forge extends CI_DB_pdo_forge
 	 *
 	 * @param    array &$attributes
 	 * @param    array &$field
-	 * @return    void
+	 *
+	 * @return	void
 	 */
 	protected function _attr_auto_increment(&$attributes, &$field)
 	{

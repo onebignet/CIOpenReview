@@ -99,6 +99,7 @@ class CI_DB_mysqli_forge extends CI_DB_forge
 	 * CREATE TABLE attributes
 	 *
 	 * @param    array $attributes Associative array of table attributes
+	 *
 	 * @return    string
 	 */
 	protected function _create_table_attr($attributes)
@@ -129,12 +130,14 @@ class CI_DB_mysqli_forge extends CI_DB_forge
 	 *
 	 * @param    string $alter_type ALTER type
 	 * @param    string $table Table name
-	 * @param    mixed $field Column definition
+	 * @param    mixed  $field Column definition
+	 *
 	 * @return    string|string[]
 	 */
 	protected function _alter_table($alter_type, $table, $field)
 	{
-		if ($alter_type === 'DROP') {
+		if ($alter_type === 'DROP')
+		{
 			return parent::_alter_table($alter_type, $table, $field);
 		}
 
@@ -164,6 +167,7 @@ class CI_DB_mysqli_forge extends CI_DB_forge
 	 * Process column
 	 *
 	 * @param    array $field
+	 *
 	 * @return    string
 	 */
 	protected function _process_column($field)
@@ -171,7 +175,8 @@ class CI_DB_mysqli_forge extends CI_DB_forge
 		$extra_clause = isset($field['after'])
 			? ' AFTER ' . $this->db->escape_identifiers($field['after']) : '';
 
-		if (empty($extra_clause) && isset($field['first']) && $field['first'] === TRUE) {
+		if (empty($extra_clause) && isset($field['first']) && $field['first'] === TRUE)
+		{
 			$extra_clause = ' FIRST';
 		}
 
@@ -193,6 +198,7 @@ class CI_DB_mysqli_forge extends CI_DB_forge
 	 * Process indexes
 	 *
 	 * @param    string $table (ignored)
+	 *
 	 * @return    string
 	 */
 	protected function _process_indexes($table)
@@ -202,12 +208,14 @@ class CI_DB_mysqli_forge extends CI_DB_forge
 		for ($i = 0, $c = count($this->keys); $i < $c; $i++) {
 			if (is_array($this->keys[$i])) {
 				for ($i2 = 0, $c2 = count($this->keys[$i]); $i2 < $c2; $i2++) {
-					if (!isset($this->fields[$this->keys[$i][$i2]])) {
+					if (!isset($this->fields[$this->keys[$i][$i2]]))
+					{
 						unset($this->keys[$i][$i2]);
 						continue;
 					}
 				}
-			} elseif (!isset($this->fields[$this->keys[$i]])) {
+			} elseif (!isset($this->fields[$this->keys[$i]]))
+			{
 				unset($this->keys[$i]);
 				continue;
 			}
@@ -215,7 +223,7 @@ class CI_DB_mysqli_forge extends CI_DB_forge
 			is_array($this->keys[$i]) OR $this->keys[$i] = array($this->keys[$i]);
 
 			$sql .= ",\n\tKEY " . $this->db->escape_identifiers(implode('_', $this->keys[$i]))
-				. ' (' . implode(', ', $this->db->escape_identifiers($this->keys[$i])) . ')';
+				. ' (' . implode(', ', $this->db->escape_identifiers($this->keys[$i])).')';
 		}
 
 		$this->keys = array();

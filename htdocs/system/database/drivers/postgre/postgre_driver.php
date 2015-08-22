@@ -84,6 +84,7 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Creates a DSN string to be used for db_connect() and db_pconnect()
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -140,6 +141,7 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    resource
 	 */
 	public function db_connect($persistent = FALSE)
@@ -148,7 +150,8 @@ class CI_DB_postgre_driver extends CI_DB
 			? pg_pconnect($this->dsn)
 			: pg_connect($this->dsn);
 
-		if ($this->conn_id !== FALSE) {
+		if ($this->conn_id !== FALSE)
+		{
 			if ($persistent === TRUE
 				&& pg_connection_status($this->conn_id) === PGSQL_CONNECTION_BAD
 				&& pg_ping($this->conn_id) === FALSE
@@ -174,7 +177,8 @@ class CI_DB_postgre_driver extends CI_DB
 	 */
 	public function reconnect()
 	{
-		if (pg_ping($this->conn_id) === FALSE) {
+		if (pg_ping($this->conn_id) === FALSE)
+		{
 			$this->conn_id = FALSE;
 		}
 	}
@@ -188,11 +192,13 @@ class CI_DB_postgre_driver extends CI_DB
 	 */
 	public function version()
 	{
-		if (isset($this->data_cache['version'])) {
+		if (isset($this->data_cache['version']))
+		{
 			return $this->data_cache['version'];
 		}
 
-		if (!$this->conn_id OR ($pg_version = pg_version($this->conn_id)) === FALSE) {
+		if (!$this->conn_id OR ($pg_version = pg_version($this->conn_id)) === FALSE)
+		{
 			return FALSE;
 		}
 
@@ -212,12 +218,14 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Begin Transaction
 	 *
 	 * @param    bool $test_mode
+	 *
 	 * @return    bool
 	 */
 	public function trans_begin($test_mode = FALSE)
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -234,12 +242,13 @@ class CI_DB_postgre_driver extends CI_DB
 	/**
 	 * Commit Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_commit()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -251,12 +260,13 @@ class CI_DB_postgre_driver extends CI_DB
 	/**
 	 * Rollback Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_rollback()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -269,7 +279,8 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Determines if a query is a "write" type.
 	 *
 	 * @param    string    An SQL query string
-	 * @return    bool
+	 *
+	 * @return	bool
 	 */
 	public function is_write_type($sql)
 	{
@@ -284,13 +295,16 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Escapes data based on type
 	 *
 	 * @param    string $str
-	 * @return    mixed
+	 *
+	 * @return	mixed
 	 */
 	public function escape($str)
 	{
-		if (is_php('5.4.4') && (is_string($str) OR (is_object($str) && method_exists($str, '__toString')))) {
+		if (is_php('5.4.4') && (is_string($str) OR (is_object($str) && method_exists($str, '__toString'))))
+		{
 			return pg_escape_literal($this->conn_id, $str);
-		} elseif (is_bool($str)) {
+		} elseif (is_bool($str))
+		{
 			return ($str) ? 'TRUE' : 'FALSE';
 		}
 
@@ -302,7 +316,7 @@ class CI_DB_postgre_driver extends CI_DB
 	/**
 	 * Affected Rows
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function affected_rows()
 	{
@@ -314,7 +328,7 @@ class CI_DB_postgre_driver extends CI_DB
 	/**
 	 * Insert ID
 	 *
-	 * @return    string
+	 * @return	string
 	 */
 	public function insert_id()
 	{
@@ -324,7 +338,8 @@ class CI_DB_postgre_driver extends CI_DB
 		$table = (func_num_args() > 0) ? func_get_arg(0) : NULL;
 		$column = (func_num_args() > 1) ? func_get_arg(1) : NULL;
 
-		if ($table === NULL && $v >= '8.1') {
+		if ($table === NULL && $v >= '8.1')
+		{
 			$sql = 'SELECT LASTVAL() AS ins_id';
 		} elseif ($table !== NULL) {
 			if ($column !== NULL && $v >= '8.0') {
@@ -332,18 +347,21 @@ class CI_DB_postgre_driver extends CI_DB
 				$query = $this->query($sql);
 				$query = $query->row();
 				$seq = $query->seq;
-			} else {
+			} else
+			{
 				// seq_name passed in table parameter
 				$seq = $table;
 			}
 
 			$sql = 'SELECT CURRVAL(\'' . $seq . "') AS ins_id";
-		} else {
+		} else
+		{
 			return pg_last_oid($this->result_id);
 		}
 
 		$query = $this->query($sql);
 		$query = $query->row();
+
 		return (int)$query->ins_id;
 	}
 
@@ -353,7 +371,8 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
-	 * @return    array
+	 *
+	 * @return	array
 	 */
 	public function field_data($table)
 	{
@@ -361,7 +380,8 @@ class CI_DB_postgre_driver extends CI_DB
 			FROM "information_schema"."columns"
 			WHERE LOWER("table_name") = ' . $this->escape(strtolower($table));
 
-		if (($query = $this->query($sql)) === FALSE) {
+		if (($query = $this->query($sql)) === FALSE)
+		{
 			return FALSE;
 		}
 		$query = $query->result_object();
@@ -386,7 +406,7 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Returns an array containing code and message of the last
 	 * database error that has occured.
 	 *
-	 * @return    array
+	 * @return	array
 	 */
 	public function error()
 	{
@@ -400,21 +420,23 @@ class CI_DB_postgre_driver extends CI_DB
 	 *
 	 * @param    string $orderby
 	 * @param    string $direction ASC, DESC or RANDOM
-	 * @param    bool $escape
-	 * @return    object
+	 * @param    bool   $escape
+	 *
+	 * @return	object
 	 */
 	public function order_by($orderby, $direction = '', $escape = NULL)
 	{
 		$direction = strtoupper(trim($direction));
 		if ($direction === 'RANDOM') {
-			if (!is_float($orderby) && ctype_digit((string)$orderby)) {
+			if (!is_float($orderby) && ctype_digit((string)$orderby))
+			{
 				$orderby = ($orderby > 1)
 					? (float)'0.' . $orderby
-					: (float)$orderby;
+					: (float) $orderby;
 			}
 
 			if (is_float($orderby)) {
-				$this->simple_query('SET SEED ' . $orderby);
+				$this->simple_query('SET SEED '.$orderby);
 			}
 
 			$orderby = $this->_random_keyword[0];
@@ -431,7 +453,8 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Set client character set
 	 *
 	 * @param    string $charset
-	 * @return    bool
+	 *
+	 *@return	bool
 	 */
 	protected function _db_set_charset($charset)
 	{
@@ -444,7 +467,8 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Execute the query
 	 *
 	 * @param    string $sql an SQL query
-	 * @return    resource
+	 *
+	 *@return	resource
 	 */
 	protected function _execute($sql)
 	{
@@ -457,7 +481,8 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Platform-dependant string escape
 	 *
 	 * @param    string
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _escape_str($str)
 	{
@@ -472,7 +497,8 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
 	{
@@ -495,7 +521,8 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _list_columns($table = '')
 	{
@@ -512,8 +539,9 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
-	 * @return    string
+	 * @param    array  $values
+	 *
+*@return	string
 	 */
 	protected function _update($table, $values)
 	{
@@ -530,19 +558,21 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Generates a platform-specific batch update string from the supplied data
 	 *
 	 * @param    string $table Table name
-	 * @param    array $values Update data
+	 * @param    array  $values Update data
 	 * @param    string $index WHERE key
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _update_batch($table, $values, $index)
 	{
 		$ids = array();
-		foreach ($values as $key => $val) {
+		foreach ($values as $key => $val)
+		{
 			$ids[] = $val[$index];
 
 			foreach (array_keys($val) as $field) {
 				if ($field !== $index) {
-					$final[$field][] = 'WHEN ' . $val[$index] . ' THEN ' . $val[$field];
+					$final[$field][] = 'WHEN ' . $val[$index].' THEN '.$val[$field];
 				}
 			}
 		}
@@ -566,8 +596,9 @@ class CI_DB_postgre_driver extends CI_DB
 	 *
 	 * Generates a platform-specific delete string from the supplied data
 	 *
-	 * @param    string $table
-	 * @return    string
+	 * @param    string	$table
+	 *
+*@return	string
 	 */
 	protected function _delete($table)
 	{
@@ -583,11 +614,12 @@ class CI_DB_postgre_driver extends CI_DB
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql SQL Query
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _limit($sql)
 	{
-		return $sql . ' LIMIT ' . $this->qb_limit . ($this->qb_offset ? ' OFFSET ' . $this->qb_offset : '');
+		return $sql . ' LIMIT ' . $this->qb_limit . ($this->qb_offset ? ' OFFSET '.$this->qb_offset : '');
 	}
 
 	// --------------------------------------------------------------------
@@ -595,7 +627,7 @@ class CI_DB_postgre_driver extends CI_DB
 	/**
 	 * Close DB Connection
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	protected function _close()
 	{

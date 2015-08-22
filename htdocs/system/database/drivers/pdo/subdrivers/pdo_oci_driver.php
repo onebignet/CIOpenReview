@@ -96,6 +96,7 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 	 * Builds the DSN if not already set.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -128,13 +129,16 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
+	 *
 	 * @return    array
 	 */
 	public function field_data($table)
 	{
-		if (strpos($table, '.') !== FALSE) {
+		if (strpos($table, '.') !== FALSE)
+		{
 			sscanf($table, '%[^.].%s', $owner, $table);
-		} else {
+		} else
+		{
 			$owner = $this->username;
 		}
 
@@ -143,7 +147,8 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 			WHERE UPPER(OWNER) = ' . $this->escape(strtoupper($owner)) . '
 				AND UPPER(TABLE_NAME) = ' . $this->escape(strtoupper($table));
 
-		if (($query = $this->query($sql)) === FALSE) {
+		if (($query = $this->query($sql)) === FALSE)
+		{
 			return FALSE;
 		}
 		$query = $query->result_object();
@@ -179,6 +184,7 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
+	 *
 	 * @return    string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
@@ -201,13 +207,16 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
+	 *
 	 * @return    string
 	 */
 	protected function _list_columns($table = '')
 	{
-		if (strpos($table, '.') !== FALSE) {
+		if (strpos($table, '.') !== FALSE)
+		{
 			sscanf($table, '%[^.].%s', $owner, $table);
-		} else {
+		} else
+		{
 			$owner = $this->username;
 		}
 
@@ -222,9 +231,10 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 	 * Insert batch statement
 	 *
 	 * @param    string $table Table name
-	 * @param    array $keys INSERT keys
-	 * @param    array $values INSERT values
-	 * @return    string
+	 * @param    array  $keys INSERT keys
+	 * @param    array  $values INSERT values
+	 *
+	 * @return 	string
 	 */
 	protected function _insert_batch($table, $keys, $values)
 	{
@@ -232,7 +242,7 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 		$sql = "INSERT ALL\n";
 
 		for ($i = 0, $c = count($values); $i < $c; $i++) {
-			$sql .= '	INTO ' . $table . ' (' . $keys . ') VALUES ' . $values[$i] . "\n";
+			$sql .= '	INTO ' . $table . ' (' . $keys . ') VALUES ' . $values[$i]."\n";
 		}
 
 		return $sql . 'SELECT * FROM dual';
@@ -246,7 +256,8 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _delete($table)
 	{
@@ -266,12 +277,13 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql SQL Query
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _limit($sql)
 	{
 		return 'SELECT * FROM (SELECT inner_query.*, rownum rnum FROM (' . $sql . ') inner_query WHERE rownum < ' . ($this->qb_offset + $this->qb_limit + 1) . ')'
-		. ($this->qb_offset ? ' WHERE rnum >= ' . ($this->qb_offset + 1) : '');
+		. ($this->qb_offset ? ' WHERE rnum >= ' . ($this->qb_offset + 1): '');
 	}
 
 }

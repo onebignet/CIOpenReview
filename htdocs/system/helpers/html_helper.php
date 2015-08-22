@@ -58,6 +58,7 @@ if (!function_exists('heading')) {
 	 * @param    string    content
 	 * @param    int    heading level
 	 * @param    string
+	 *
 	 * @return    string
 	 */
 	function heading($data = '', $h = '1', $attributes = '')
@@ -68,7 +69,8 @@ if (!function_exists('heading')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('ul')) {
+if (!function_exists('ul'))
+{
 	/**
 	 * Unordered List
 	 *
@@ -76,6 +78,7 @@ if (!function_exists('ul')) {
 	 *
 	 * @param    array
 	 * @param    mixed
+	 *
 	 * @return    string
 	 */
 	function ul($list, $attributes = '')
@@ -86,7 +89,8 @@ if (!function_exists('ul')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('ol')) {
+if (!function_exists('ol'))
+{
 	/**
 	 * Ordered List
 	 *
@@ -94,6 +98,7 @@ if (!function_exists('ol')) {
 	 *
 	 * @param    array
 	 * @param    mixed
+	 *
 	 * @return    string
 	 */
 	function ol($list, $attributes = '')
@@ -104,7 +109,8 @@ if (!function_exists('ol')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('_list')) {
+if (!function_exists('_list'))
+{
 	/**
 	 * Generates the list
 	 *
@@ -114,31 +120,35 @@ if (!function_exists('_list')) {
 	 * @param    mixed
 	 * @param    mixed
 	 * @param    int
+	 *
 	 * @return    string
 	 */
 	function _list($type = 'ul', $list = array(), $attributes = '', $depth = 0)
 	{
 		// If an array wasn't submitted there's nothing to do...
-		if (!is_array($list)) {
+		if (!is_array($list))
+		{
 			return $list;
 		}
 
 		// Set the indentation based on the depth
 		$out = str_repeat(' ', $depth)
 			// Write the opening list tag
-			. '<' . $type . _stringify_attributes($attributes) . ">\n";
+			. '<' . $type . _stringify_attributes($attributes).">\n";
 
 
 		// Cycle through the list elements.  If an array is
 		// encountered we will recursively call _list()
 
 		static $_last_list_item = '';
-		foreach ($list as $key => $val) {
+		foreach ($list as $key => $val)
+		{
 			$_last_list_item = $key;
 
-			$out .= str_repeat(' ', $depth + 2) . '<li>';
+			$out .= str_repeat(' ', $depth + 2).'<li>';
 
-			if (!is_array($val)) {
+			if (!is_array($val))
+			{
 				$out .= $val;
 			} else {
 				$out .= $_last_list_item . "\n" . _list($type, $val, '', $depth + 4) . str_repeat(' ', $depth + 2);
@@ -148,13 +158,14 @@ if (!function_exists('_list')) {
 		}
 
 		// Set the indentation for the closing tag and apply it
-		return $out . str_repeat(' ', $depth) . '</' . $type . ">\n";
+		return $out . str_repeat(' ', $depth) . '</' . $type.">\n";
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('img')) {
+if (!function_exists('img'))
+{
 	/**
 	 * Image
 	 *
@@ -163,16 +174,19 @@ if (!function_exists('img')) {
 	 * @param    mixed
 	 * @param    bool
 	 * @param    mixed
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	function img($src = '', $index_page = FALSE, $attributes = '')
 	{
-		if (!is_array($src)) {
+		if (!is_array($src) )
+		{
 			$src = array('src' => $src);
 		}
 
 		// If there is no alt attribute defined, set it to an empty string
-		if (!isset($src['alt'])) {
+		if (!isset($src['alt']))
+		{
 			$src['alt'] = '';
 		}
 
@@ -181,22 +195,23 @@ if (!function_exists('img')) {
 		foreach ($src as $k => $v) {
 			if ($k === 'src' && !preg_match('#^([a-z]+:)?//#i', $v)) {
 				if ($index_page === TRUE) {
-					$img .= ' src="' . get_instance()->config->site_url($v) . '"';
+					$img .= ' src="' . get_instance()->config->site_url($v).'"';
 				} else {
-					$img .= ' src="' . get_instance()->config->slash_item('base_url') . $v . '"';
+					$img .= ' src="' . get_instance()->config->slash_item('base_url') . $v .'"';
 				}
 			} else {
-				$img .= ' ' . $k . '="' . $v . '"';
+				$img .= ' ' . $k . '="' . $v.'"';
 			}
 		}
 
-		return $img . _stringify_attributes($attributes) . ' />';
+		return $img . _stringify_attributes($attributes).' />';
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('doctype')) {
+if (!function_exists('doctype'))
+{
 	/**
 	 * Doctype
 	 *
@@ -207,7 +222,8 @@ if (!function_exists('doctype')) {
 	 * All values are saved in the doctypes config file.
 	 *
 	 * @param    string    type    The doctype to be generated
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	function doctype($type = 'xhtml1-strict')
 	{
@@ -222,7 +238,8 @@ if (!function_exists('doctype')) {
 				include(APPPATH . 'config/' . ENVIRONMENT . '/doctypes.php');
 			}
 
-			if (empty($_doctypes) OR !is_array($_doctypes)) {
+			if (empty($_doctypes) OR !is_array($_doctypes))
+			{
 				$doctypes = array();
 				return FALSE;
 			}
@@ -236,7 +253,8 @@ if (!function_exists('doctype')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('link_tag')) {
+if (!function_exists('link_tag'))
+{
 	/**
 	 * Link
 	 *
@@ -248,7 +266,8 @@ if (!function_exists('link_tag')) {
 	 * @param    string    title
 	 * @param    string    media
 	 * @param    bool    should index_page be added to the css path
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	function link_tag($href = '', $rel = 'stylesheet', $type = 'text/css', $title = '', $media = '', $index_page = FALSE)
 	{
@@ -261,15 +280,15 @@ if (!function_exists('link_tag')) {
 					if ($index_page === TRUE) {
 						$link .= 'href="' . $CI->config->site_url($v) . '" ';
 					} else {
-						$link .= 'href="' . $CI->config->slash_item('base_url') . $v . '" ';
+						$link .= 'href="' . $CI->config->slash_item('base_url') . $v.'" ';
 					}
 				} else {
-					$link .= $k . '="' . $v . '" ';
+					$link .= $k . '="' .$v.'" ';
 				}
 			}
 		} else {
 			if (preg_match('#^([a-z]+:)?//#i', $href)) {
-				$link .= 'href="' . $href . '" ';
+				$link .= 'href="'.$href . '" ';
 			} elseif ($index_page === TRUE) {
 				$link .= 'href="' . $CI->config->site_url($href) . '" ';
 			} else {
@@ -279,21 +298,22 @@ if (!function_exists('link_tag')) {
 			$link .= 'rel="' . $rel . '" type="' . $type . '" ';
 
 			if ($media !== '') {
-				$link .= 'media="' . $media . '" ';
+				$link .= 'media="'.$media . '" ';
 			}
 
 			if ($title !== '') {
-				$link .= 'title="' . $title . '" ';
+				$link .= 'title="'.$title.'" ';
 			}
 		}
 
-		return $link . "/>\n";
+		return $link."/>\n";
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('meta')) {
+if (!function_exists('meta'))
+{
 	/**
 	 * Generates meta tags from an array of key/values
 	 *
@@ -301,15 +321,18 @@ if (!function_exists('meta')) {
 	 * @param    string
 	 * @param    string
 	 * @param    string
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	function meta($name = '', $content = '', $type = 'name', $newline = "\n")
 	{
 		// Since we allow the data to be passes as a string, a simple array
 		// or a multidimensional one, we need to do a little prepping.
-		if (!is_array($name)) {
+		if (!is_array($name))
+		{
 			$name = array(array('name' => $name, 'content' => $content, 'type' => $type, 'newline' => $newline));
-		} elseif (isset($name['name'])) {
+		} elseif (isset($name['name']))
+		{
 			// Turn single array into multidimensional
 			$name = array($name);
 		}
@@ -321,7 +344,7 @@ if (!function_exists('meta')) {
 			$content = isset($meta['content']) ? $meta['content'] : '';
 			$newline = isset($meta['newline']) ? $meta['newline'] : "\n";
 
-			$str .= '<meta ' . $type . '="' . $name . '" content="' . $content . '" />' . $newline;
+			$str .= '<meta ' . $type . '="' . $name . '" content="' . $content .'" />'.$newline;
 		}
 
 		return $str;
@@ -330,13 +353,16 @@ if (!function_exists('meta')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('br')) {
+if (!function_exists('br'))
+{
 	/**
 	 * Generates HTML BR tags based on number supplied
 	 *
 	 * @deprecated    3.0.0    Use str_repeat() instead
+	 *
 	 * @param    int $count Number of times to repeat the tag
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	function br($count = 1)
 	{
@@ -346,13 +372,16 @@ if (!function_exists('br')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('nbs')) {
+if (!function_exists('nbs'))
+{
 	/**
 	 * Generates non-breaking space entities based on number supplied
 	 *
 	 * @deprecated    3.0.0    Use str_repeat() instead
+	 *
 	 * @param    int
-	 * @return    string
+	 *
+*@return	string
 	 */
 	function nbs($num = 1)
 	{

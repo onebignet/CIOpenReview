@@ -59,6 +59,7 @@ class CI_Cache_wincache extends CI_Driver
 	 * if not, return FALSE
 	 *
 	 * @param    string $id Cache Ide
+	 *
 	 * @return    mixed    Value that is stored/FALSE on failure
 	 */
 	public function get($id)
@@ -76,9 +77,10 @@ class CI_Cache_wincache extends CI_Driver
 	 * Cache Save
 	 *
 	 * @param    string $id Cache ID
-	 * @param    mixed $data Data to store
-	 * @param    int $ttl Time to live (in seconds)
-	 * @param    bool $raw Whether to store the raw value (unused)
+	 * @param    mixed  $data Data to store
+	 * @param    int    $ttl Time to live (in seconds)
+	 * @param    bool   $raw Whether to store the raw value (unused)
+	 *
 	 * @return    bool    true on success/false on failure
 	 */
 	public function save($id, $data, $ttl = 60, $raw = FALSE)
@@ -92,6 +94,7 @@ class CI_Cache_wincache extends CI_Driver
 	 * Delete from Cache
 	 *
 	 * @param    mixed    unique identifier of the item in the cache
+	 *
 	 * @return    bool    true on success/false on failure
 	 */
 	public function delete($id)
@@ -105,7 +108,8 @@ class CI_Cache_wincache extends CI_Driver
 	 * Increment a raw value
 	 *
 	 * @param    string $id Cache ID
-	 * @param    int $offset Step/value to add
+	 * @param    int    $offset Step/value to add
+	 *
 	 * @return    mixed    New value on success or FALSE on failure
 	 */
 	public function increment($id, $offset = 1)
@@ -122,7 +126,8 @@ class CI_Cache_wincache extends CI_Driver
 	 * Decrement a raw value
 	 *
 	 * @param    string $id Cache ID
-	 * @param    int $offset Step/value to reduce by
+	 * @param    int    $offset Step/value to reduce by
+	 *
 	 * @return    mixed    New value on success or FALSE on failure
 	 */
 	public function decrement($id, $offset = 1)
@@ -155,7 +160,7 @@ class CI_Cache_wincache extends CI_Driver
 	public function cache_info()
 	{
 		return wincache_ucache_info(TRUE);
-	}
+	 }
 
 	// ------------------------------------------------------------------------
 
@@ -163,20 +168,22 @@ class CI_Cache_wincache extends CI_Driver
 	 * Get Cache Metadata
 	 *
 	 * @param    mixed    key to get cache metadata on
+	 *
 	 * @return    mixed    array on success/false on failure
 	 */
 	public function get_metadata($id)
 	{
-		if ($stored = wincache_ucache_info(FALSE, $id)) {
+		if ($stored = wincache_ucache_info(FALSE, $id))
+		{
 			$age = $stored['ucache_entries'][1]['age_seconds'];
 			$ttl = $stored['ucache_entries'][1]['ttl_seconds'];
 			$hitcount = $stored['ucache_entries'][1]['hitcount'];
 
 			return array(
-				'expire' => $ttl - $age,
-				'hitcount' => $hitcount,
-				'age' => $age,
-				'ttl' => $ttl
+				'expire'     => $ttl - $age,
+				'hitcount'   => $hitcount,
+				'age'        => $age,
+				'ttl'		=> $ttl,
 			);
 		}
 
@@ -190,11 +197,12 @@ class CI_Cache_wincache extends CI_Driver
 	 *
 	 * Check to see if WinCache is available on this system, bail if it isn't.
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function is_supported()
 	{
-		if (!extension_loaded('wincache') OR !ini_get('wincache.ucenabled')) {
+		if (!extension_loaded('wincache') OR !ini_get('wincache.ucenabled'))
+		{
 			log_message('debug', 'The Wincache PHP extension must be loaded to use Wincache Cache.');
 			return FALSE;
 		}

@@ -84,6 +84,7 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Builds the DSN if not already set.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -109,6 +110,7 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    object
 	 */
 	public function db_connect($persistent = FALSE)
@@ -128,11 +130,13 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Insert ID
 	 *
 	 * @param    string $name
-	 * @return    int
+	 *
+	 * @return	int
 	 */
 	public function insert_id($name = NULL)
 	{
-		if ($name === NULL && version_compare($this->version(), '8.1', '>=')) {
+		if ($name === NULL && version_compare($this->version(), '8.1', '>='))
+		{
 			$query = $this->query('SELECT LASTVAL() AS ins_id');
 			$query = $query->row();
 			return $query->ins_id;
@@ -147,7 +151,8 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Determines if a query is a "write" type.
 	 *
 	 * @param    string    An SQL query string
-	 * @return    bool
+	 *
+	 * @return	bool
 	 */
 	public function is_write_type($sql)
 	{
@@ -162,11 +167,13 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Escapes data based on type
 	 *
 	 * @param    string $str
-	 * @return    mixed
+	 *
+	 * @return	mixed
 	 */
 	public function escape($str)
 	{
-		if (is_bool($str)) {
+		if (is_bool($str))
+		{
 			return ($str) ? 'TRUE' : 'FALSE';
 		}
 
@@ -180,21 +187,23 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 *
 	 * @param    string $orderby
 	 * @param    string $direction ASC, DESC or RANDOM
-	 * @param    bool $escape
-	 * @return    object
+	 * @param    bool   $escape
+	 *
+	 * @return	object
 	 */
 	public function order_by($orderby, $direction = '', $escape = NULL)
 	{
 		$direction = strtoupper(trim($direction));
 		if ($direction === 'RANDOM') {
-			if (!is_float($orderby) && ctype_digit((string)$orderby)) {
+			if (!is_float($orderby) && ctype_digit((string)$orderby))
+			{
 				$orderby = ($orderby > 1)
 					? (float)'0.' . $orderby
-					: (float)$orderby;
+					: (float) $orderby;
 			}
 
 			if (is_float($orderby)) {
-				$this->simple_query('SET SEED ' . $orderby);
+				$this->simple_query('SET SEED '.$orderby);
 			}
 
 			$orderby = $this->_random_keyword[0];
@@ -211,7 +220,8 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
-	 * @return    array
+	 *
+	 * @return	array
 	 */
 	public function field_data($table)
 	{
@@ -219,7 +229,8 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 			FROM "information_schema"."columns"
 			WHERE LOWER("table_name") = ' . $this->escape(strtolower($table));
 
-		if (($query = $this->query($sql)) === FALSE) {
+		if (($query = $this->query($sql)) === FALSE)
+		{
 			return FALSE;
 		}
 		$query = $query->result_object();
@@ -244,7 +255,8 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
 	{
@@ -267,7 +279,8 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _list_columns($table = '')
 	{
@@ -284,8 +297,9 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
-	 * @return    string
+	 * @param    array  $values
+	 *
+*@return	string
 	 */
 	protected function _update($table, $values)
 	{
@@ -302,19 +316,21 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific batch update string from the supplied data
 	 *
 	 * @param    string $table Table name
-	 * @param    array $values Update data
+	 * @param    array  $values Update data
 	 * @param    string $index WHERE key
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _update_batch($table, $values, $index)
 	{
 		$ids = array();
-		foreach ($values as $key => $val) {
+		foreach ($values as $key => $val)
+		{
 			$ids[] = $val[$index];
 
 			foreach (array_keys($val) as $field) {
 				if ($field !== $index) {
-					$final[$field][] = 'WHEN ' . $val[$index] . ' THEN ' . $val[$field];
+					$final[$field][] = 'WHEN ' . $val[$index] .' THEN '.$val[$field];
 				}
 			}
 		}
@@ -323,7 +339,7 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 		foreach ($final as $k => $v) {
 			$cases .= $k . ' = (CASE ' . $index . "\n"
 				. implode("\n", $v) . "\n"
-				. 'ELSE ' . $k . ' END), ';
+				.'ELSE ' . $k . ' END), ';
 		}
 
 		$this->where($index . ' IN(' . implode(',', $ids) . ')', NULL, FALSE);
@@ -339,7 +355,8 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _delete($table)
 	{
@@ -355,11 +372,12 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql SQL Query
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _limit($sql)
 	{
-		return $sql . ' LIMIT ' . $this->qb_limit . ($this->qb_offset ? ' OFFSET ' . $this->qb_offset : '');
+		return $sql . ' LIMIT ' . $this->qb_limit . ($this->qb_offset ? ' OFFSET '.$this->qb_offset : '');
 	}
 
 }

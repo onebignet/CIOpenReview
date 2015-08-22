@@ -63,6 +63,7 @@ class CI_Javascript
 	 * Constructor
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params = array())
@@ -98,6 +99,7 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
+	 *
 	 * @return    string
 	 */
 	public function blur($element = 'this', $js = '')
@@ -114,6 +116,7 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
+	 *
 	 * @return    string
 	 */
 	public function change($element = 'this', $js = '')
@@ -131,6 +134,7 @@ class CI_Javascript
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
 	 * @param    bool    whether or not to return false
+	 *
 	 * @return    string
 	 */
 	public function click($element = 'this', $js = '', $ret_false = TRUE)
@@ -147,7 +151,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	public function dblclick($element = 'this', $js = '')
 	{
@@ -163,7 +168,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	public function error($element = 'this', $js = '')
 	{
@@ -179,7 +185,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	public function focus($element = 'this', $js = '')
 	{
@@ -196,7 +203,8 @@ class CI_Javascript
 	 * @param    string - element
 	 * @param    string - Javascript code for mouse over
 	 * @param    string - Javascript code for mouse out
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	public function hover($element = 'this', $over = '', $out = '')
 	{
@@ -212,7 +220,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	public function keydown($element = 'this', $js = '')
 	{
@@ -228,7 +237,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function keyup($element = 'this', $js = '')
 	{
@@ -244,7 +254,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function load($element = 'this', $js = '')
 	{
@@ -260,7 +271,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function mousedown($element = 'this', $js = '')
 	{
@@ -276,7 +288,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function mouseout($element = 'this', $js = '')
 	{
@@ -292,7 +305,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function mouseover($element = 'this', $js = '')
 	{
@@ -308,7 +322,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function mouseup($element = 'this', $js = '')
 	{
@@ -323,7 +338,8 @@ class CI_Javascript
 	 * Outputs the called javascript to the screen
 	 *
 	 * @param    string    The code to output
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function output($js)
 	{
@@ -338,7 +354,8 @@ class CI_Javascript
 	 * Outputs a javascript library mouseup event
 	 *
 	 * @param    string $js Code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function ready($js)
 	{
@@ -354,7 +371,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function resize($element = 'this', $js = '')
 	{
@@ -370,7 +388,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function scroll($element = 'this', $js = '')
 	{
@@ -386,7 +405,8 @@ class CI_Javascript
 	 *
 	 * @param    string    The element to attach the event to
 	 * @param    string    The code to execute
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function unload($element = 'this', $js = '')
 	{
@@ -403,8 +423,9 @@ class CI_Javascript
 	 * Outputs a javascript library addClass event
 	 *
 	 * @param    string - element
-	 * @param    string - Class to add
-	 * @return    string
+	 * @param    string	- Class to add
+	 *
+*@return	string
 	 */
 	public function addClass($element = 'this', $class = '')
 	{
@@ -419,10 +440,11 @@ class CI_Javascript
 	 * Outputs a javascript library animate event
 	 *
 	 * @param    string $element = 'this'
-	 * @param    array $params = array()
-	 * @param    mixed $speed 'slow', 'normal', 'fast', or time in milliseconds
-	 * @param    string $extra
-	 * @return    string
+	 * @param    array  $params = array()
+	 * @param    mixed  $speed 'slow', 'normal', 'fast', or time in milliseconds
+	 * @param	string	$extra
+	 *
+*@return	string
 	 */
 	public function animate($element = 'this', $params = array(), $speed = '', $extra = '')
 	{
@@ -439,7 +461,8 @@ class CI_Javascript
 	 * @param    string - element
 	 * @param    string - One of 'slow', 'normal', 'fast', or time in milliseconds
 	 * @param    string - Javascript callback function
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function fadeIn($element = 'this', $speed = '', $callback = '')
 	{
@@ -456,7 +479,8 @@ class CI_Javascript
 	 * @param    string - element
 	 * @param    string - One of 'slow', 'normal', 'fast', or time in milliseconds
 	 * @param    string - Javascript callback function
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function fadeOut($element = 'this', $speed = '', $callback = '')
 	{
@@ -472,7 +496,8 @@ class CI_Javascript
 	 * @param    string - element
 	 * @param    string - One of 'slow', 'normal', 'fast', or time in milliseconds
 	 * @param    string - Javascript callback function
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function slideUp($element = 'this', $speed = '', $callback = '')
 	{
@@ -488,8 +513,9 @@ class CI_Javascript
 	 * Outputs a javascript library removeClass event
 	 *
 	 * @param    string - element
-	 * @param    string - Class to add
-	 * @return    string
+	 * @param	string	- Class to add
+	 *
+*@return	string
 	 */
 	public function removeClass($element = 'this', $class = '')
 	{
@@ -505,8 +531,9 @@ class CI_Javascript
 	 *
 	 * @param    string - element
 	 * @param    string - One of 'slow', 'normal', 'fast', or time in milliseconds
-	 * @param    string - Javascript callback function
-	 * @return    string
+	 * @param    string	- Javascript callback function
+	 *
+*@return	string
 	 */
 	public function slideDown($element = 'this', $speed = '', $callback = '')
 	{
@@ -522,8 +549,9 @@ class CI_Javascript
 	 *
 	 * @param    string - element
 	 * @param    string - One of 'slow', 'normal', 'fast', or time in milliseconds
-	 * @param    string - Javascript callback function
-	 * @return    string
+	 * @param    string	- Javascript callback function
+	 *
+*@return	string
 	 */
 	public function slideToggle($element = 'this', $speed = '', $callback = '')
 	{
@@ -540,8 +568,9 @@ class CI_Javascript
 	 *
 	 * @param    string - element
 	 * @param    string - One of 'slow', 'normal', 'fast', or time in milliseconds
-	 * @param    string - Javascript callback function
-	 * @return    string
+	 * @param    string	- Javascript callback function
+	 *
+*@return	string
 	 */
 	public function hide($element = 'this', $speed = '', $callback = '')
 	{
@@ -555,8 +584,9 @@ class CI_Javascript
 	 *
 	 * Outputs a javascript library toggle event
 	 *
-	 * @param    string - element
-	 * @return    string
+	 * @param	string	- element
+	 *
+*@return	string
 	 */
 	public function toggle($element = 'this')
 	{
@@ -572,8 +602,9 @@ class CI_Javascript
 	 * Outputs a javascript library toggle class event
 	 *
 	 * @param    string $element = 'this'
-	 * @param    string $class = ''
-	 * @return    string
+	 * @param	string	$class = ''
+	 *
+*@return	string
 	 */
 	public function toggleClass($element = 'this', $class = '')
 	{
@@ -589,8 +620,9 @@ class CI_Javascript
 	 *
 	 * @param    string - element
 	 * @param    string - One of 'slow', 'normal', 'fast', or time in milliseconds
-	 * @param    string - Javascript callback function
-	 * @return    string
+	 * @param	string	- Javascript callback function
+	 *
+*@return	string
 	 */
 	public function show($element = 'this', $speed = '', $callback = '')
 	{
@@ -604,9 +636,10 @@ class CI_Javascript
 	 *
 	 * gather together all script needing to be output
 	 *
-	 * @param    string $view_var
-	 * @param    bool $script_tags
-	 * @return    string
+	 * @param    string	$view_var
+	 * @param	bool	$script_tags
+	 *
+*@return	string
 	 */
 	public function compile($view_var = 'script_foot', $script_tags = TRUE)
 	{
@@ -620,7 +653,7 @@ class CI_Javascript
 	 *
 	 * Clears any previous javascript collected for output
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	public function clear_compile()
 	{
@@ -634,15 +667,17 @@ class CI_Javascript
 	 *
 	 * Outputs a <script> tag with the source as an external js file
 	 *
-	 * @param    string $external_file
-	 * @param    bool $relative
-	 * @return    string
+	 * @param    string	$external_file
+	 * @param	bool	$relative
+	 *
+*@return	string
 	 */
 	public function external($external_file = '', $relative = FALSE)
 	{
 		if ($external_file !== '') {
 			$this->_javascript_location = $external_file;
-		} elseif ($this->CI->config->item('javascript_location') !== '') {
+		} elseif ($this->CI->config->item('javascript_location') !== '')
+		{
 			$this->_javascript_location = $this->CI->config->item('javascript_location');
 		}
 
@@ -651,10 +686,10 @@ class CI_Javascript
 		} elseif (strpos($this->_javascript_location, 'http://') !== FALSE) {
 			$str = $this->_open_script($this->_javascript_location . $external_file);
 		} else {
-			$str = $this->_open_script($this->CI->config->slash_item('base_url') . $this->_javascript_location . $external_file);
+			$str = $this->_open_script($this->CI->config->slash_item('base_url') . $this->_javascript_location.$external_file);
 		}
 
-		return $str . $this->_close_script();
+		return $str.$this->_close_script();
 	}
 
 	// --------------------------------------------------------------------
@@ -665,14 +700,14 @@ class CI_Javascript
 	 * Outputs a <script> tag
 	 *
 	 * @param    string    The element to attach the event to
-	 * @param    bool    If a CDATA section should be added
-	 * @return    string
+	 * @param	bool	If a CDATA section should be added
+	 * @return	string
 	 */
 	public function inline($script, $cdata = TRUE)
 	{
 		return $this->_open_script()
-		. ($cdata ? "\n// <![CDATA[\n" . $script . "\n// ]]>\n" : "\n" . $script . "\n")
-		. $this->_close_script();
+		. ($cdata ? "\n// <![CDATA[\n" . $script."\n// ]]>\n" : "\n".$script."\n")
+			. $this->_close_script();
 	}
 
 	// --------------------------------------------------------------------
@@ -684,8 +719,9 @@ class CI_Javascript
 	 *
 	 * @param    string - element
 	 * @param    string - One of 'slow', 'normal', 'fast', or time in milliseconds
-	 * @param    string - Javascript callback function
-	 * @return    string
+	 * @param	string	- Javascript callback function
+	 *
+*@return	string
 	 */
 	public function update($element = 'this', $speed = '', $callback = '')
 	{
@@ -701,7 +737,8 @@ class CI_Javascript
 	 *
 	 * @param    mixed    result set or array
 	 * @param    bool    match array types (defaults to objects)
-	 * @return    string    a json formatted string
+	 *
+*@return	string	a json formatted string
 	 */
 	public function generate_json($result = NULL, $match_array_type = FALSE)
 	{
@@ -709,36 +746,43 @@ class CI_Javascript
 		// either as a database result object or an array, or a user supplied array
 		if ($result !== NULL) {
 			if (is_object($result)) {
-				$json_result = is_callable(array($result, 'result_array')) ? $result->result_array() : (array)$result;
-			} elseif (is_array($result)) {
+				$json_result = is_callable(array($result, 'result_array')) ? $result->result_array() : (array) $result;
+			} elseif (is_array($result))
+			{
 				$json_result = $result;
-			} else {
+			}
+			else
+			{
 				return $this->_prep_args($result);
 			}
-		} else {
+		}
+		else {
 			return 'null';
 		}
 
 		$json = array();
 		$_is_assoc = TRUE;
 
-		if (!is_array($json_result) && empty($json_result)) {
+		if ( ! is_array($json_result) && empty($json_result)) {
 			show_error('Generate JSON Failed - Illegal key, value pair.');
-		} elseif ($match_array_type) {
+		}
+		elseif ($match_array_type) {
 			$_is_assoc = $this->_is_associative_array($json_result);
 		}
 
 		foreach ($json_result as $k => $v) {
 			if ($_is_assoc) {
-				$json[] = $this->_prep_args($k, TRUE) . ':' . $this->generate_json($v, $match_array_type);
-			} else {
+				$json[] = $this->_prep_args($k, TRUE).':'.$this->generate_json($v, $match_array_type);
+			}
+			else
+			{
 				$json[] = $this->generate_json($v, $match_array_type);
 			}
 		}
 
 		$json = implode(',', $json);
 
-		return $_is_assoc ? '{' . $json . '}' : '[' . $json . ']';
+		return $_is_assoc ? '{'.$json.'}' : '['.$json.']';
 
 	}
 
@@ -751,13 +795,13 @@ class CI_Javascript
 	 *
 	 * Outputs an opening <script>
 	 *
-	 * @param    string
+	 * @param	string
 	 * @return    string
 	 */
 	protected function _open_script($src = '')
 	{
-		return '<script type="text/javascript" charset="' . strtolower($this->CI->config->item('charset')) . '"'
-		. ($src === '' ? '>' : ' src="' . $src . '">');
+		return '<script type="text/javascript" charset="' . strtolower($this->CI->config->item('charset')).'"'
+			.($src === '' ? '>' : ' src="'.$src.'">');
 	}
 
 	// --------------------------------------------------------------------
@@ -767,12 +811,12 @@ class CI_Javascript
 	 *
 	 * Outputs an closing </script>
 	 *
-	 * @param    string
+	 * @param	string
 	 * @return    string
 	 */
 	protected function _close_script($extra = "\n")
 	{
-		return '</script>' . $extra;
+		return '</script>'.$extra;
 	}
 
 	// --------------------------------------------------------------------
@@ -782,13 +826,16 @@ class CI_Javascript
 	 *
 	 * Checks for an associative array
 	 *
-	 * @param    array
+	 * @param	array
+	 *
 	 * @return    bool
 	 */
 	protected function _is_associative_array($arr)
 	{
-		foreach (array_keys($arr) as $key => $val) {
-			if ($key !== $val) {
+		foreach (array_keys($arr) as $key => $val)
+		{
+			if ($key !== $val)
+			{
 				return TRUE;
 			}
 		}
@@ -803,19 +850,24 @@ class CI_Javascript
 	 *
 	 * Ensures a standard json value and escapes values
 	 *
-	 * @param    mixed $result
-	 * @param    bool $is_key = FALSE
-	 * @return    string
+	 * @param	mixed	$result
+	 * @param	bool	$is_key = FALSE
+	 *
+*@return    string
 	 */
 	protected function _prep_args($result, $is_key = FALSE)
 	{
-		if ($result === NULL) {
+		if ($result === NULL)
+		{
 			return 'null';
-		} elseif (is_bool($result)) {
+		}
+		elseif (is_bool($result)) {
 			return ($result === TRUE) ? 'true' : 'false';
 		} elseif (is_string($result) OR $is_key) {
-			return '"' . str_replace(array('\\', "\t", "\n", "\r", '"', '/'), array('\\\\', '\\t', '\\n', "\\r", '\"', '\/'), $result) . '"';
-		} elseif (is_scalar($result)) {
+			return '"' . str_replace(array('\\', "\t", "\n", "\r", '"', '/'), array('\\\\', '\\t', '\\n', "\\r", '\"', '\/'), $result).'"';
+		}
+		elseif (is_scalar($result))
+		{
 			return $result;
 		}
 	}

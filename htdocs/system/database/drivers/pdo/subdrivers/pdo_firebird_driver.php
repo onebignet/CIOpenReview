@@ -77,6 +77,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 	 * Builds the DSN if not already set.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -105,6 +106,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
+	 *
 	 * @return    array
 	 */
 	public function field_data($table)
@@ -131,7 +133,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 				"rfields"."RDB$DEFAULT_VALUE" AS "default"
 			FROM "RDB$RELATION_FIELDS" "rfields"
 				JOIN "RDB$FIELDS" "fields" ON "rfields"."RDB$FIELD_SOURCE" = "fields"."RDB$FIELD_NAME"
-			WHERE "rfields"."RDB$RELATION_NAME" = ' . $this->escape($table) . '
+			WHERE "rfields"."RDB$RELATION_NAME" = ' . $this->escape($table).'
 			ORDER BY "rfields"."RDB$FIELD_POSITION"';
 
 		return (($query = $this->query($sql)) !== FALSE)
@@ -147,6 +149,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
+	 *
 	 * @return    string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
@@ -169,6 +172,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
+	 *
 	 * @return    string
 	 */
 	protected function _list_columns($table = '')
@@ -184,8 +188,9 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
-	 * @return    string
+	 * @param    array  $values
+	 *
+	 * @return	string
 	 */
 	protected function _update($table, $values)
 	{
@@ -204,11 +209,12 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'DELETE FROM ' . $table;
+		return 'DELETE FROM '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -219,7 +225,8 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _delete($table)
 	{
@@ -235,7 +242,8 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql SQL Query
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _limit($sql)
 	{
@@ -243,12 +251,14 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver
 		if (stripos($this->version(), 'firebird') !== FALSE) {
 			$select = 'FIRST ' . $this->qb_limit
 				. ($this->qb_offset > 0 ? ' SKIP ' . $this->qb_offset : '');
-		} else {
+		}
+		else
+		{
 			$select = 'ROWS '
 				. ($this->qb_offset > 0 ? $this->qb_offset . ' TO ' . ($this->qb_limit + $this->qb_offset) : $this->qb_limit);
 		}
 
-		return preg_replace('`SELECT`i', 'SELECT ' . $select, $sql);
+		return preg_replace('`SELECT`i', 'SELECT '.$select, $sql);
 	}
 
 }

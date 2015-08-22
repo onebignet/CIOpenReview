@@ -66,7 +66,7 @@ class CI_Encrypt
 	protected $_hash_type = 'sha1';
 
 	/**
-	 * Flag for the existance of mcrypt
+	 * Flag for the existence of mcrypt
 	 *
 	 * @var bool
 	 */
@@ -109,6 +109,7 @@ class CI_Encrypt
 	 * Mcrypt is sensitive to keys that are not the correct length
 	 *
 	 * @param    string
+	 *
 	 * @return    string
 	 */
 	public function get_key($key = '')
@@ -134,6 +135,7 @@ class CI_Encrypt
 	 * Set the encryption key
 	 *
 	 * @param    string
+	 *
 	 * @return    CI_Encrypt
 	 */
 	public function set_key($key = '')
@@ -157,6 +159,7 @@ class CI_Encrypt
 	 *
 	 * @param    string    the string to encode
 	 * @param    string    the key
+	 *
 	 * @return    string
 	 */
 	public function encode($string, $key = '')
@@ -173,11 +176,13 @@ class CI_Encrypt
 	 *
 	 * @param    string
 	 * @param    string
+	 *
 	 * @return    string
 	 */
 	public function decode($string, $key = '')
 	{
-		if (preg_match('/[^a-zA-Z0-9\/\+=]/', $string) OR base64_encode(base64_decode($string)) !== $string) {
+		if (preg_match('/[^a-zA-Z0-9\/\+=]/', $string) OR base64_encode(base64_decode($string)) !== $string)
+		{
 			return FALSE;
 		}
 
@@ -199,11 +204,13 @@ class CI_Encrypt
 	 * @param    string
 	 * @param    int (mcrypt mode constant)
 	 * @param    string
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	public function encode_from_legacy($string, $legacy_mode = MCRYPT_MODE_ECB, $key = '')
 	{
-		if (preg_match('/[^a-zA-Z0-9\/\+=]/', $string)) {
+		if (preg_match('/[^a-zA-Z0-9\/\+=]/', $string))
+		{
 			return FALSE;
 		}
 
@@ -215,7 +222,8 @@ class CI_Encrypt
 
 		$key = $this->get_key($key);
 		$dec = base64_decode($string);
-		if (($dec = $this->mcrypt_decode($dec, $key)) === FALSE) {
+		if (($dec = $this->mcrypt_decode($dec, $key)) === FALSE)
+		{
 			$this->set_mode($current_mode);
 			return FALSE;
 		}
@@ -236,12 +244,14 @@ class CI_Encrypt
 	 *
 	 * @param    string
 	 * @param    string
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	public function mcrypt_encode($data, $key)
 	{
 		$init_size = mcrypt_get_iv_size($this->_get_cipher(), $this->_get_mode());
 		$init_vect = mcrypt_create_iv($init_size, MCRYPT_RAND);
+
 		return $this->_add_cipher_noise($init_vect . mcrypt_encrypt($this->_get_cipher(), $key, $data, $this->_get_mode(), $init_vect), $key);
 	}
 
@@ -252,14 +262,16 @@ class CI_Encrypt
 	 *
 	 * @param    string
 	 * @param    string
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	public function mcrypt_decode($data, $key)
 	{
 		$data = $this->_remove_cipher_noise($data, $key);
 		$init_size = mcrypt_get_iv_size($this->_get_cipher(), $this->_get_mode());
 
-		if ($init_size > strlen($data)) {
+		if ($init_size > strlen($data))
+		{
 			return FALSE;
 		}
 
@@ -274,7 +286,8 @@ class CI_Encrypt
 	 * Set the Mcrypt Cipher
 	 *
 	 * @param    int
-	 * @return    CI_Encrypt
+	 *
+	 * @return	CI_Encrypt
 	 */
 	public function set_cipher($cipher)
 	{
@@ -288,7 +301,8 @@ class CI_Encrypt
 	 * Set the Mcrypt Mode
 	 *
 	 * @param    int
-	 * @return    CI_Encrypt
+	 *
+	 * @return	CI_Encrypt
 	 */
 	public function set_mode($mode)
 	{
@@ -302,7 +316,8 @@ class CI_Encrypt
 	 * Set the Hash type
 	 *
 	 * @param    string
-	 * @return    void
+	 *
+*@return	void
 	 */
 	public function set_hash($type = 'sha1')
 	{
@@ -315,7 +330,8 @@ class CI_Encrypt
 	 * Hash encode a string
 	 *
 	 * @param    string
-	 * @return    string
+	 *
+*@return	string
 	 */
 	public function hash($str)
 	{
@@ -332,14 +348,16 @@ class CI_Encrypt
 	 *
 	 * @param    string
 	 * @param    string
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _xor_decode($string, $key)
 	{
 		$string = $this->_xor_merge($string, $key);
 
 		$dec = '';
-		for ($i = 0, $l = strlen($string); $i < $l; $i++) {
+		for ($i = 0, $l = strlen($string); $i < $l; $i++)
+		{
 			$dec .= ($string[$i++] ^ $string[$i]);
 		}
 
@@ -355,13 +373,15 @@ class CI_Encrypt
 	 *
 	 * @param    string
 	 * @param    string
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _xor_merge($string, $key)
 	{
 		$hash = $this->hash($key);
 		$str = '';
-		for ($i = 0, $ls = strlen($string), $lh = strlen($hash); $i < $ls; $i++) {
+		for ($i = 0, $ls = strlen($string), $lh = strlen($hash); $i < $ls; $i++)
+		{
 			$str .= $string[$i] ^ $hash[($i % $lh)];
 		}
 
@@ -377,15 +397,18 @@ class CI_Encrypt
 	 *
 	 * @param    string
 	 * @param    string
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _add_cipher_noise($data, $key)
 	{
 		$key = $this->hash($key);
 		$str = '';
 
-		for ($i = 0, $j = 0, $ld = strlen($data), $lk = strlen($key); $i < $ld; ++$i, ++$j) {
-			if ($j >= $lk) {
+		for ($i = 0, $j = 0, $ld = strlen($data), $lk = strlen($key); $i < $ld; ++$i, ++$j)
+		{
+			if ($j >= $lk)
+			{
 				$j = 0;
 			}
 
@@ -403,23 +426,27 @@ class CI_Encrypt
 	 *
 	 * Function description
 	 *
-	 * @param    string $data
-	 * @param    string $key
-	 * @return    string
+	 * @param    string    $data
+	 * @param    string	$key
+	 *
+*@return	string
 	 */
 	protected function _remove_cipher_noise($data, $key)
 	{
 		$key = $this->hash($key);
 		$str = '';
 
-		for ($i = 0, $j = 0, $ld = strlen($data), $lk = strlen($key); $i < $ld; ++$i, ++$j) {
-			if ($j >= $lk) {
+		for ($i = 0, $j = 0, $ld = strlen($data), $lk = strlen($key); $i < $ld; ++$i, ++$j)
+		{
+			if ($j >= $lk)
+			{
 				$j = 0;
 			}
 
 			$temp = ord($data[$i]) - ord($key[$j]);
 
-			if ($temp < 0) {
+			if ($temp < 0)
+			{
 				$temp += 256;
 			}
 
@@ -434,11 +461,12 @@ class CI_Encrypt
 	/**
 	 * Get Mcrypt cipher Value
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	protected function _get_cipher()
 	{
-		if ($this->_mcrypt_cipher === NULL) {
+		if ($this->_mcrypt_cipher === NULL)
+		{
 			return $this->_mcrypt_cipher = MCRYPT_RIJNDAEL_256;
 		}
 
@@ -450,11 +478,12 @@ class CI_Encrypt
 	/**
 	 * Get Mcrypt Mode Value
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	protected function _get_mode()
 	{
-		if ($this->_mcrypt_mode === NULL) {
+		if ($this->_mcrypt_mode === NULL)
+		{
 			return $this->_mcrypt_mode = MCRYPT_MODE_CBC;
 		}
 

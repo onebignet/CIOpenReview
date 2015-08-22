@@ -53,31 +53,32 @@ if (!function_exists('create_captcha')) {
 	/**
 	 * Create CAPTCHA
 	 *
-	 * @param    array $data data for the CAPTCHA
+	 * @param    array  $data data for the CAPTCHA
 	 * @param    string $img_path path to create the image in
 	 * @param    string $img_url URL to the CAPTCHA image folder
 	 * @param    string $font_path server path to font
+	 *
 	 * @return    string
 	 */
 	function create_captcha($data = '', $img_path = '', $img_url = '', $font_path = '')
 	{
 		$defaults = array(
-			'word' => '',
-			'img_path' => '',
-			'img_url' => '',
-			'img_width' => '150',
-			'img_height' => '30',
-			'font_path' => '',
-			'expiration' => 7200,
+			'word'        => '',
+			'img_path'    => '',
+			'img_url'     => '',
+			'img_width'   => '150',
+			'img_height'  => '30',
+			'font_path'   => '',
+			'expiration'  => 7200,
 			'word_length' => 8,
-			'font_size' => 16,
-			'img_id' => '',
-			'pool' => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-			'colors' => array(
+			'font_size'   => 16,
+			'img_id'      => '',
+			'pool'        => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+			'colors'      => array(
 				'background' => array(255, 255, 255),
-				'border' => array(153, 102, 102),
-				'text' => array(204, 153, 153),
-				'grid' => array(255, 182, 182)
+				'border'     => array(153, 102, 102),
+				'text'       => array(204, 153, 153),
+				'grid'       => array(255, 182, 182),
 			)
 		);
 

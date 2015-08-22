@@ -77,6 +77,7 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver
 	 * Builds the DSN if not already set.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -97,19 +98,49 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver
 	// --------------------------------------------------------------------
 
 	/**
+	 * Fetch Field Names
+	 *
+	 * @param    string $table Table name
+	 * @return    array
+	 */
+	public function list_fields($table)
+	{
+		// Is there a cached result?
+		if (isset($this->data_cache['field_names'][$table])) {
+			return $this->data_cache['field_names'][$table];
+		}
+
+		if (($result = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, TRUE, NULL, FALSE) . ')')) === FALSE) {
+			return FALSE;
+		}
+
+		$this->data_cache['field_names'][$table] = array();
+		foreach ($result->result_array() as $row) {
+			$this->data_cache['field_names'][$table][] = $row['name'];
+		}
+
+		return $this->data_cache['field_names'][$table];
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
+	 *
 	 * @return    array
 	 */
 	public function field_data($table)
 	{
-		if (($query = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, TRUE, NULL, FALSE) . ')')) === FALSE) {
+		if (($query = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, TRUE, NULL, FALSE) . ')')) === FALSE)
+		{
 			return FALSE;
 		}
 
 		$query = $query->result_array();
-		if (empty($query)) {
+		if (empty($query))
+		{
 			return FALSE;
 		}
 
@@ -134,6 +165,7 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
+	 *
 	 * @return    string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
@@ -151,27 +183,12 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver
 	// --------------------------------------------------------------------
 
 	/**
-	 * Show column query
-	 *
-	 * Generates a platform-specific query string so that the column names can be fetched
-	 *
-	 * @param    string $table
-	 * @return    string
-	 */
-	protected function _list_columns($table = '')
-	{
-		// Not supported
-		return FALSE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Replace statement
 	 *
 	 * @param    string $table Table name
-	 * @param    array $keys INSERT keys
-	 * @param    array $values INSERT values
+	 * @param    array  $keys INSERT keys
+	 * @param    array  $values INSERT values
+	 *
 	 * @return    string
 	 */
 	protected function _replace($table, $keys, $values)
@@ -190,11 +207,12 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 * @return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'DELETE FROM ' . $table;
+		return 'DELETE FROM '.$table;
 	}
 
 }

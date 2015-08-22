@@ -87,6 +87,7 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Appends the port number to the hostname, if needed.
 	 *
 	 * @param    array $params
+	 *
 	 * @return    void
 	 */
 	public function __construct($params)
@@ -104,6 +105,7 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Non-persistent database connection
 	 *
 	 * @param    bool $persistent
+	 *
 	 * @return    resource
 	 */
 	public function db_connect($persistent = FALSE)
@@ -112,7 +114,8 @@ class CI_DB_mssql_driver extends CI_DB
 			? mssql_pconnect($this->hostname, $this->username, $this->password)
 			: mssql_connect($this->hostname, $this->username, $this->password);
 
-		if (!$this->conn_id) {
+		if (!$this->conn_id)
+		{
 			return FALSE;
 		}
 
@@ -142,17 +145,20 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Select the database
 	 *
 	 * @param    string $database
+	 *
 	 * @return    bool
 	 */
 	public function db_select($database = '')
 	{
-		if ($database === '') {
+		if ($database === '')
+		{
 			$database = $this->database;
 		}
 
 		// Note: Escaping is required in the event that the DB name
 		// contains reserved characters.
-		if (mssql_select_db('[' . $database . ']', $this->conn_id)) {
+		if (mssql_select_db('[' . $database . ']', $this->conn_id))
+		{
 			$this->database = $database;
 			return TRUE;
 		}
@@ -166,12 +172,14 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Begin Transaction
 	 *
 	 * @param    bool $test_mode
-	 * @return    bool
+	 *
+	 * @return	bool
 	 */
 	public function trans_begin($test_mode = FALSE)
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -188,12 +196,13 @@ class CI_DB_mssql_driver extends CI_DB
 	/**
 	 * Commit Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_commit()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -205,12 +214,13 @@ class CI_DB_mssql_driver extends CI_DB
 	/**
 	 * Rollback Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
 	public function trans_rollback()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0) {
+		if (!$this->trans_enabled OR $this->_trans_depth > 0)
+		{
 			return TRUE;
 		}
 
@@ -222,7 +232,7 @@ class CI_DB_mssql_driver extends CI_DB
 	/**
 	 * Affected Rows
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function affected_rows()
 	{
@@ -236,7 +246,7 @@ class CI_DB_mssql_driver extends CI_DB
 	 *
 	 * Returns the last id created in the Identity column.
 	 *
-	 * @return    string
+	 * @return	string
 	 */
 	public function insert_id()
 	{
@@ -255,7 +265,8 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Returns an object with field data
 	 *
 	 * @param    string $table
-	 * @return    array
+	 *
+	 * @return	array
 	 */
 	public function field_data($table)
 	{
@@ -263,7 +274,8 @@ class CI_DB_mssql_driver extends CI_DB
 			FROM INFORMATION_SCHEMA.Columns
 			WHERE UPPER(TABLE_NAME) = ' . $this->escape(strtoupper($table));
 
-		if (($query = $this->query($sql)) === FALSE) {
+		if (($query = $this->query($sql)) === FALSE)
+		{
 			return FALSE;
 		}
 		$query = $query->result_object();
@@ -288,7 +300,7 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Returns an array containing code and message of the last
 	 * database error that has occured.
 	 *
-	 * @return    array
+	 * @return	array
 	 */
 	public function error()
 	{
@@ -303,6 +315,7 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Execute the query
 	 *
 	 * @param    string $sql an SQL query
+	 *
 	 * @return    mixed    resource if rows are returned, bool otherwise
 	 */
 	protected function _execute($sql)
@@ -316,7 +329,8 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Set client character set
 	 *
 	 * @param    string $charset
-	 * @return    bool
+	 *
+	 *@return	bool
 	 */
 	protected function _db_set_charset($charset)
 	{
@@ -328,7 +342,7 @@ class CI_DB_mssql_driver extends CI_DB
 	/**
 	 * Version number query string
 	 *
-	 * @return    string
+	 * @return	string
 	 */
 	protected function _version()
 	{
@@ -343,7 +357,8 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Generates a platform-specific query string so that the table names can be fetched
 	 *
 	 * @param    bool $prefix_limit
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _list_tables($prefix_limit = FALSE)
 	{
@@ -367,7 +382,8 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Generates a platform-specific query string so that the column names can be fetched
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+	 *@return	string
 	 */
 	protected function _list_columns($table = '')
 	{
@@ -384,8 +400,9 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Generates a platform-specific update string from the supplied data
 	 *
 	 * @param    string $table
-	 * @param    array $values
-	 * @return    string
+	 * @param    array  $values
+	 *
+*@return	string
 	 */
 	protected function _update($table, $values)
 	{
@@ -405,11 +422,12 @@ class CI_DB_mssql_driver extends CI_DB
 	 * then this method maps to 'DELETE FROM table'
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _truncate($table)
 	{
-		return 'TRUNCATE TABLE ' . $table;
+		return 'TRUNCATE TABLE '.$table;
 	}
 
 	// --------------------------------------------------------------------
@@ -420,7 +438,8 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Generates a platform-specific delete string from the supplied data
 	 *
 	 * @param    string $table
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _delete($table)
 	{
@@ -439,7 +458,8 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Generates a platform-specific LIMIT clause
 	 *
 	 * @param    string $sql SQL Query
-	 * @return    string
+	 *
+*@return	string
 	 */
 	protected function _limit($sql)
 	{
@@ -447,16 +467,20 @@ class CI_DB_mssql_driver extends CI_DB
 
 		// As of SQL Server 2005 (9.0.*) ROW_NUMBER() is supported,
 		// however an ORDER BY clause is required for it to work
-		if (version_compare($this->version(), '9', '>=') && $this->qb_offset && !empty($this->qb_orderby)) {
+		if (version_compare($this->version(), '9', '>=') && $this->qb_offset && !empty($this->qb_orderby))
+		{
 			$orderby = $this->_compile_order_by();
 
 			// We have to strip the ORDER BY clause
 			$sql = trim(substr($sql, 0, strrpos($sql, $orderby)));
 
 			// Get the fields to select from our subquery, so that we can avoid CI_rownum appearing in the actual results
-			if (count($this->qb_select) === 0) {
+			if (count($this->qb_select) === 0)
+			{
 				$select = '*'; // Inevitable
-			} else {
+			}
+			else
+			{
 				// Use only field names and their aliases, everything else is out of our scope.
 				$select = array();
 				$field_regexp = ($this->_quoted_identifier)
@@ -474,7 +498,7 @@ class CI_DB_mssql_driver extends CI_DB
 			. "\nWHERE " . $this->escape_identifiers('CI_rownum') . ' BETWEEN ' . ($this->qb_offset + 1) . ' AND ' . $limit;
 		}
 
-		return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP ' . $limit . ' ', $sql);
+		return preg_replace('/(^\SELECT (DISTINCT)?)/i', '\\1 TOP '.$limit.' ', $sql);
 	}
 
 	// --------------------------------------------------------------------
@@ -485,14 +509,16 @@ class CI_DB_mssql_driver extends CI_DB
 	 * Generates a platform-specific insert string from the supplied data.
 	 *
 	 * @param    string $table Table name
-	 * @param    array $keys INSERT keys
-	 * @param    array $values INSERT values
-	 * @return    string|bool
+	 * @param    array  $keys INSERT keys
+	 * @param    array  $values INSERT values
+	 *
+*@return	string|bool
 	 */
 	protected function _insert_batch($table, $keys, $values)
 	{
 		// Multiple-value inserts are only supported as of SQL Server 2008
-		if (version_compare($this->version(), '10', '>=')) {
+		if (version_compare($this->version(), '10', '>='))
+		{
 			return parent::_insert_batch($table, $keys, $values);
 		}
 
@@ -504,7 +530,7 @@ class CI_DB_mssql_driver extends CI_DB
 	/**
 	 * Close DB Connection
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	protected function _close()
 	{
