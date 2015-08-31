@@ -1,18 +1,5 @@
 <!-- START OF 'CONTENT' SECTION -->
-<script language="JavaScript">
-    $(document).ready(function () {
 
-        $('.star_rating').raty({
-            path: '{{= base_url() }}libs/raty/images',
-            readOnly: true,
-            half: true,
-            score: function () {
-                return $(this).attr('data-score');
-            }
-        });
-        // Handler for .ready() called.
-    });
-</script>
 <!-- START OF CONDITIONAL 'FEATURED' SECTION -->
 {{ if ($featured_reviews >= $featured_minimum): }}
 <div class="panel panel-danger featured_panel">
