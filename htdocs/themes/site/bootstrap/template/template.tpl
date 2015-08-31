@@ -27,16 +27,7 @@
         }
         -->
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"
-            type="text/javascript"></script>
-    <script src="{{= template_path() }}assets/js/script.js"
-            type="text/javascript"></script>
-    <script src='{{= base_url() }}libs/raty/jquery.raty.js' type="text/javascript"
-            language="javascript"></script>
-    {{ if ($lightbox): }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js"></script>
-    {{ endif }}
+
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icons/114x114.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icons/72x72.png">
     <link rel="apple-touch-icon-precomposed" href="img/icons/default.png">
@@ -170,6 +161,16 @@
 <!-- END OF 'MAIN' SECTION -->
 
 <!-- Bootstrap Javascript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"
+        type="text/javascript"></script>
+<script src="{{= template_path() }}assets/js/script.js"
+        type="text/javascript"></script>
+<script src='{{= base_url() }}libs/raty/jquery.raty.js' type="text/javascript"
+        language="javascript"></script>
+{{ if ($lightbox): }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js" type="text/javascript"></script>
+{{ endif }}
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <script>
