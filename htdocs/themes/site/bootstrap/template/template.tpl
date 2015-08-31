@@ -168,6 +168,20 @@
         type="text/javascript"></script>
 <script src='{{= base_url() }}libs/raty/jquery.raty.js' type="text/javascript"
         language="javascript"></script>
+<script language="JavaScript">
+    $(document).ready(function () {
+
+        $('.star_rating').raty({
+            path: '{{= base_url() }}libs/raty/images',
+            readOnly: true,
+            half: true,
+            score: function () {
+                return $(this).attr('data-score');
+            }
+        });
+        // Handler for .ready() called.
+    });
+</script>
 {{ if ($lightbox): }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js" type="text/javascript"></script>
 {{ endif }}
