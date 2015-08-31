@@ -68,7 +68,19 @@ class Review_ratings extends CI_Controller
 		$this->secure->allow_managers($this->session);
 		if ($review_id) {
 			debug('loaded review');
-			$data['values'] = array('--------', '1', '2', '3', '4', '5');
+			$data['values'] = array(
+				''    => '--------',
+				'0.5' => '0.5',
+				'1'   => '1',
+				'1.5' => '1.5',
+				'2'   => '2',
+				'2.5' => '2.5',
+				'3'   => '3',
+				'3.5' => '3.5',
+				'4'   => '4',
+				'4.5' => '4.5',
+				'5'   => '5',
+			);
 			// load a page of review features for this review into an array for displaying in the view
 			$review = $this->Review_model->get_review_by_id($review_id);
 			if ($review) {
