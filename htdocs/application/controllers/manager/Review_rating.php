@@ -77,7 +77,19 @@ class Review_rating extends CI_Controller
 		if ($data['ratings']) {
 			debug('ratings loaded');
 			// load data for ratings drop down list in view
-			$data['values'] = array('--------', '0.5', '1', '1.5', '2', '2.5', '3', '3.5', '4', '4.5', '5');
+			$data['values'] = array(
+				''    => '--------',
+				'0.5' => '0.5',
+				'1'   => '1',
+				'1.5' => '1.5',
+				'2'   => '2',
+				'2.5' => '2.5',
+				'3'   => '3',
+				'3.5' => '3.5',
+				'4'   => '4',
+				'4.5' => '4.5',
+				'5'   => '5',
+			);
 			$data['selected_rating'] = '';
 			$data[] = '';
 			if ($review_id) {
@@ -94,12 +106,12 @@ class Review_rating extends CI_Controller
 							array(
 								'field' => 'rating_id',
 								'label' => lang('manager_review_ratings_form_validation_rating_id'),
-								'rules' => 'callback__more_than_zero'
+								'rules' => 'callback__more_than_zero',
 							),
 							array(
 								'field' => 'value_id',
 								'label' => lang('manager_review_ratings_form_validation_value'),
-								'rules' => 'callback__more_than_zero2'
+								'rules' => 'callback__more_than_zero2',
 							),
 						);
 						$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
@@ -179,12 +191,12 @@ class Review_rating extends CI_Controller
 				array(
 					'field' => 'rating_id',
 					'label' => lang('manager_review_ratings_form_validation_rating_id'),
-					'rules' => 'callback__more_than_zero'
+					'rules' => 'callback__more_than_zero',
 				),
 				array(
 					'field' => 'value_id',
 					'label' => lang('manager_review_ratings_form_validation_value'),
-					'rules' => 'callback__more_than_zero2'
+					'rules' => 'callback__more_than_zero2',
 				),
 			);
 			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
@@ -298,6 +310,7 @@ class Review_rating extends CI_Controller
 		if (!is_numeric($str)) {
 			return FALSE;
 		}
+
 		return $str > 0;
 	}
 
@@ -314,6 +327,7 @@ class Review_rating extends CI_Controller
 		if (!is_numeric($str)) {
 			return FALSE;
 		}
+
 		return $str > 0;
 	}
 

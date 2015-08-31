@@ -155,7 +155,7 @@ class Review_rating_model extends CI_Model
 			// set the rating image for each review rating
 			foreach ($query->result() as $result) {
 				$result->rating_name = $this->Rating_model->get_rating_by_id($result->rating_id)->name;
-				$result->rating_value = $result->value / 2;
+				$result->rating_value = $result->value;
 			}
 			// return review ratings
 			return $query->result();

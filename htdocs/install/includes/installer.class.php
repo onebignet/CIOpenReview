@@ -596,6 +596,17 @@ class Installer
 					$query = mysql_query("select `password` from `user` WHERE `name`='" . $username . "' LIMIT 1");
 					$userpass = mysql_fetch_row($query);
 
+					//Support for old style password
+					if (strlen($userpass[0]) <= 33) {
+						//Check against password
+
+						if (md5($password) == $userpass[0]) {
+							$this->set_session_vars($username, md5(md5($userpass[0])));
+
+							return TRUE;
+						}
+					}
+
 					if (password_verify($password, $userpass[0])) {
 						$this->set_session_vars($username, md5(md5($userpass[0])));
 
