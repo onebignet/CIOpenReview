@@ -270,6 +270,43 @@ class Installer
 
 	}
 
+	public function update_database_structure()
+	{
+
+		//If no install/update is needed...do not make changes!
+		if (!$this->is_install_needed()) {
+			return;
+		}
+
+		$db = array();
+
+		define('BASEPATH', 'basepath');
+		//Load the database.php file CI uses
+		include $this->path_to_config_file;
+		//Connect to DB
+		if (mysql_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'])) {
+			if (mysql_select_db($db['default']['database'])) {
+
+				//Cycle through the install.sql and execute all queries
+				include($this->path_to_sql_file);
+				foreach ($db_queries as $query) {
+					mysql_query($query);
+				}
+
+				return TRUE;
+			} else {
+				//mysql_select_db failed
+				return FALSE;
+			}
+		} else {
+			//mysql_connect failed
+			return FALSE;
+		}
+
+		//Display errors, if any
+		return $this->display_all_errors();
+	}
+
 	//Create the database.php config file needed by CI
 	public function create_database_file()
 	{
@@ -278,26 +315,6 @@ class Installer
 		if (!$this->is_install_needed()) {
 			return;
 		}
-
-		//Attempt to connect to database
-		if (mysql_connect($this->db_hostname, $this->db_username, $this->db_password)) {
-			if (mysql_select_db($this->db_name)) {
-
-				//Cycle through the install.sql and execute all queries
-				include($this->path_to_sql_file);
-				foreach ($db_queries as $query) {
-					mysql_query($query);
-				}
-
-			} else {
-				//mysql_select_db files
-				$this->error_list[] = 'Unable to select the database "' . $this->db_name . '" Please go back and try again';
-			}
-		} else {
-			//mysql_connect failes
-			$this->error_list[] = 'Unable to connect to the database on host "' . $this->db_username . '@' . $this->db_hostname . '" Please go back and try again';
-		}
-
 
 		//Load the database.php file and write it to disk
 		$database_file = file_get_contents($this->path_to_database_file);
@@ -311,7 +328,15 @@ class Installer
 				fclose($file);
 				if (file_exists($this->path_to_config_file)) {
 					//Everything should be complete, just verify there were no errors
-					return $this->display_all_errors();
+					if ($this->update_database_structure()) {
+						return $this->display_all_errors();
+					} else {
+						//DB Structure Update Failed
+						$this->alert_error('There was a problem updating the database structure. Please restart the installation</div>');
+
+						return FALSE;
+					}
+
 				} else {
 					//File was not written
 					$this->alert_error('There was a problem writing the database config file, please check the file \'application/config/database.php\' is writable then click <a href="">here</a> to try again</div>');
