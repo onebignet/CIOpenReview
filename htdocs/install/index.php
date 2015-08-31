@@ -124,8 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 		// Settings form submitted - show database settings form
 
-		//Skip if the DB already exists
-		if ($installer->db_exists()) {
+		//Skip if the DB already exists and the structure updates have been applied
+		if ($installer->db_exists() && $installer->update_database_structure()) {
 			include_once("includes/installer.stage_3.php");
 
 		} else {
