@@ -216,6 +216,7 @@ VALUES(1, 'Main Category', 'main_category', '2011-11-22 13:31:01');",
   DEFAULT CHARSET = utf8
   COLLATE = utf8_unicode_ci
   AUTO_INCREMENT = 1;",
+    "DROP TABLE IF EXISTS `session`",
 	"CREATE TABLE IF NOT EXISTS `session` (
 `id`         VARCHAR(40)                NOT NULL,
   `ip_address` VARCHAR(45)                NOT NULL,
