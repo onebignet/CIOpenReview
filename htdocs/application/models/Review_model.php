@@ -301,7 +301,7 @@ class Review_model extends CI_Model
 		$this->db->where('featured', 1);
 		if ($approval_required > 0)
 			$this->db->where('approved', '1');
-		$this->db->order_by('id', 'asc');
+		$this->db->order_by('id', 'random');
 		$query = $this->db->get('review');
 		if ($query->num_rows() > 0) {
 			$result = $query->result();
