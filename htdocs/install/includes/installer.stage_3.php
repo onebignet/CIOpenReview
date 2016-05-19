@@ -36,7 +36,7 @@ if (!$installer) {
 }
 
 if ($installer->db_exists()){
-	$site_name = $installer->get_site_setting("site_summary_text");
+	$site_name = $installer->get_site_setting("site_summary_title");
 	$site_email = $installer->get_site_setting("site_email");
 } else {
 	$site_name = $_POST['sitename'];
