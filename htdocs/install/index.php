@@ -53,7 +53,7 @@ if ($installer->db_exists() && !$installer->validate_token($session_username, $s
 			if ($installer->login_manager($_POST['managerusername'], $_POST['managerpassword'])) {
 
 				//Login successful, set the session vars and load stage 1
-				$_SESSION['session_username'] = mysql_real_escape_string(trim($_POST['managerusername']));
+				$_SESSION['session_username'] = $installer->sanitize($_POST['managerusername']);
 				$_SESSION['session_token'] = $installer->get_session_token();
 
 				//Do we need to install anything or are we already up-to-date
