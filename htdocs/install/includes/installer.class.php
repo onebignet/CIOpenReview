@@ -270,6 +270,27 @@ class Installer
 
     }
 
+    private function create_db_connection_from_config()
+    {
+        $db = array();
+
+        define('BASEPATH', 'basepath');
+
+        if (is_file($this->path_to_config_file)) {
+
+            include $this->path_to_config_file;
+
+            //Connect to DB
+            $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
+
+            return $mysqli;
+        } else {
+            //database.php is missing
+            $this->error_list[] = "Could not finalize DB configurations. Please ensure application/config/database.php exists";
+        }
+        return FALSE;
+    }
+
     public function update_database_structure()
     {
 
@@ -278,17 +299,11 @@ class Installer
             return;
         }
 
-        $db = array();
-        
-        define('BASEPATH', 'basepath');
-        //Load the database.php file CI uses
-        include $this->path_to_config_file;
-
         //Connect to DB
-        $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
+        $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (mysqli_connect_errno()) {
+        if (!$mysqli || $mysqli->connect_error()) {
             return FALSE;
         }
 
@@ -452,18 +467,13 @@ class Installer
             return;
         }
 
-        $db = array();
         $user_count = 0;
 
-        define('BASEPATH', 'basepath');
-        //Load the database.php file CI uses
-        include $this->path_to_config_file;
-
         //Connect to DB
-        $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
+        $mysqli = $this->create_db_connection_from_config();
 
-        //Return errors
-        if (mysqli_connect_errno()) {
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error()) {
             $this->error_list[] = $mysqli->connect_error;
         } else {
 
@@ -515,56 +525,47 @@ class Installer
 
     public function complete_installation()
     {
-        $db = array();
-        if (is_file($this->path_to_config_file)) {
-            define('BASEPATH', 'basepath');
-            include $this->path_to_config_file;
 
-            //Connect to DB
-            $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config();
 
-            //Return errors
-            if (mysqli_connect_errno()) {
-                $this->error_list[] = "Could not select CIOpenReview database. Please ensure application/config/database.php is readable";
-            } else {
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error()) {
+            $this->error_list[] = "Could not select CIOpenReview database. Please ensure application/config/database.php is readable";
+        } else {
 
-                //prepare for mysql
-                $this->build_number = $mysqli->real_escape_string($this->build_number);
-                $this->version_string = $mysqli->real_escape_string($this->version_string);
+            //prepare for mysql
+            $this->build_number = $mysqli->real_escape_string($this->build_number);
+            $this->version_string = $mysqli->real_escape_string($this->version_string);
 
-                //Check the currently installed version of CIOpenReview/OpenReviewScript
-                $installed_version = $this->get_installed_build();
+            //Check the currently installed version of CIOpenReview/OpenReviewScript
+            $installed_version = $this->get_installed_build();
 
-                //If OpenReviewScript is installed, installed_version is NULL. Add DB entries
-                if ($installed_version == NULL) {
+            //If OpenReviewScript is installed, installed_version is NULL. Add DB entries
+            if ($installed_version == NULL) {
 
-                    $query = "SELECT `id` FROM `setting` ORDER BY `id` DESC LIMIT 1";
-                    if ($result = $mysqli->query($query)) {
-                        $last_id = $result->fetch_object();
-                        $last_insert_id = $last_id->id;
-                        $result->close();
-                    } else {
-                        $last_insert_id = 99;
-                    }
-
-                    $build_code_id = $last_insert_id + 1;
-                    $version_string_id = $last_insert_id + 2;
-
-
-                    $mysqli->query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('" . $build_code_id . "', 'build_code', '" . $this->build_number . "')");
-                    $mysqli->query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('" . $version_string_id . "', 'version_string', '" . $this->version_string . "')");
+                $query = "SELECT `id` FROM `setting` ORDER BY `id` DESC LIMIT 1";
+                if ($result = $mysqli->query($query)) {
+                    $last_id = $result->fetch_object();
+                    $last_insert_id = $last_id->id;
+                    $result->close();
                 } else {
-                    //Update the version of CIOpenReview in the database
-                    $mysqli->query("UPDATE `setting` SET `value` = '" . $this->build_number . "' WHERE `name` = 'build_code'");
-                    $mysqli->query("UPDATE `setting` SET `value` = '" . $this->version_string . "' WHERE `name` = 'version_string'");
+                    $last_insert_id = 99;
                 }
 
-                return TRUE;
+                $build_code_id = $last_insert_id + 1;
+                $version_string_id = $last_insert_id + 2;
+
+
+                $mysqli->query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('" . $build_code_id . "', 'build_code', '" . $this->build_number . "')");
+                $mysqli->query("INSERT INTO `setting` (`id`, `name`, `value`) VALUES ('" . $version_string_id . "', 'version_string', '" . $this->version_string . "')");
+            } else {
+                //Update the version of CIOpenReview in the database
+                $mysqli->query("UPDATE `setting` SET `value` = '" . $this->build_number . "' WHERE `name` = 'build_code'");
+                $mysqli->query("UPDATE `setting` SET `value` = '" . $this->version_string . "' WHERE `name` = 'version_string'");
             }
 
-        } else {
-            //database.php is missing
-            $this->error_list[] = "Could not finalize DB configurations. Please ensure application/config/database.php exists";
+            return TRUE;
         }
 
         //Display errors, if any
@@ -594,206 +595,199 @@ class Installer
 
     public function db_exists()
     {
-        $db = array();
 
-        if (is_file($this->path_to_config_file)) {
-            define('BASEPATH', 'basepath');
-            include $this->path_to_config_file;
+        $user_count = 0;
+        $setting_count = 0;
 
-            $user_count = 0;
-            $setting_count = 0;
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config();
 
-            //Connect to DB
-            $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
-
-            //Return errors
-            if (mysqli_connect_errno()) {
-                return FALSE;
-            }
-            if ($result = $mysqli->query("select `email` from `user` LIMIT 1")) {
-                $user_count = $result->num_rows;
-                $result->close();
-            }
-
-            if ($result = $mysqli->query("select `value` from `setting` LIMIT 1")) {
-                $setting_count = $result->num_rows;
-                $result->close();
-            }
-
-            if ($user_count == 1 && $setting_count == 1) {
-                return TRUE;
-            }
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error()) {
+            return FALSE;
+        }
+        if ($result = $mysqli->query("select `email` from `user` LIMIT 1")) {
+            $user_count = $result->num_rows;
+            $result->close();
         }
 
+        if ($result = $mysqli->query("select `value` from `setting` LIMIT 1")) {
+            $setting_count = $result->num_rows;
+            $result->close();
+        }
+
+        if ($user_count == 1 && $setting_count == 1) {
+            return TRUE;
+        }
         return FALSE;
     }
 
-    //Show a green alert
 
-    public function login_manager($username, $password)
+//Show a green alert
+
+    public
+    function login_manager($username, $password)
     {
 
         $username = $this->sanitize($username);
         $password = $this->sanitize($password);
-        $db = array();
 
-        if (is_file($this->path_to_config_file)) {
-            define('BASEPATH', 'basepath');
-            include $this->path_to_config_file;
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config();
 
-            //Connect to DB
-            $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error()) {
+            return FALSE;
+        }
 
-            //Return errors
-            if (mysqli_connect_errno()) {
-                return FALSE;
-            }
+        //prepare mysql
+        $username = $mysqli->real_escape_string($username);
+        $password = $mysqli->real_escape_string($password);
 
-            //prepare mysql
-            $username = $mysqli->real_escape_string($username);
-            $password = $mysqli->real_escape_string($password);
+        //Validate user and set class tokens
+        if ($result = $mysqli->query("select `password` from `user` WHERE `name`='" . $username . "' LIMIT 1")) {
+            $row = $result->fetch_object();
+            $userpass = $row->password;
+            $result->close();
+        }
 
-            //Validate user and set class tokens
-            if ($result = $mysqli->query("select `password` from `user` WHERE `name`='" . $username . "' LIMIT 1")) {
-                $row = $result->fetch_object();
-                $userpass = $row->password;
-                $result->close();
-            }
+        //Support for old style password
+        if (strlen($userpass) <= 33) {
+            //Check against password
 
-            //Support for old style password
-            if (strlen($userpass) <= 33) {
-                //Check against password
-
-                if (md5($password) == $userpass) {
-                    $this->set_session_vars($username, md5(md5($userpass)));
-
-                    return TRUE;
-                }
-            }
-
-            if (password_verify($password, $userpass)) {
+            if (md5($password) == $userpass) {
                 $this->set_session_vars($username, md5(md5($userpass)));
 
                 return TRUE;
             }
+        }
 
+        if (password_verify($password, $userpass)) {
+            $this->set_session_vars($username, md5(md5($userpass)));
+
+            return TRUE;
         }
 
         return FALSE;
     }
 
-    //Show a yellow alert
+//Show a yellow alert
 
-    public function validate_token($username, $token)
+    public
+    function validate_token($username, $token)
     {
 
         $username = $this->sanitize($username);
         $token = $this->sanitize($token);
-        $db = array();
 
-        if (is_file($this->path_to_config_file)) {
-            define('BASEPATH', 'basepath');
-            include $this->path_to_config_file;
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config();
 
-            //Connect to DB
-            $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error()) {
+            return FALSE;
+        }
 
-            //Return errors
-            if (mysqli_connect_errno()) {
-                return FALSE;
-            }
+        //prepare mysql
+        $username = $mysqli->real_escape_string($username);
 
-            //prepare mysql
-            $username = $mysqli->real_escape_string($username);
+        //Validate user and set class tokens
+        if ($result = $mysqli->query("select `password` from `user` WHERE `name`='" . $username . "' LIMIT 1")) {
+            $row = $result->fetch_object();
+            $userpass = $row->password;
+            $result->close();
+        }
+        if ($token == md5(md5($userpass))) {
+            $this->set_session_vars($username, md5(md5($userpass)));
 
-            //Validate user and set class tokens
-            if ($result = $mysqli->query("select `password` from `user` WHERE `name`='" . $username . "' LIMIT 1")) {
-                $row = $result->fetch_object();
-                $userpass = $row->password;
-                $result->close();
-            }
-            if ($token == md5(md5($userpass))) {
-                $this->set_session_vars($username, md5(md5($userpass)));
-
-                return TRUE;
-            }
-
+            return TRUE;
         }
 
         return FALSE;
     }
 
-    //Show a red alert
+//Show a red alert
 
-    public function validation_error()
+    public
+    function validation_error()
     {
         $this->alert_error("Please provide your CIOpenReview login credentials in order to proceed.");
     }
 
-    //Is this Apache?
+//Is this Apache?
 
-    public function set_session_vars($session_username, $session_token)
+    public
+    function set_session_vars($session_username, $session_token)
     {
         $this->session_username = $session_username;
         $this->session_token = $session_token;
     }
 
-    //Is this NGINX?
+//Is this NGINX?
 
-    public function get_session_token()
+    public
+    function get_session_token()
     {
         return $this->session_token;
     }
 
-    //Open a curl connection to a remote URL
+//Open a curl connection to a remote URL
 
-    private function set_error($error_code)
+    private
+    function set_error($error_code)
     {
         $this->error[] = $error_code;
     }
 
-    //Check the installed build of CIOpenReview
+//Check the installed build of CIOpenReview
 
-    private function show_success($message)
+    private
+    function show_success($message)
     {
         echo '<td class="success">' . $message . '</td>';
     }
 
-    //Check the installed version of CIOpenReview
+//Check the installed version of CIOpenReview
 
-    private function show_error($message)
+    private
+    function show_error($message)
     {
         echo '<td class="danger">' . $message . '</td>';
     }
 
 
-    //Display all of the errors in the errors[] array
+//Display all of the errors in the errors[] array
 
-    private function show_warning($message)
+    private
+    function show_warning($message)
     {
         echo '<td class="warning">' . $message . '</td>';
     }
 
-    //Is an install needed in the first place or are we already up-to-date?
+//Is an install needed in the first place or are we already up-to-date?
 
-    private function alert_success($message)
+    private
+    function alert_success($message)
     {
         echo '<div class="alert alert-success">' . $message . '</div>';
     }
 
-    //Complete the installation by updating the DB build number. This should make the installer no-longer work.
+//Complete the installation by updating the DB build number. This should make the installer no-longer work.
 
-    private function alert_warning($message)
+    private
+    function alert_warning($message)
     {
         echo '<div class="alert alert-warning">' . $message . '</div>';
     }
 
-    private function alert_error($message)
+    private
+    function alert_error($message)
     {
         echo '<div class="alert alert-danger">' . $message . '</div>';
     }
 
-    private function is_apache()
+    private
+    function is_apache()
     {
         if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), "apache") !== FALSE) {
             return TRUE;
@@ -802,7 +796,8 @@ class Installer
         return FALSE;
     }
 
-    private function is_nginx()
+    private
+    function is_nginx()
     {
         if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), "nginx") !== FALSE) {
             return TRUE;
@@ -811,7 +806,8 @@ class Installer
         return FALSE;
     }
 
-    private function curl_check($url)
+    private
+    function curl_check($url)
     {
         if (function_exists('curl_init')) {
             $curl = curl_init($url);
@@ -830,67 +826,55 @@ class Installer
         }
     }
 
-    private function get_installed_build()
+    private
+    function get_installed_build()
     {
         $db = array();
         $build = NULL;
 
-        if (is_file($this->path_to_config_file)) {
-            define('BASEPATH', 'basepath');
-            include $this->path_to_config_file;
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config();
 
-            //Connect to DB
-            $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
-
-            //Return errors
-            if (mysqli_connect_errno()) {
-                return FALSE;
-            }
-
-            if ($result = $mysqli->query("select `value` from `setting` WHERE `name`='build_code'")) {
-                $row = $result->fetch_object();
-                $build = $row->value;
-                $result->close();
-
-            }
-
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error()) {
+            return FALSE;
         }
 
+        if ($result = $mysqli->query("select `value` from `setting` WHERE `name`='build_code'")) {
+            $row = $result->fetch_object();
+            $build = $row->value;
+            $result->close();
+
+        }
 
         return $build;
     }
 
-    private function get_installed_version()
+    private
+    function get_installed_version()
     {
         $db = array();
         $version = NULL;
 
-        if (is_file($this->path_to_config_file)) {
-            define('BASEPATH', 'basepath');
-            include $this->path_to_config_file;
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config();
 
-            //Connect to DB
-            $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error()) {
+            return FALSE;
+        }
 
-            //Return errors
-            if (mysqli_connect_errno()) {
-                return FALSE;
-            }
-
-            if ($result = $mysqli->query("select `value` from `setting` WHERE `name`='version_string'")) {
-                $row = $result->fetch_object();
-                $version = $row->value;
-                $result->close();
-
-            }
-
-            if ($version == NULL) {
-                $version = '1.0.1';
-            }
+        if ($result = $mysqli->query("select `value` from `setting` WHERE `name`='version_string'")) {
+            $row = $result->fetch_object();
+            $version = $row->value;
+            $result->close();
 
         }
 
-
+        if ($version == NULL) {
+            $version = '1.0.1';
+        }
+        
         return $version;
     }
 
@@ -912,7 +896,8 @@ class Installer
         return TRUE;
     }
 
-    private function remove_directory($path)
+    private
+    function remove_directory($path)
     {
         $files = glob($path . '/*');
         foreach ($files as $file) {
@@ -923,7 +908,8 @@ class Installer
         return;
     }
 
-    private function sanitize($input)
+    private
+    function sanitize($input)
     {
         $input = trim($input);
         return filer_var($input, FILTER_SANITIZE_STRING);
