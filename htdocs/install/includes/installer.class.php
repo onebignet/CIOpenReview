@@ -913,7 +913,7 @@ class Installer
         return TRUE;
     }
 
-    private
+    public
     function sanitize($input)
     {
         $input = trim($input);
