@@ -111,7 +111,7 @@ class Installer
             $value = "OFF";
         }
         if ($value == 1 || strtolower($value) == "on") {
-            $value == "ON";
+            $value = "ON";
         }
 
         if ($value == $required) {
@@ -284,15 +284,17 @@ class Installer
             $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
 
             return $mysqli;
+
         } else {
             //database.php is missing
             $this->error_list[] = "Could not finalize DB configurations. Please ensure application/config/database.php exists";
         }
-        return FALSE;
+        return NULL;
     }
 
     public function update_database_structure()
     {
+        $db_queries = NULL;
 
         //If no install/update is needed...do not make changes!
         if (!$this->is_install_needed()) {
@@ -313,9 +315,6 @@ class Installer
             $mysqli->query($query);
         }
 
-        return TRUE;
-
-
         //Display errors, if any
         return $this->display_all_errors();
     }
@@ -326,7 +325,7 @@ class Installer
 
         //If no install/update is needed...do not make changes!
         if (!$this->is_install_needed()) {
-            return;
+            return TRUE;
         }
 
         //Load the database.php file and write it to disk
@@ -464,7 +463,7 @@ class Installer
     {
         //If no install/update is needed...do not make changes!
         if (!$this->is_install_needed()) {
-            return;
+            return TRUE;
         }
 
         $user_count = 0;
@@ -629,6 +628,7 @@ class Installer
     function login_manager($username, $password)
     {
 
+        $userpass = NULL;
         $username = $this->sanitize($username);
         $password = $this->sanitize($password);
 
@@ -677,6 +677,7 @@ class Installer
     function validate_token($username, $token)
     {
 
+        $userpass = NULL;
         $username = $this->sanitize($username);
         $token = $this->sanitize($token);
 
@@ -874,7 +875,7 @@ class Installer
         if ($version == NULL) {
             $version = '1.0.1';
         }
-        
+
         return $version;
     }
 
@@ -905,14 +906,14 @@ class Installer
         }
         rmdir($path);
 
-        return;
+        return TRUE;
     }
 
     private
     function sanitize($input)
     {
         $input = trim($input);
-        return filer_var($input, FILTER_SANITIZE_STRING);
+        return filter_var($input, FILTER_SANITIZE_STRING);
 
     }
 
