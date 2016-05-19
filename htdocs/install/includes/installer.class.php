@@ -571,7 +571,6 @@ class Installer
         //Display errors, if any
         if ($this->display_all_errors()) {
             session_destroy();
-            $this->delete_install_dir();
             return TRUE;
         }
 

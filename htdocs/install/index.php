@@ -130,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         } else if ($installer->load_site_vars_into_db() && $installer->complete_installation()) {
             include_once("includes/installer.stage_4.php");
+            $installer->delete_install_dir();
 
         } else {
             include_once("includes/installer.stage_3.php");
