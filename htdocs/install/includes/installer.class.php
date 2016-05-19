@@ -592,7 +592,7 @@ class Installer
 
         return FALSE;
     }
-    
+
 
     //Show a basic yellow table row
 
@@ -649,7 +649,7 @@ class Installer
         $password = $mysqli->real_escape_string($password);
 
         //Validate user and set class tokens
-        if ($result = $mysqli->query("select `password` from `user` WHERE `name`='" . $username . "' LIMIT 1")) {
+        if ($result = $mysqli->query("select `password` from `user` WHERE `name`='" . $username . "' AND `level`=10 LIMIT 1")) {
             $row = $result->fetch_object();
             $userpass = $row->password;
             $result->close();
