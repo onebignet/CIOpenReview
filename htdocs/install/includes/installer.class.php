@@ -902,13 +902,17 @@ class Installer
         return TRUE;
     }
 
-    private function remove_directory($dir)
+    private
+    function remove_directory($path)
     {
-        $files = array_diff(scandir($dir));
+        $files = glob($path . '/*');
         foreach ($files as $file) {
-            is_dir("$dir/$file") ? remove_directory("$dir/$file") : unlink("$dir/$file");
+            is_dir($file) ? $this->remove_directory($file) : unlink($file);
         }
-        return rmdir($dir);
+        unlink($path."/.htaccess");
+        rmdir($path);
+
+        return TRUE;
     }
 
     public
