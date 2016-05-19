@@ -86,23 +86,23 @@ if ($installer->db_exists() && !$installer->validate_token($session_username, $s
 
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-	if (isset($_POST['info_form'])) {
-// validate form
 
-		if (!$installer->validate_site_vars()) {
+	if (isset($_POST['precheck_form'])) {
+
+		// Settings form submitted - show database settings form
+
+		//Skip if the DB already exists and the structure updates have been applied
+		if ($installer->db_exists() && $installer->update_database_structure()) {
 			include_once("includes/installer.stage_3.php");
-
-		} else if ($installer->load_site_vars_into_db() && $installer->complete_installation()) {
-			include_once("includes/installer.stage_4.php");
 
 		} else {
-			include_once("includes/installer.stage_3.php");
-
+			//database does not exist
+			include_once("includes/installer.stage_2.php");
 		}
 		include_once("includes/installer.footer.php");
 		exit;
-	}
 
+	}
 
 	if (isset($_POST['database_form'])) {
 
@@ -120,21 +120,21 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 		exit;
 	}
 
-	if (isset($_POST['settings_form'])) {
+	if (isset($_POST['info_form'])) {
+// validate form
 
-		// Settings form submitted - show database settings form
-
-		//Skip if the DB already exists and the structure updates have been applied
-		if ($installer->db_exists() && $installer->update_database_structure()) {
+		if (!$installer->validate_site_vars()) {
 			include_once("includes/installer.stage_3.php");
 
+		} else if ($installer->load_site_vars_into_db() && $installer->complete_installation()) {
+			include_once("includes/installer.stage_4.php");
+
 		} else {
-			//database does not exist
-			include_once("includes/installer.stage_2.php");
+			include_once("includes/installer.stage_3.php");
+
 		}
 		include_once("includes/installer.footer.php");
 		exit;
-
 	}
 
 } else {
