@@ -59,6 +59,7 @@ if ($installer->db_exists() && !$installer->validate_token($session_username, $s
                 //Do we need to install anything or are we already up-to-date
                 if (!$installer->is_install_needed()) {
                     include_once("includes/installer.no_install_needed.php");
+                    $installer->installer_delete_install_dir();
                     exit;
                 }
                 include_once("includes/installer.stage_1.php");
