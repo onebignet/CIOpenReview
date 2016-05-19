@@ -36,11 +36,11 @@ if (!$installer) {
 }
 
 if ($installer->db_exists()){
-	$sitename = $installer->get_site_setting("site_summary_text");
-	$siteemail = $installer->get_site_setting("site_email");
+	$site_name = $installer->get_site_setting("site_summary_text");
+	$site_email = $installer->get_site_setting("site_email");
 } else {
-	$sitename = $_POST['sitename'];
-	$siteemail = $_POST['siteemail'];
+	$site_name = $_POST['sitename'];
+	$site_email = $_POST['siteemail'];
 }
 
 ?>
@@ -55,8 +55,8 @@ if ($installer->db_exists()){
 		<div class="form-group">
 			<label for="sitename">Site Name</label>
 			<input type="text" class="form-control" id="sitename" name="sitename"
-			       placeholder="Site Name" value="<?php if (isset($sitename))
-				echo htmlspecialchars($sitename); ?>">
+			       placeholder="Site Name" value="<?php if (isset($site_name))
+				echo htmlspecialchars($site_name); ?>">
 
 			<p class="help-block">The name of your website - as you want it to appear in the browser
 				title</p>
@@ -64,8 +64,8 @@ if ($installer->db_exists()){
 		<div class="form-group">
 			<label for="siteemail">Site Email</label>
 			<input type="text" class="form-control" id="siteemail" name="siteemail"
-			       placeholder="Site Email" value="<?php if (isset($siteemail))
-				echo htmlspecialchars($siteemail); ?>">
+			       placeholder="Site Email" value="<?php if (isset($site_email))
+				echo htmlspecialchars($site_email); ?>">
 
 			<p class="help-block">When emails are sent to users, they will be sent 'from' this email
 				address. It is also where messages from the contact form are sent, and also appears in
