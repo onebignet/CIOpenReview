@@ -601,7 +601,7 @@ class Installer
         $setting_count = 0;
 
         //Connect to DB
-        $mysqli = $this->create_db_connection_from_config();
+        $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
         if (!$mysqli || $mysqli->connect_error) {
