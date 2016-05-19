@@ -47,7 +47,3 @@ if (!$installer) {
 	</li>
 </ul>
 <br/>
-
-<div class="alert alert-warning" role="alert"><b>IMPORTANT - You must now delete the /install folder, if
-		you don't your site could be vulnerable to security attacks</b></div>
-</div>
