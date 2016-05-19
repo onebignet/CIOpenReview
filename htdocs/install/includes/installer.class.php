@@ -578,6 +578,30 @@ class Installer
 
     }
 
+    public function get_site_setting($name)
+    {
+
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config(FALSE);
+
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error) {
+            $this->error_list[] = "Could not select CIOpenReview database. Please ensure application/config/database.php is readable";
+            return NULL;
+        }
+
+        $name = $mysqli->real_escape_string($name);
+
+        if ($result = $mysqli->query("SELECT `value` FROM `setting` WHERE `name` = '" . $name . "'")) {
+            $row = $result->fetch_object();
+            $value = $row->value;
+            $result->close();
+        }
+
+
+        return $value;
+    }
+
 
     public function delete_install_dir()
     {
