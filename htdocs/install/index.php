@@ -31,7 +31,8 @@
 ?>
 <?php
 session_start();
-error_reporting(E_ALL);
+error_reporting(0);
+@ini_set('display_errors', 0);
 ini_set("display_erros", 1);
 require_once('../application/libraries/Password.php');
 define('INSTALLER', TRUE);
