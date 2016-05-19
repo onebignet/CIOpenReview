@@ -909,7 +909,7 @@ class Installer
             foreach ($objects as $object) {
                 if ($object != "." && $object != "..") {
                     if (is_dir($path . "/" . $object))
-                        remove_directory($path . "/" . $object);
+                        $this->remove_directory($path . "/" . $object);
                     else
                         unlink($path . "/" . $object);
                 }
