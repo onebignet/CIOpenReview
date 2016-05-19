@@ -270,7 +270,7 @@ class Installer
 
     }
 
-    private function create_db_connection_from_config()
+    private function create_db_connection_from_config($verbose = TRUE)
     {
         $db = array();
 
@@ -287,7 +287,9 @@ class Installer
 
         } else {
             //database.php is missing
-            $this->error_list[] = "Could not finalize DB configurations. Please ensure application/config/database.php exists";
+            if ($verbose) {
+                $this->error_list[] = "Could not finalize DB configurations. Please ensure application/config/database.php exists";
+            }
         }
         return NULL;
     }
@@ -403,7 +405,7 @@ class Installer
             $mysqli = mysqli_connect($this->db_hostname, $this->db_username, $this->db_password, $this->db_name);
 
             //Return false on error
-            if (mysqli_connect_errno()) {
+            if ($mysqli->connect_error()) {
                 $this->error_list[] = $mysqli->connect_error;
             }
 
@@ -834,7 +836,7 @@ class Installer
         $build = NULL;
 
         //Connect to DB
-        $mysqli = $this->create_db_connection_from_config();
+        $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
         if (!$mysqli || $mysqli->connect_error()) {
@@ -858,7 +860,7 @@ class Installer
         $version = NULL;
 
         //Connect to DB
-        $mysqli = $this->create_db_connection_from_config();
+        $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
         if (!$mysqli || $mysqli->connect_error()) {
