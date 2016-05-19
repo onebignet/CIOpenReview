@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package    CodeIgniter
- * @author    EllisLab Dev Team
- * @copyright    Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright    Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
- * @license    http://opensource.org/licenses/MIT	MIT License
- * @link    http://codeigniter.com
- * @since    Version 1.0.0
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	https://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -40,14 +40,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Parser Class
  *
- * @package        CodeIgniter
- * @subpackage    Libraries
- * @category    Parser
- * @author        EllisLab Dev Team
- * @link        http://codeigniter.com/user_guide/libraries/parser.html
+ * @package		CodeIgniter
+ * @subpackage	Libraries
+ * @category	Parser
+ * @author		EllisLab Dev Team
+ * @link		https://codeigniter.com/user_guide/libraries/parser.html
  */
-class CI_Parser
-{
+class CI_Parser {
 
 	/**
 	 * Left delimiter character for pseudo vars
@@ -75,7 +74,7 @@ class CI_Parser
 	/**
 	 * Class constructor
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	public function __construct()
 	{
@@ -91,11 +90,10 @@ class CI_Parser
 	 * Parses pseudo-variables contained in the specified template view,
 	 * replacing them with the data in the second param
 	 *
-	 * @param    string
-	 * @param    array
-	 * @param    bool
-	 *
-	 * @return    string
+	 * @param	string
+	 * @param	array
+	 * @param	bool
+	 * @return	string
 	 */
 	public function parse($template, $data, $return = FALSE)
 	{
@@ -112,31 +110,14 @@ class CI_Parser
 	 * Parses pseudo-variables contained in the specified string,
 	 * replacing them with the data in the second param
 	 *
-	 * @param    string
-	 * @param    array
-	 * @param    bool
-	 *
-	 * @return    string
+	 * @param	string
+	 * @param	array
+	 * @param	bool
+	 * @return	string
 	 */
 	public function parse_string($template, $data, $return = FALSE)
 	{
 		return $this->_parse($template, $data, $return);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set the left/right variable delimiters
-	 *
-	 * @param    string
-	 * @param    string
-	 *
-	 * @return    void
-	 */
-	public function set_delimiters($l = '{', $r = '}')
-	{
-		$this->l_delim = $l;
-		$this->r_delim = $r;
 	}
 
 	// --------------------------------------------------------------------
@@ -147,11 +128,10 @@ class CI_Parser
 	 * Parses pseudo-variables contained in the specified template,
 	 * replacing them with the data in the second param
 	 *
-	 * @param    string
-	 * @param    array
-	 * @param    bool
-	 *
-	 * @return    string
+	 * @param	string
+	 * @param	array
+	 * @param	bool
+	 * @return	string
 	 */
 	protected function _parse($template, $data, $return = FALSE)
 	{
@@ -167,7 +147,7 @@ class CI_Parser
 				$replace,
 				is_array($val)
 					? $this->_parse_pair($key, $val, $template)
-					: $this->_parse_single($key, (string)$val, $template)
+					: $this->_parse_single($key, (string) $val, $template)
 			);
 		}
 
@@ -185,17 +165,31 @@ class CI_Parser
 	// --------------------------------------------------------------------
 
 	/**
+	 * Set the left/right variable delimiters
+	 *
+	 * @param	string
+	 * @param	string
+	 * @return	void
+	 */
+	public function set_delimiters($l = '{', $r = '}')
+	{
+		$this->l_delim = $l;
+		$this->r_delim = $r;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Parse a single key/value
 	 *
-	 * @param    string
-	 * @param    string
-	 * @param    string
-	 *
+	 * @param	string
+	 * @param	string
+	 * @param	string
 	 * @return	string
 	 */
 	protected function _parse_single($key, $val, $string)
 	{
-		return array($this->l_delim . $key . $this->r_delim => (string) $val);
+		return array($this->l_delim.$key.$this->r_delim => (string) $val);
 	}
 
 	// --------------------------------------------------------------------
@@ -205,17 +199,16 @@ class CI_Parser
 	 *
 	 * Parses tag pairs: {some_tag} string... {/some_tag}
 	 *
-	 * @param    string
-	 * @param    array
-	 * @param    string
-	 *
+	 * @param	string
+	 * @param	array
+	 * @param	string
 	 * @return	string
 	 */
 	protected function _parse_pair($variable, $data, $string)
 	{
 		$replace = array();
 		preg_match_all(
-			'#' . preg_quote($this->l_delim . $variable . $this->r_delim) . '(.+?)' . preg_quote($this->l_delim . '/' . $variable . $this->r_delim).'#s',
+			'#'.preg_quote($this->l_delim.$variable.$this->r_delim).'(.+?)'.preg_quote($this->l_delim.'/'.$variable.$this->r_delim).'#s',
 			$string,
 			$matches,
 			PREG_SET_ORDER
@@ -227,11 +220,12 @@ class CI_Parser
 			foreach ($data as $row)
 			{
 				$temp = array();
-				foreach ($row as $key => $val) {
+				foreach ($row as $key => $val)
+				{
 					if (is_array($val))
 					{
 						$pair = $this->_parse_pair($key, $val, $match[1]);
-						if (!empty($pair))
+						if ( ! empty($pair))
 						{
 							$temp = array_merge($temp, $pair);
 						}
@@ -239,7 +233,7 @@ class CI_Parser
 						continue;
 					}
 
-					$temp[$this->l_delim . $key . $this->r_delim] = $val;
+					$temp[$this->l_delim.$key.$this->r_delim] = $val;
 				}
 
 				$str .= strtr($match[1], $temp);

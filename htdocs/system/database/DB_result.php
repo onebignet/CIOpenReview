@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package    CodeIgniter
- * @author    EllisLab Dev Team
- * @copyright    Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright    Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
- * @license    http://opensource.org/licenses/MIT	MIT License
- * @link    http://codeigniter.com
- * @since    Version 1.0.0
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	https://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -44,66 +44,65 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * This class will not be called directly. Rather, the adapter
  * class for the specific database will extend and instantiate it.
  *
- * @category    Database
- * @author        EllisLab Dev Team
- * @link        http://codeigniter.com/user_guide/database/
+ * @category	Database
+ * @author		EllisLab Dev Team
+ * @link		https://codeigniter.com/user_guide/database/
  */
-class CI_DB_result
-{
+class CI_DB_result {
 
 	/**
 	 * Connection ID
 	 *
-	 * @var    resource|object
+	 * @var	resource|object
 	 */
 	public $conn_id;
 
 	/**
 	 * Result ID
 	 *
-	 * @var    resource|object
+	 * @var	resource|object
 	 */
 	public $result_id;
 
 	/**
 	 * Result Array
 	 *
-	 * @var    array[]
+	 * @var	array[]
 	 */
-	public $result_array = array();
+	public $result_array			= array();
 
 	/**
 	 * Result Object
 	 *
-	 * @var    object[]
+	 * @var	object[]
 	 */
-	public $result_object = array();
+	public $result_object			= array();
 
 	/**
 	 * Custom Result Object
 	 *
-	 * @var    object[]
+	 * @var	object[]
 	 */
-	public $custom_result_object = array();
+	public $custom_result_object		= array();
 
 	/**
 	 * Current Row index
 	 *
-	 * @var    int
+	 * @var	int
 	 */
-	public $current_row = 0;
+	public $current_row			= 0;
 
 	/**
 	 * Number of rows
 	 *
-	 * @var    int
+	 * @var	int
 	 */
 	public $num_rows;
 
 	/**
 	 * Row data
 	 *
-	 * @var    array
+	 * @var	array
 	 */
 	public $row_data;
 
@@ -112,9 +111,8 @@ class CI_DB_result
 	/**
 	 * Constructor
 	 *
-	 * @param    object $driver_object
-	 *
-	 * @return    void
+	 * @param	object	$driver_object
+	 * @return	void
 	 */
 	public function __construct(&$driver_object)
 	{
@@ -127,15 +125,20 @@ class CI_DB_result
 	/**
 	 * Number of rows in the result set
 	 *
-	 * @return    int
+	 * @return	int
 	 */
 	public function num_rows()
 	{
-		if (is_int($this->num_rows)) {
+		if (is_int($this->num_rows))
+		{
 			return $this->num_rows;
-		} elseif (count($this->result_array) > 0) {
+		}
+		elseif (count($this->result_array) > 0)
+		{
 			return $this->num_rows = count($this->result_array);
-		} elseif (count($this->result_object) > 0) {
+		}
+		elseif (count($this->result_object) > 0)
+		{
 			return $this->num_rows = count($this->result_object);
 		}
 
@@ -147,19 +150,20 @@ class CI_DB_result
 	/**
 	 * Query result. Acts as a wrapper function for the following functions.
 	 *
-	 * @param    string $type 'object', 'array' or a custom class name
-	 *
-	 * @return    array
+	 * @param	string	$type	'object', 'array' or a custom class name
+	 * @return	array
 	 */
 	public function result($type = 'object')
 	{
 		if ($type === 'array')
 		{
 			return $this->result_array();
-		} elseif ($type === 'object')
+		}
+		elseif ($type === 'object')
 		{
 			return $this->result_object();
-		} else
+		}
+		else
 		{
 			return $this->custom_result_object($type);
 		}
@@ -170,16 +174,16 @@ class CI_DB_result
 	/**
 	 * Custom query result.
 	 *
-	 * @param    string $class_name
-	 *
-	 * @return    array
+	 * @param	string	$class_name
+	 * @return	array
 	 */
 	public function custom_result_object($class_name)
 	{
 		if (isset($this->custom_result_object[$class_name]))
 		{
 			return $this->custom_result_object[$class_name];
-		} elseif (!$this->result_id OR $this->num_rows === 0)
+		}
+		elseif ( ! $this->result_id OR $this->num_rows === 0)
 		{
 			return array();
 		}
@@ -189,12 +193,14 @@ class CI_DB_result
 		if (($c = count($this->result_array)) > 0)
 		{
 			$_data = 'result_array';
-		} elseif (($c = count($this->result_object)) > 0)
+		}
+		elseif (($c = count($this->result_object)) > 0)
 		{
 			$_data = 'result_object';
 		}
 
-		if ($_data !== NULL) {
+		if ($_data !== NULL)
+		{
 			for ($i = 0; $i < $c; $i++)
 			{
 				$this->custom_result_object[$class_name][$i] = new $class_name();
@@ -236,14 +242,16 @@ class CI_DB_result
 		// In the event that query caching is on, the result_id variable
 		// will not be a valid resource so we'll simply return an empty
 		// array.
-		if (!$this->result_id OR $this->num_rows === 0)
+		if ( ! $this->result_id OR $this->num_rows === 0)
 		{
 			return array();
 		}
 
-		if (($c = count($this->result_array)) > 0) {
-			for ($i = 0; $i < $c; $i++) {
-				$this->result_object[$i] = (object)$this->result_array[$i];
+		if (($c = count($this->result_array)) > 0)
+		{
+			for ($i = 0; $i < $c; $i++)
+			{
+				$this->result_object[$i] = (object) $this->result_array[$i];
 			}
 
 			return $this->result_object;
@@ -275,14 +283,16 @@ class CI_DB_result
 		// In the event that query caching is on, the result_id variable
 		// will not be a valid resource so we'll simply return an empty
 		// array.
-		if (!$this->result_id OR $this->num_rows === 0)
+		if ( ! $this->result_id OR $this->num_rows === 0)
 		{
 			return array();
 		}
 
-		if (($c = count($this->result_object)) > 0) {
-			for ($i = 0; $i < $c; $i++) {
-				$this->result_array[$i] = (array)$this->result_object[$i];
+		if (($c = count($this->result_object)) > 0)
+		{
+			for ($i = 0; $i < $c; $i++)
+			{
+				$this->result_array[$i] = (array) $this->result_object[$i];
 			}
 
 			return $this->result_array;
@@ -304,20 +314,19 @@ class CI_DB_result
 	 *
 	 * A wrapper method.
 	 *
-	 * @param    mixed  $n
-	 * @param    string $type 'object' or 'array'
-	 *
+	 * @param	mixed	$n
+	 * @param	string	$type	'object' or 'array'
 	 * @return	mixed
 	 */
 	public function row($n = 0, $type = 'object')
 	{
-		if (!is_numeric($n))
+		if ( ! is_numeric($n))
 		{
 			// We cache the row data for subsequent uses
 			is_array($this->row_data) OR $this->row_data = $this->row_array(0);
 
 			// array_key_exists() instead of isset() to allow for NULL values
-			if (empty($this->row_data) OR !array_key_exists($n, $this->row_data))
+			if (empty($this->row_data) OR ! array_key_exists($n, $this->row_data))
 			{
 				return NULL;
 			}
@@ -335,20 +344,20 @@ class CI_DB_result
 	/**
 	 * Assigns an item into a particular column slot
 	 *
-	 * @param    mixed $key
-	 * @param    mixed $value
-	 *
+	 * @param	mixed	$key
+	 * @param	mixed	$value
 	 * @return	void
 	 */
 	public function set_row($key, $value = NULL)
 	{
 		// We cache the row data for subsequent uses
-		if (!is_array($this->row_data))
+		if ( ! is_array($this->row_data))
 		{
 			$this->row_data = $this->row_array(0);
 		}
 
-		if (is_array($key)) {
+		if (is_array($key))
+		{
 			foreach ($key as $k => $v)
 			{
 				$this->row_data[$k] = $v;
@@ -367,9 +376,8 @@ class CI_DB_result
 	/**
 	 * Returns a single result row - custom object version
 	 *
-	 * @param    int    $n
-	 * @param    string $type
-	 *
+	 * @param	int	$n
+	 * @param	string	$type
 	 * @return	object
 	 */
 	public function custom_row_object($n, $type)
@@ -394,8 +402,7 @@ class CI_DB_result
 	/**
 	 * Returns a single result row - object version
 	 *
-	 * @param    int $n
-	 *
+	 * @param	int	$n
 	 * @return	object
 	 */
 	public function row_object($n = 0)
@@ -419,9 +426,8 @@ class CI_DB_result
 	/**
 	 * Returns a single result row - array version
 	 *
-	 * @param    int $n
-	 *
-	 *@return	array
+	 * @param	int	$n
+	 * @return	array
 	 */
 	public function row_array($n = 0)
 	{
@@ -444,9 +450,8 @@ class CI_DB_result
 	/**
 	 * Returns the "first" row
 	 *
-	 * @param    string $type
-	 *
-*@return	mixed
+	 * @param	string	$type
+	 * @return	mixed
 	 */
 	public function first_row($type = 'object')
 	{
@@ -459,9 +464,8 @@ class CI_DB_result
 	/**
 	 * Returns the "last" row
 	 *
-	 * @param    string $type
-	 *
-*@return	mixed
+	 * @param	string	$type
+	 * @return	mixed
 	 */
 	public function last_row($type = 'object')
 	{
@@ -474,9 +478,8 @@ class CI_DB_result
 	/**
 	 * Returns the "next" row
 	 *
-	 * @param    string $type
-	 *
-*@return	mixed
+	 * @param	string	$type
+	 * @return	mixed
 	 */
 	public function next_row($type = 'object')
 	{
@@ -496,14 +499,14 @@ class CI_DB_result
 	/**
 	 * Returns the "previous" row
 	 *
-	 * @param    string $type
-	 *
-*@return	mixed
+	 * @param	string	$type
+	 * @return	mixed
 	 */
 	public function previous_row($type = 'object')
 	{
 		$result = $this->result($type);
-		if (count($result) === 0) {
+		if (count($result) === 0)
+		{
 			return NULL;
 		}
 
@@ -519,16 +522,16 @@ class CI_DB_result
 	/**
 	 * Returns an unbuffered row and move pointer to next row
 	 *
-	 * @param    string $type 'array', 'object' or a custom class name
-	 *
-*@return	mixed
+	 * @param	string	$type	'array', 'object' or a custom class name
+	 * @return	mixed
 	 */
 	public function unbuffered_row($type = 'object')
 	{
 		if ($type === 'array')
 		{
 			return $this->_fetch_assoc();
-		} elseif ($type === 'object')
+		}
+		elseif ($type === 'object')
 		{
 			return $this->_fetch_object();
 		}
@@ -620,8 +623,7 @@ class CI_DB_result
 	 * Overridden by driver result classes.
 	 *
 	 * @param	int	$n
-	 *
-*@return	bool
+	 * @return	bool
 	 */
 	public function data_seek($n = 0)
 	{
@@ -653,9 +655,8 @@ class CI_DB_result
 	 *
 	 * Overridden by driver result classes.
 	 *
-	 * @param    string $class_name
-	 *
-*@return	object
+	 * @param	string	$class_name
+	 * @return	object
 	 */
 	protected function _fetch_object($class_name = 'stdClass')
 	{

@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package    CodeIgniter
- * @author    EllisLab Dev Team
- * @copyright    Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright    Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
- * @license    http://opensource.org/licenses/MIT	MIT License
- * @link    http://codeigniter.com
- * @since    Version 1.3.0
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	https://codeigniter.com
+ * @since	Version 1.3.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -44,19 +44,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * creates dynamically based on whether the query builder
  * class is being used or not.
  *
- * @package        CodeIgniter
- * @subpackage    Drivers
- * @category    Database
- * @author        EllisLab Dev Team
- * @link        http://codeigniter.com/user_guide/database/
+ * @package		CodeIgniter
+ * @subpackage	Drivers
+ * @category	Database
+ * @author		EllisLab Dev Team
+ * @link		https://codeigniter.com/user_guide/database/
  */
-class CI_DB_sqlite_driver extends CI_DB
-{
+class CI_DB_sqlite_driver extends CI_DB {
 
 	/**
 	 * Database driver
 	 *
-	 * @var    string
+	 * @var	string
 	 */
 	public $dbdriver = 'sqlite';
 
@@ -65,7 +64,7 @@ class CI_DB_sqlite_driver extends CI_DB
 	/**
 	 * ORDER BY random keyword
 	 *
-	 * @var    array
+	 * @var	array
 	 */
 	protected $_random_keyword = array('RANDOM()', 'RANDOM()');
 
@@ -74,9 +73,8 @@ class CI_DB_sqlite_driver extends CI_DB
 	/**
 	 * Non-persistent database connection
 	 *
-	 * @param    bool $persistent
-	 *
-	 * @return    resource
+	 * @param	bool	$persistent
+	 * @return	resource
 	 */
 	public function db_connect($persistent = FALSE)
 	{
@@ -95,7 +93,7 @@ class CI_DB_sqlite_driver extends CI_DB
 	/**
 	 * Database version number
 	 *
-	 * @return    string
+	 * @return	string
 	 */
 	public function version()
 	{
@@ -107,27 +105,28 @@ class CI_DB_sqlite_driver extends CI_DB
 	// --------------------------------------------------------------------
 
 	/**
+	 * Execute the query
+	 *
+	 * @param	string	$sql	an SQL query
+	 * @return	resource
+	 */
+	protected function _execute($sql)
+	{
+		return $this->is_write_type($sql)
+			? sqlite_exec($this->conn_id, $sql)
+			: sqlite_query($this->conn_id, $sql);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Begin Transaction
 	 *
-	 * @param    bool $test_mode
-	 *
-	 * @return    bool
+	 * @return	bool
 	 */
-	public function trans_begin($test_mode = FALSE)
+	protected function _trans_begin()
 	{
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0)
-		{
-			return TRUE;
-		}
-
-		// Reset the transaction failure flag.
-		// If the $test_mode flag is set to TRUE transactions will be rolled back
-		// even if the queries produce a successful result.
-		$this->_trans_failure = ($test_mode === TRUE);
-
-		$this->simple_query('BEGIN TRANSACTION');
-		return TRUE;
+		return $this->simple_query('BEGIN TRANSACTION');
 	}
 
 	// --------------------------------------------------------------------
@@ -135,18 +134,11 @@ class CI_DB_sqlite_driver extends CI_DB
 	/**
 	 * Commit Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
-	public function trans_commit()
+	protected function _trans_commit()
 	{
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0)
-		{
-			return TRUE;
-		}
-
-		$this->simple_query('COMMIT');
-		return TRUE;
+		return $this->simple_query('COMMIT');
 	}
 
 	// --------------------------------------------------------------------
@@ -154,18 +146,24 @@ class CI_DB_sqlite_driver extends CI_DB
 	/**
 	 * Rollback Transaction
 	 *
-	 * @return    bool
+	 * @return	bool
 	 */
-	public function trans_rollback()
+	protected function _trans_rollback()
 	{
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if (!$this->trans_enabled OR $this->_trans_depth > 0)
-		{
-			return TRUE;
-		}
+		return $this->simple_query('ROLLBACK');
+	}
 
-		$this->simple_query('ROLLBACK');
-		return TRUE;
+	// --------------------------------------------------------------------
+
+	/**
+	 * Platform-dependant string escape
+	 *
+	 * @param	string
+	 * @return	string
+	 */
+	protected function _escape_str($str)
+	{
+		return sqlite_escape_string($str);
 	}
 
 	// --------------------------------------------------------------------
@@ -195,15 +193,52 @@ class CI_DB_sqlite_driver extends CI_DB
 	// --------------------------------------------------------------------
 
 	/**
+	 * List table query
+	 *
+	 * Generates a platform-specific query string so that the table names can be fetched
+	 *
+	 * @param	bool	$prefix_limit
+	 * @return	string
+	 */
+	protected function _list_tables($prefix_limit = FALSE)
+	{
+		$sql = "SELECT name FROM sqlite_master WHERE type='table'";
+
+		if ($prefix_limit !== FALSE && $this->dbprefix != '')
+		{
+			return $sql." AND 'name' LIKE '".$this->escape_like_str($this->dbprefix)."%' ".sprintf($this->_like_escape_str, $this->_like_escape_chr);
+		}
+
+		return $sql;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Show column query
+	 *
+	 * Generates a platform-specific query string so that the column names can be fetched
+	 *
+	 * @param	string	$table
+	 * @return	bool
+	 */
+	protected function _list_columns($table = '')
+	{
+		// Not supported
+		return FALSE;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Returns an object with field data
 	 *
-	 * @param    string $table
-	 *
-	 * @return    array
+	 * @param	string	$table
+	 * @return	array
 	 */
 	public function field_data($table)
 	{
-		if (($query = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, TRUE, NULL, FALSE) . ')')) === FALSE)
+		if (($query = $this->query('PRAGMA TABLE_INFO('.$this->protect_identifiers($table, TRUE, NULL, FALSE).')')) === FALSE)
 		{
 			return FALSE;
 		}
@@ -215,13 +250,14 @@ class CI_DB_sqlite_driver extends CI_DB
 		}
 
 		$retval = array();
-		for ($i = 0, $c = count($query); $i < $c; $i++) {
-			$retval[$i] = new stdClass();
-			$retval[$i]->name = $query[$i]['name'];
-			$retval[$i]->type = $query[$i]['type'];
-			$retval[$i]->max_length = NULL;
-			$retval[$i]->default = $query[$i]['dflt_value'];
-			$retval[$i]->primary_key = isset($query[$i]['pk']) ? (int)$query[$i]['pk'] : 0;
+		for ($i = 0, $c = count($query); $i < $c; $i++)
+		{
+			$retval[$i]			= new stdClass();
+			$retval[$i]->name		= $query[$i]['name'];
+			$retval[$i]->type		= $query[$i]['type'];
+			$retval[$i]->max_length		= NULL;
+			$retval[$i]->default		= $query[$i]['dflt_value'];
+			$retval[$i]->primary_key	= isset($query[$i]['pk']) ? (int) $query[$i]['pk'] : 0;
 		}
 
 		return $retval;
@@ -247,88 +283,18 @@ class CI_DB_sqlite_driver extends CI_DB
 	// --------------------------------------------------------------------
 
 	/**
-	 * Execute the query
-	 *
-	 * @param    string $sql an SQL query
-	 *
-	 * @return    resource
-	 */
-	protected function _execute($sql)
-	{
-		return $this->is_write_type($sql)
-			? sqlite_exec($this->conn_id, $sql)
-			: sqlite_query($this->conn_id, $sql);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Platform-dependant string escape
-	 *
-	 * @param    string
-	 *
-	 * @return	string
-	 */
-	protected function _escape_str($str)
-	{
-		return sqlite_escape_string($str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * List table query
-	 *
-	 * Generates a platform-specific query string so that the table names can be fetched
-	 *
-	 * @param    bool $prefix_limit
-	 *
-	 * @return	string
-	 */
-	protected function _list_tables($prefix_limit = FALSE)
-	{
-		$sql = "SELECT name FROM sqlite_master WHERE type='table'";
-
-		if ($prefix_limit !== FALSE && $this->dbprefix != '') {
-			return $sql . " AND 'name' LIKE '" . $this->escape_like_str($this->dbprefix) . "%' " . sprintf($this->_like_escape_str, $this->_like_escape_chr);
-		}
-
-		return $sql;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Show column query
-	 *
-	 * Generates a platform-specific query string so that the column names can be fetched
-	 *
-	 * @param    string $table
-	 *
-	 *@return	bool
-	 */
-	protected function _list_columns($table = '')
-	{
-		// Not supported
-		return FALSE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Replace statement
 	 *
 	 * Generates a platform-specific replace string from the supplied data
 	 *
-	 * @param    string $table Table name
-	 * @param    array  $keys INSERT keys
-	 * @param    array  $values INSERT values
-	 *
-	 *@return	string
+	 * @param	string	$table	Table name
+	 * @param	array	$keys	INSERT keys
+	 * @param	array	$values	INSERT values
+	 * @return	string
 	 */
 	protected function _replace($table, $keys, $values)
 	{
-		return 'INSERT OR ' . parent::_replace($table, $keys, $values);
+		return 'INSERT OR '.parent::_replace($table, $keys, $values);
 	}
 
 	// --------------------------------------------------------------------
@@ -341,9 +307,8 @@ class CI_DB_sqlite_driver extends CI_DB
 	 * If the database does not support the TRUNCATE statement,
 	 * then this function maps to 'DELETE FROM table'
 	 *
-	 * @param    string $table
-	 *
-	 *@return	string
+	 * @param	string	$table
+	 * @return	string
 	 */
 	protected function _truncate($table)
 	{
