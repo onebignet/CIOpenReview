@@ -575,7 +575,7 @@ class Installer
             $this->delete_install_dir();
             return TRUE;
         }
-        
+
         return FALSE;
 
     }
@@ -902,16 +902,13 @@ class Installer
         return TRUE;
     }
 
-    private
-    function remove_directory($path)
+    private function remove_directory($dir)
     {
-        $files = glob($path . '/*');
+        $files = array_diff(scandir($dir), array('.', '..'));
         foreach ($files as $file) {
-            is_dir($file) ? $this->remove_directory($file) : unlink($file);
+            (is_dir("$dir/$file")) ? remove_directory("$dir/$file") : unlink("$dir/$file");
         }
-        rmdir($path);
-
-        return TRUE;
+        return rmdir($dir);
     }
 
     public
