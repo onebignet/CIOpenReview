@@ -515,6 +515,7 @@ class Installer
         if ($this->get_installed_build() >= $this->build_number) {
             $this->alert_success("You are currently running the latest version of CIOpenReview (" . $this->version_string . ")");
             $this->delete_install_dir();
+            session_destroy();
 
             return FALSE;
         }
