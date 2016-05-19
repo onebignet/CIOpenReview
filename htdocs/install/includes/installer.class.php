@@ -307,7 +307,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error()) {
+        if (!$mysqli || $mysqli->connect_error) {
             return FALSE;
         }
 
@@ -405,7 +405,7 @@ class Installer
             $mysqli = mysqli_connect($this->db_hostname, $this->db_username, $this->db_password, $this->db_name);
 
             //Return false on error
-            if ($mysqli->connect_error()) {
+            if ($mysqli->connect_error) {
                 $this->error_list[] = $mysqli->connect_error;
             }
 
@@ -474,7 +474,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error()) {
+        if (!$mysqli || $mysqli->connect_error) {
             $this->error_list[] = $mysqli->connect_error;
         } else {
 
@@ -531,7 +531,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error()) {
+        if (!$mysqli || $mysqli->connect_error) {
             $this->error_list[] = "Could not select CIOpenReview database. Please ensure application/config/database.php is readable";
         } else {
 
@@ -604,7 +604,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error()) {
+        if (!$mysqli || $mysqli->connect_error) {
             return FALSE;
         }
         if ($result = $mysqli->query("select `email` from `user` LIMIT 1")) {
@@ -638,7 +638,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error()) {
+        if (!$mysqli || $mysqli->connect_error) {
             return FALSE;
         }
 
@@ -687,7 +687,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error()) {
+        if (!$mysqli || $mysqli->connect_error) {
             return FALSE;
         }
 
@@ -839,7 +839,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error()) {
+        if (!$mysqli || $mysqli->connect_error) {
             return FALSE;
         }
 
@@ -863,7 +863,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error()) {
+        if (!$mysqli || $mysqli->connect_error) {
             return FALSE;
         }
 
