@@ -904,9 +904,9 @@ class Installer
 
     private function remove_directory($dir)
     {
-        $files = array_diff(scandir($dir), array('.', '..'));
+        $files = array_diff(scandir($dir));
         foreach ($files as $file) {
-            (is_dir("$dir/$file")) ? remove_directory("$dir/$file") : unlink("$dir/$file");
+            is_dir("$dir/$file") ? remove_directory("$dir/$file") : unlink("$dir/$file");
         }
         return rmdir($dir);
     }
