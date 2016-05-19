@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     //Do we need to install anything or are we already up-to-date
     if (!$installer->is_install_needed()) {
         include_once("includes/installer.no_install_needed.php");
-        $installer->delete_install_dir();
+        $installer->installer_delete_install_dir();
         exit;
     }
 

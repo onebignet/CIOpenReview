@@ -579,11 +579,23 @@ class Installer
 
     }
 
-    //Show a basic red table row
 
-    public function delete_install_dir()
+    private function delete_install_dir()
     {
         if ($this->remove_directory("../install")) {
+            $this->alert_success('"install" directory has been automatically deleted for safety .');
+
+            return TRUE;
+        }
+        $this->alert_error("Failed to automatically delete \"install\" dir. IMPORTANT - You must now delete the /install folder, if
+		you don't your site could be vulnerable to security attacks");
+
+        return FALSE;
+    }
+
+    public function installer_delete_install_dir()
+    {
+        if ($this->remove_directory("install")) {
             $this->alert_success('"install" directory has been automatically deleted for safety .');
 
             return TRUE;
