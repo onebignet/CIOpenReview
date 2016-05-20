@@ -160,9 +160,9 @@ class Installer
             $latest_version = json_decode($response);
 
             if ($latest_version->build_number >= $this->build_number) {
-                $this->show_success("You are installing the latest version available (" . $latest_version->version_number . ")");
+                $this->show_success("You are installing the latest version available (" . $latest_version->version_string . ")");
             } else {
-                $this->show_warning("There is a new version of CIOpenReview Available (" . $latest_version->version_number . ")");
+                $this->show_warning("There is a new version of CIOpenReview Available (" . $latest_version->version_string . ")");
             }
         }
 
