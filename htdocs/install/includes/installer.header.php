@@ -75,7 +75,7 @@ if (!$installer) {
 				<div class="col-md-12 text-center">
 					<img src="images/ciorlogo.png">
 
-					<h1>CIOpenReview Installer</h1>
+					<h1>CIOpenReview <?php echo $installer->get_version();?> Installer</h1>
 
 					<div class="col-md-12">
 						<p>Full installation Instructions Are Available on <u><a target="_blank"

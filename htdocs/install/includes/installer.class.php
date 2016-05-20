@@ -103,6 +103,10 @@ class Installer
         }
     }
 
+    public function get_version(){
+        return $this->version_string;
+    }
+
     //Verifies that certain functionality is enables or disabled (ex. register_globals)
     public function is_on_or_off($name, $value, $required, $error_key)
     {
