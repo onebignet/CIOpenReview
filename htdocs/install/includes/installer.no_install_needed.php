@@ -32,23 +32,23 @@
 <?php
 defined('INSTALLER') OR exit('No direct script access allowed');
 if (!$installer) {
-    exit('No direct script access allowed');
+	exit('No direct script access allowed');
 }
 
 ?>
 <div class="row">
-    <div class="col-md-12 text-center">
-        <h2 class="center-block">Installation Complete - Your new site is ready!</h2>
-    </div>
+	<div class="col-md-12 text-center">
+		<h2>Installation Not Needed - Your are already up to date!</h2>
+	</div>
 </div>
 <div class="row">
-    <ul>
-        <li>To go to your site <b><a href="../../">click here</a></b></li>
-        <li>to visit your manager area <b><a href="../manager" target="_blank">click
-                    here</a></b></li>
-        <li>and for more help and support visit our <b><a
-                    href="http://ciopenreview.com/guide/userguide" target="_blank">CIOpenReview
-                    User Guide</a></b>
-        </li>
-    </ul>
+	<ul>
+		<li>To go to your site <b><a href="../../">click here</a></b></li>
+		<li>to visit your manager area <b><a href="../manager" target="_blank">click
+					here</a></b></li>
+		<li>and for more help and support visit our <b><a
+					href="http://ciopenreview.com/guide/userguide" target="_blank">CIOpenReview
+					User Guide</a></b>
+		</li>
+	</ul>
 </div>

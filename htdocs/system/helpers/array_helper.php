@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package    CodeIgniter
- * @author    EllisLab Dev Team
- * @copyright    Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright    Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
- * @license    http://opensource.org/licenses/MIT	MIT License
- * @link    http://codeigniter.com
- * @since    Version 1.0.0
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	https://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -40,27 +40,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * CodeIgniter Array Helpers
  *
- * @package        CodeIgniter
- * @subpackage    Helpers
- * @category    Helpers
- * @author        EllisLab Dev Team
- * @link        http://codeigniter.com/user_guide/helpers/array_helper.html
+ * @package		CodeIgniter
+ * @subpackage	Helpers
+ * @category	Helpers
+ * @author		EllisLab Dev Team
+ * @link		https://codeigniter.com/user_guide/helpers/array_helper.html
  */
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('element')) {
+if ( ! function_exists('element'))
+{
 	/**
 	 * Element
 	 *
 	 * Lets you determine whether an array index is set and whether it has a value.
 	 * If the element is empty it returns NULL (or whatever you specify as the default value.)
 	 *
-	 * @param    string
-	 * @param    array
-	 * @param    mixed
-	 *
-	 * @return    mixed    depends on what the array contains
+	 * @param	string
+	 * @param	array
+	 * @param	mixed
+	 * @return	mixed	depends on what the array contains
 	 */
 	function element($item, array $array, $default = NULL)
 	{
@@ -70,14 +70,13 @@ if (!function_exists('element')) {
 
 // ------------------------------------------------------------------------
 
-if (!function_exists('random_element'))
+if ( ! function_exists('random_element'))
 {
 	/**
 	 * Random Element - Takes an array as input and returns a random element
 	 *
-	 * @param    array
-	 *
-	 * @return    mixed    depends on what the array contains
+	 * @param	array
+	 * @return	mixed	depends on what the array contains
 	 */
 	function random_element($array)
 	{
@@ -87,7 +86,7 @@ if (!function_exists('random_element'))
 
 // --------------------------------------------------------------------
 
-if (!function_exists('elements'))
+if ( ! function_exists('elements'))
 {
 	/**
 	 * Elements
@@ -95,11 +94,10 @@ if (!function_exists('elements'))
 	 * Returns only the array items specified. Will return a default value if
 	 * it is not set.
 	 *
-	 * @param    array
-	 * @param    array
-	 * @param    mixed
-	 *
-	 * @return    mixed    depends on what the array contains
+	 * @param	array
+	 * @param	array
+	 * @param	mixed
+	 * @return	mixed	depends on what the array contains
 	 */
 	function elements($items, array $array, $default = NULL)
 	{

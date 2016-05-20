@@ -46,107 +46,112 @@ include_once("includes/installer.header.php");
 
 //If there is already a DB, we want them to validate their credentials...otherwise bas things can happen
 if ($installer->db_exists() && !$installer->validate_token($session_username, $session_token)) {
-	//validate Login form
-	if ($_SERVER['REQUEST_METHOD'] == "POST") {
-		if (isset($_POST['login_form'])) {
-			//Check for valid login
-			if ($installer->login_manager($_POST['managerusername'], $_POST['managerpassword'])) {
+    //validate Login form
+    if ($_SERVER['REQUEST_METHOD'] == "POST") {
+        if (isset($_POST['login_form'])) {
+            //Check for valid login
+            if ($installer->login_manager($_POST['managerusername'], $_POST['managerpassword'])) {
 
-				//Login successful, set the session vars and load stage 1
-				$_SESSION['session_username'] = mysql_real_escape_string(trim($_POST['managerusername']));
-				$_SESSION['session_token'] = $installer->get_session_token();
+                //Login successful, set the session vars and load stage 1
+                $_SESSION['session_username'] = $installer->sanitize($_POST['managerusername']);
+                $_SESSION['session_token'] = $installer->get_session_token();
 
-				//Do we need to install anything or are we already up-to-date
-				if (!$installer->is_install_needed()) {
-					exit;
-				}
-				include_once("includes/installer.stage_1.php");
-				include_once("includes/installer.footer.php");
+                //Do we need to install anything or are we already up-to-date
+                if (!$installer->is_install_needed()) {
+                    include_once("includes/installer.no_install_needed.php");
+                    $installer->delete_install_dir();
+                    exit;
+                }
+                include_once("includes/installer.stage_1.php");
+                include_once("includes/installer.footer.php");
 
-			} else {
-				//Invalid login
-				session_destroy();
-				$installer->validation_error();
-				include_once("includes/installer.stage_0.php");
-				include_once("includes/installer.footer.php");
-				exit;
-			}
+            } else {
+                //Invalid login
+                session_destroy();
+                $installer->validation_error();
+                include_once("includes/installer.stage_0.php");
+                include_once("includes/installer.footer.php");
+                exit;
+            }
 
-		}
-	} else {
-		//Display the login page
-		session_destroy();
-		$installer->validation_error();
-		include_once("includes/installer.stage_0.php");
-		include_once("includes/installer.footer.php");
-		exit;
-	}
+        }
+    } else {
+        //Display the login page
+        session_destroy();
+        $installer->validation_error();
+        include_once("includes/installer.stage_0.php");
+        include_once("includes/installer.footer.php");
+        exit;
+    }
 
 }
 
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-	if (isset($_POST['info_form'])) {
+
+    if (isset($_POST['precheck_form'])) {
+
+        // Settings form submitted - show database settings form
+
+        //Skip if the DB already exists and the structure updates have been applied
+        if ($installer->db_exists() && $installer->update_database_structure()) {
+            include_once("includes/installer.stage_3.php");
+
+        } else {
+            //database does not exist
+            include_once("includes/installer.stage_2.php");
+        }
+        include_once("includes/installer.footer.php");
+        exit;
+
+    }
+
+    if (isset($_POST['database_form'])) {
+
+        if (!$installer->validate_database_vars()) {
+            include_once("includes/installer.stage_2.php");
+
+        } else if ($installer->create_database_file()) {
+            include_once("includes/installer.stage_3.php");
+
+        } else {
+            include_once("includes/installer.stage_2.php");
+
+        }
+        include_once("includes/installer.footer.php");
+        exit;
+    }
+
+    if (isset($_POST['info_form'])) {
 // validate form
 
-		if (!$installer->validate_site_vars()) {
-			include_once("includes/installer.stage_3.php");
+        if (!$installer->validate_site_vars()) {
+            include_once("includes/installer.stage_3.php");
 
-		} else if ($installer->load_site_vars_into_db() && $installer->complete_installation()) {
-			include_once("includes/installer.stage_4.php");
+        } else if ($installer->load_site_vars_into_db() && $installer->complete_installation()) {
+            include_once("includes/installer.stage_4.php");
+            $installer->delete_install_dir();
 
-		} else {
-			include_once("includes/installer.stage_3.php");
+        } else {
+            include_once("includes/installer.stage_3.php");
 
-		}
-		include_once("includes/installer.footer.php");
-		exit;
-	}
-
-
-	if (isset($_POST['database_form'])) {
-
-		if (!$installer->validate_database_vars()) {
-			include_once("includes/installer.stage_2.php");
-
-		} else if ($installer->create_database_file()) {
-			include_once("includes/installer.stage_3.php");
-
-		} else {
-			include_once("includes/installer.stage_2.php");
-
-		}
-		include_once("includes/installer.footer.php");
-		exit;
-	}
-
-	if (isset($_POST['settings_form'])) {
-
-		// Settings form submitted - show database settings form
-
-		//Skip if the DB already exists and the structure updates have been applied
-		if ($installer->db_exists() && $installer->update_database_structure()) {
-			include_once("includes/installer.stage_3.php");
-
-		} else {
-			//database does not exist
-			include_once("includes/installer.stage_2.php");
-		}
-		include_once("includes/installer.footer.php");
-		exit;
-
-	}
+        }
+        include_once("includes/installer.footer.php");
+        exit;
+    }
 
 } else {
-	// Nothing submitted - show first page of installer
+    // Nothing submitted - show first page of installer
 
-	//Do we need to install anything or are we already up-to-date
-	if (!$installer->is_install_needed()) {
-		exit;
-	}
+    //Do we need to install anything or are we already up-to-date
+    if (!$installer->is_install_needed()) {
+        include_once("includes/installer.no_install_needed.php");
+        $installer->delete_install_dir();
+        exit;
+    }
 
-	include_once("includes/installer.stage_1.php");
-	include_once("includes/installer.footer.php");
+    include_once("includes/installer.stage_1.php");
+    include_once("includes/installer.footer.php");
 }
 
 
