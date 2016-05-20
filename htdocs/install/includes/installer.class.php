@@ -283,7 +283,7 @@ class Installer
             //Connect to DB
             $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
 
-            if (!$mysqli){
+            if (!$mysqli) {
                 $this->error_list[] = mysqli_connect_error();
             }
 
@@ -409,8 +409,8 @@ class Installer
             $mysqli = mysqli_connect($this->db_hostname, $this->db_username, $this->db_password, $this->db_name);
 
             //Return false on error
-            if ($mysqli->connect_error) {
-                $this->error_list[] = $mysqli->connect_error;
+            if (!$mysqli) {
+                $this->error_list[] = mysqli_connect_error();
             }
 
         }
