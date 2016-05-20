@@ -1,5 +1,5 @@
-CIOpenReview �2015 CIOpenReview.com
-OpenReviewScrript �2011-2012 OpenReviewScript.org
+CIOpenReview &copy;2015 CIOpenReview.com
+OpenReviewScrript &copy;2011-2012 OpenReviewScript.org
 
 CIOpenReview is free, open source software for creating product or service review websites, written in PHP using the CodeIgniter framework (http://codeigniter.com) and released under the GPLv2 license (see the 'LICENSE' file for more details).
 
