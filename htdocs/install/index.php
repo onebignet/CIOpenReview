@@ -129,6 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             include_once("includes/installer.stage_3.php");
 
         } else if ($installer->load_site_vars_into_db() && $installer->complete_installation()) {
+            if ($_POST['notify_install'] == "on") {
+                $installer->notify_of_installation();
+            }
             include_once("includes/installer.stage_4.php");
             $installer->delete_install_dir();
 
