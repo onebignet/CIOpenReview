@@ -177,8 +177,8 @@ class Installer
     {
         if (function_exists('curl_init')) {
             $post_fields = array(
-                'build_number' => $this->build_number,
-                'version_string' => $this->version_string
+                'build_number' => $this->get_installed_build(),
+                'version_string' => $this->get_installed_build()
             );
             $curl = curl_init("http://ciopenreview.com/api/notify_install");
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -195,8 +195,8 @@ class Installer
     {
         if (function_exists('curl_init')) {
             $post_fields = array(
-                'build_number' => $this->get_installed_build() . ":" . $this->build_number,
-                'version_string' => $this->get_installed_version() . ":" . $this->version_string
+                'build_number' => $this->get_installed_build(),
+                'version_string' => $this->get_installed_version()
             );
             $curl = curl_init("http://ciopenreview.com/api/notify_upgrade");
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
