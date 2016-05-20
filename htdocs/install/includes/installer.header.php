@@ -44,7 +44,7 @@ if (!$installer) {
 	<meta http-equiv="content-language" content="en"/>
 	<title>CIOpenReview - Install</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<link rel="stylesheet" href="custom.css">
+	<link rel="stylesheet" href="../assets/css/custom.css">
 </head>
 
 <body class="has-navbar-fixed-top page-index">
