@@ -153,7 +153,7 @@ class Installer
                 'build_number' => $this->build_number,
                 'version_string' => $this->version_string
             );
-            $curl = curl_init("http://ciopenreview.com/update_check");
+            $curl = curl_init("http://ciopenreview.com/api/update_check");
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $post_fields);
@@ -168,6 +168,24 @@ class Installer
             } else {
                 $this->show_warning("There is a new version of CIOpenReview Available (" . $latest_version->version_string . ")");
             }
+        }
+
+    }
+
+    public function notify_of_installation()
+    {
+        if (function_exists('curl_init')) {
+            $post_fields = array(
+                'build_number' => $this->build_number,
+                'version_string' => $this->version_string
+            );
+            $curl = curl_init("http://ciopenreview.com/api/notify_install");
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $post_fields);
+
+            curl_exec($curl);
+            curl_close($curl);
         }
 
     }
