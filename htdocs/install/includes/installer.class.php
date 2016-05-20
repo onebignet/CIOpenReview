@@ -283,6 +283,10 @@ class Installer
             //Connect to DB
             $mysqli = mysqli_connect($db['default']['hostname'], $db['default']['username'], $db['default']['password'], $db['default']['database']);
 
+            if (!$mysqli){
+                $this->error_list[] = mysqli_connect_error();
+            }
+
             return $mysqli;
 
         } else {
@@ -629,7 +633,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error) {
+        if (!$mysqli) {
             return FALSE;
         }
         if ($result = $mysqli->query("select `email` from `user` LIMIT 1")) {
@@ -663,7 +667,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error) {
+        if (!$mysqli) {
             return FALSE;
         }
 
@@ -712,7 +716,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config();
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error) {
+        if (!$mysqli) {
             return FALSE;
         }
 
@@ -864,7 +868,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error) {
+        if (!$mysqli) {
             return FALSE;
         }
 
@@ -888,7 +892,7 @@ class Installer
         $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error) {
+        if (!$mysqli) {
             return FALSE;
         }
 
