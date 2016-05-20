@@ -96,9 +96,8 @@ if ($installer->db_exists()){
 			</div>
 		<?php } ?>
 		<div class="form-group">
-			<label for="notify_install">Notify of Install</label>
-			<input type="checkbox" checked class="form-control" id="notify_install" name="notify_install">
-
+			<label for="notify_install">Allow Anonymous Stats</label>
+			<input type="checkbox" checked class="checkbox" id="notify_install" name="notify_install">
 			<p class="help-block">By checking this box, you agree to allow CIOpenReview to collect minimal installation data (The version installed and Today's date) for analytical purposes</p>
 		</div>
 		<input type="submit" name="info_submit" id="button" class="btn btn-success" value="Next Step"/>
