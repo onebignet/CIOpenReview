@@ -142,6 +142,32 @@ class Installer
         }
     }
 
+    public function check_for_available_updates()
+    {
+        if (function_exists('curl_init')) {
+            $post_fields = array(
+                'build_number' => $this->build_number,
+                'version_string' => $this->version_string
+            );
+            $curl = curl_init("http://ciopenreview.com/update_check");
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $post_fields);
+
+            $response = curl_exec($curl);
+            curl_close($curl);
+
+            $latest_version = json_decode($response);
+
+            if ($latest_version->build_number >= $this->build_number) {
+                $this->show_success("You are installing the latest version available (" . $latest_version->version_number . ")");
+            } else {
+                $this->show_warning("There is a new version of CIOpenReview Available (" . $latest_version->version_number . ")");
+            }
+        }
+
+    }
+
     //Check to see if we have Apache, NGINX, or an unknown server
     public function check_server_software()
     {

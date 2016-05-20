@@ -75,7 +75,7 @@ $upload_max_filesize = ini_get('upload_max_filesize') + 0;
 <h3>Checking CIOpenReview configuration...</h3>
 <table class="table">
 	<tr><?php $installer->check_installed_version(); ?></tr>
-
+	<tr><?php $installer->check_for_available_updates(); ?></tr>
 </table>
 
 <?php
