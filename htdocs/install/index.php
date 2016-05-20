@@ -130,7 +130,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         } else if ($installer->load_site_vars_into_db() && $installer->complete_installation()) {
             if ($_POST['notify_install'] == "on") {
-                $installer->notify_of_installation();
+                if ($installer->db_exists()) {
+                    $installer->notify_of_upgrade();
+                } else {
+                    $installer->notify_of_installation();
+                }
             }
             include_once("includes/installer.stage_4.php");
             $installer->delete_install_dir();

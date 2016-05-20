@@ -103,7 +103,8 @@ class Installer
         }
     }
 
-    public function get_version(){
+    public function get_version()
+    {
         return $this->version_string;
     }
 
@@ -180,6 +181,24 @@ class Installer
                 'version_string' => $this->version_string
             );
             $curl = curl_init("http://ciopenreview.com/api/notify_install");
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $post_fields);
+
+            curl_exec($curl);
+            curl_close($curl);
+        }
+
+    }
+
+    public function notify_of_upgrade()
+    {
+        if (function_exists('curl_init')) {
+            $post_fields = array(
+                'build_number' => $this->get_installed_build() . ":" . $this->build_number,
+                'version_string' => $this->get_installed_version() . ":" . $this->version_string
+            );
+            $curl = curl_init("http://ciopenreview.com/api/notify_upgrade");
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $post_fields);
