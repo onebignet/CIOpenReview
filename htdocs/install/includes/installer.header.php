@@ -73,7 +73,7 @@ if (!$installer) {
 		<div class="inner">
 			<div class="row">
 				<div class="col-md-12 text-center">
-					<img src="images/ciorlogo.png">
+					<img src="../themes/manager/manager_light/design/images/ciorlogo.png">
 
 					<h1>CIOpenReview <?php echo $installer->get_version();?> Installer</h1>
 
