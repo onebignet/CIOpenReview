@@ -1,0 +1,12 @@
+{
+    "name": "jimok82/ci_open_review",
+    "description": "CIOpenReview",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "James Dimitrov",
+            "email": "jimok82@gmail.com"
+        }
+    ],
+    "require": {}
+}
