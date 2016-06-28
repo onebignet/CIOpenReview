@@ -32,22 +32,23 @@
 <?php
 defined('INSTALLER') OR exit('No direct script access allowed');
 if (!$installer) {
-	exit('No direct script access allowed');
+    exit('No direct script access allowed');
 }
 
 ?>
-<h2>Installation Complete - Your new site is ready!</h2>
-<ul>
-	<li>To go to your site <b><a href="../../">click here</a></b></li>
-	<li>to visit your manager area <b><a href="../manager" target="_blank">click
-				here</a></b></li>
-	<li>and for more help and support visit our <b><a
-				href="http://ciopenreview.com/guide/userguide" target="_blank">CIOpenReview
-				User Guide</a></b>
-	</li>
-</ul>
-<br/>
-
-<div class="alert alert-warning" role="alert"><b>IMPORTANT - You must now delete the /install folder, if
-		you don't your site could be vulnerable to security attacks</b></div>
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h2 class="center-block">Installation Complete - Your new site is ready!</h2>
+    </div>
+</div>
+<div class="row">
+    <ul>
+        <li>To go to your site <b><a href="../../">click here</a></b></li>
+        <li>to visit your manager area <b><a href="../manager" target="_blank">click
+                    here</a></b></li>
+        <li>and for more help and support visit our <b><a
+                    href="http://ciopenreview.com/guide/userguide" target="_blank">CIOpenReview
+                    User Guide</a></b>
+        </li>
+    </ul>
 </div>

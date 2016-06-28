@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package    CodeIgniter
- * @author    EllisLab Dev Team
- * @copyright    Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright    Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
- * @license    http://opensource.org/licenses/MIT	MIT License
- * @link    http://codeigniter.com
- * @since    Version 1.0.0
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	https://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -42,28 +42,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * Provides a mechanism to extend the base system without hacking.
  *
- * @package        CodeIgniter
- * @subpackage    Libraries
- * @category    Libraries
- * @author        EllisLab Dev Team
- * @link        http://codeigniter.com/user_guide/libraries/encryption.html
+ * @package		CodeIgniter
+ * @subpackage	Libraries
+ * @category	Libraries
+ * @author		EllisLab Dev Team
+ * @link		https://codeigniter.com/user_guide/general/hooks.html
  */
-class CI_Hooks
-{
+class CI_Hooks {
 
 	/**
 	 * Determines whether hooks are enabled
 	 *
-	 * @var    bool
+	 * @var	bool
 	 */
 	public $enabled = FALSE;
 
 	/**
 	 * List of all hooks set in config/hooks.php
 	 *
-	 * @var    array
+	 * @var	array
 	 */
-	public $hooks = array();
+	public $hooks =	array();
 
 	/**
 	 * Array with class objects to use hooks methods
@@ -77,14 +76,14 @@ class CI_Hooks
 	 *
 	 * Determines whether hook is in progress, used to prevent infinte loops
 	 *
-	 * @var    bool
+	 * @var	bool
 	 */
 	protected $_in_progress = FALSE;
 
 	/**
 	 * Class constructor
 	 *
-	 * @return    void
+	 * @return	void
 	 */
 	public function __construct()
 	{
@@ -93,21 +92,25 @@ class CI_Hooks
 
 		// If hooks are not enabled in the config file
 		// there is nothing else to do
-		if ($CFG->item('enable_hooks') === FALSE) {
+		if ($CFG->item('enable_hooks') === FALSE)
+		{
 			return;
 		}
 
 		// Grab the "hooks" definition file.
-		if (file_exists(APPPATH . 'config/hooks.php')) {
-			include(APPPATH . 'config/hooks.php');
+		if (file_exists(APPPATH.'config/hooks.php'))
+		{
+			include(APPPATH.'config/hooks.php');
 		}
 
-		if (file_exists(APPPATH . 'config/' . ENVIRONMENT . '/hooks.php')) {
-			include(APPPATH . 'config/' . ENVIRONMENT . '/hooks.php');
+		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/hooks.php'))
+		{
+			include(APPPATH.'config/'.ENVIRONMENT.'/hooks.php');
 		}
 
 		// If there are no hooks, we're done.
-		if (!isset($hook) OR !is_array($hook)) {
+		if ( ! isset($hook) OR ! is_array($hook))
+		{
 			return;
 		}
 
@@ -122,22 +125,27 @@ class CI_Hooks
 	 *
 	 * Calls a particular hook. Called by CodeIgniter.php.
 	 *
-	 * @uses    CI_Hooks::_run_hook()
+	 * @uses	CI_Hooks::_run_hook()
 	 *
-	 * @param    string $which Hook name
-	 * @return    bool    TRUE on success or FALSE on failure
+	 * @param	string	$which	Hook name
+	 * @return	bool	TRUE on success or FALSE on failure
 	 */
 	public function call_hook($which = '')
 	{
-		if (!$this->enabled OR !isset($this->hooks[$which])) {
+		if ( ! $this->enabled OR ! isset($this->hooks[$which]))
+		{
 			return FALSE;
 		}
 
-		if (is_array($this->hooks[$which]) && !isset($this->hooks[$which]['function'])) {
-			foreach ($this->hooks[$which] as $val) {
+		if (is_array($this->hooks[$which]) && ! isset($this->hooks[$which]['function']))
+		{
+			foreach ($this->hooks[$which] as $val)
+			{
 				$this->_run_hook($val);
 			}
-		} else {
+		}
+		else
+		{
 			$this->_run_hook($this->hooks[$which]);
 		}
 
@@ -151,19 +159,22 @@ class CI_Hooks
 	 *
 	 * Runs a particular hook
 	 *
-	 * @param    array $data Hook details
-	 * @return    bool    TRUE on success or FALSE on failure
+	 * @param	array	$data	Hook details
+	 * @return	bool	TRUE on success or FALSE on failure
 	 */
 	protected function _run_hook($data)
 	{
 		// Closures/lambda functions and array($object, 'method') callables
-		if (is_callable($data)) {
+		if (is_callable($data))
+		{
 			is_array($data)
 				? $data[0]->{$data[1]}()
 				: $data();
 
 			return TRUE;
-		} elseif (!is_array($data)) {
+		}
+		elseif ( ! is_array($data))
+		{
 			return FALSE;
 		}
 
@@ -173,7 +184,8 @@ class CI_Hooks
 
 		// If the script being called happens to have the same
 		// hook call within it a loop can happen
-		if ($this->_in_progress === TRUE) {
+		if ($this->_in_progress === TRUE)
+		{
 			return;
 		}
 
@@ -181,22 +193,25 @@ class CI_Hooks
 		// Set file path
 		// -----------------------------------
 
-		if (!isset($data['filepath'], $data['filename'])) {
+		if ( ! isset($data['filepath'], $data['filename']))
+		{
 			return FALSE;
 		}
 
-		$filepath = APPPATH . $data['filepath'] . '/' . $data['filename'];
+		$filepath = APPPATH.$data['filepath'].'/'.$data['filename'];
 
-		if (!file_exists($filepath)) {
+		if ( ! file_exists($filepath))
+		{
 			return FALSE;
 		}
 
 		// Determine and class and/or function names
-		$class = empty($data['class']) ? FALSE : $data['class'];
-		$function = empty($data['function']) ? FALSE : $data['function'];
-		$params = isset($data['params']) ? $data['params'] : '';
+		$class		= empty($data['class']) ? FALSE : $data['class'];
+		$function	= empty($data['function']) ? FALSE : $data['function'];
+		$params		= isset($data['params']) ? $data['params'] : '';
 
-		if (empty($function)) {
+		if (empty($function))
+		{
 			return FALSE;
 		}
 
@@ -204,18 +219,26 @@ class CI_Hooks
 		$this->_in_progress = TRUE;
 
 		// Call the requested class and/or function
-		if ($class !== FALSE) {
+		if ($class !== FALSE)
+		{
 			// The object is stored?
-			if (isset($this->_objects[$class])) {
-				if (method_exists($this->_objects[$class], $function)) {
+			if (isset($this->_objects[$class]))
+			{
+				if (method_exists($this->_objects[$class], $function))
+				{
 					$this->_objects[$class]->$function($params);
-				} else {
+				}
+				else
+				{
 					return $this->_in_progress = FALSE;
 				}
-			} else {
+			}
+			else
+			{
 				class_exists($class, FALSE) OR require_once($filepath);
 
-				if (!class_exists($class, FALSE) OR !method_exists($class, $function)) {
+				if ( ! class_exists($class, FALSE) OR ! method_exists($class, $function))
+				{
 					return $this->_in_progress = FALSE;
 				}
 
@@ -223,10 +246,13 @@ class CI_Hooks
 				$this->_objects[$class] = new $class();
 				$this->_objects[$class]->$function($params);
 			}
-		} else {
+		}
+		else
+		{
 			function_exists($function) OR require_once($filepath);
 
-			if (!function_exists($function)) {
+			if ( ! function_exists($function))
+			{
 				return $this->_in_progress = FALSE;
 			}
 

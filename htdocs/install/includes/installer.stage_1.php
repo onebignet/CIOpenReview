@@ -75,7 +75,7 @@ $upload_max_filesize = ini_get('upload_max_filesize') + 0;
 <h3>Checking CIOpenReview configuration...</h3>
 <table class="table">
 	<tr><?php $installer->check_installed_version(); ?></tr>
-
+	<tr><?php $installer->check_for_available_updates(); ?></tr>
 </table>
 
 <?php
@@ -96,7 +96,7 @@ if (mail('null@localhost', 'Test', 'Test', $headers)) {
 <h1>Test Results</h1>
 <?php $installer->show_precheck_errors_and_warnings(); ?>
 <form class="myform" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-	<input type="hidden" name="settings_form"/>
+	<input type="hidden" name="precheck_form"/>
 	<input type="submit" name="settings_submit" id="button"
 	       class="btn btn-success " <?php echo $installer->is_critical_error() ? 'disabled="disabled"' : ""; ?>
 	       value="Next Step"/>

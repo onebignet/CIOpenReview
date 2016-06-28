@@ -34,8 +34,9 @@
 <head>
     <title>{{= lang('manager_page_title') }} - {{= $this->config->item('site_name') }}</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" href="{{= manager_template_path() }}design/style.css">
-    <script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{= manager_template_path() }}assets/css/default.css">
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script type="text/javascript">
         tinymce.init({
             mode: "exact",
@@ -50,28 +51,54 @@
             toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
             toolbar2: "print preview media | forecolor backcolor emoticons",
         });
+
     </script>
 </head>
-<body>
-<div id="container">
-    <div id="header">
-        {{ if ($this->secure->is_manager_logged_in($this->session)): }}
-        <p>
-            <span class="manager_log">{{= lang('manager_logged_in_as').' ('.$this->session->userdata('name').') | '.anchor('/manager/logout',lang('manager_log_out')) }}</span>
-        </p>
-        {{ endif }}
+<body class="has-navbar-fixed-top page-index">
+<!-- START OF NAVIGATION -->
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand"
+               href="#">CIOpenReview {{= lang('version_number').$this->Setting_model->get_setting_by_name('version_string') }}</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav pull-right">
+                {{ if ($this->secure->is_manager_logged_in($this->session)): }}
+                <li> {{= anchor('/manager/logout',lang('manager_logged_in_as').' ('.$this->session->userdata('name').') | '.lang('manager_log_out')) }}</li>
+                {{ endif }}
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
     </div>
-    <div id="navbar">
-        <div id="version">{{= lang('version_number').$this->Setting_model->get_setting_by_name('version_string') }}</div>
-    </div>
-    <div id="main_section">
+    <!-- /.container-fluid -->
+</nav>
+<!-- END OF NAVIGATION -->
+<div class="row">
+    <div class="col-md-12">
+
         {{ if(isset($sidebar)): }}
+        <div class="col-md-3">
         {{= $sidebar }}
+        </div>
         {{ endif }}
+        <div class="col-md-8">
         {{= $content }}
+        </div>
     </div>
-    <div id="footer">
-        <p>Copyright &copy;2015<a class="footerlink" href="http://ciopenreview.com">CIOpenReview</a></p>
+</div>
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <p>Copyright &copy;2015 - {{= date("Y") }} <a class="footerlink" href="http://ciopenreview.com">CIOpenReview</a>
+        </p>
     </div>
 </div>
 </body>

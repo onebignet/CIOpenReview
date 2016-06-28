@@ -44,7 +44,7 @@ if (!$installer) {
 	<meta http-equiv="content-language" content="en"/>
 	<title>CIOpenReview - Install</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<link rel="stylesheet" href="custom.css">
+	<link rel="stylesheet" href="../assets/css/custom.css">
 </head>
 
 <body class="has-navbar-fixed-top page-index">
@@ -73,9 +73,9 @@ if (!$installer) {
 		<div class="inner">
 			<div class="row">
 				<div class="col-md-12 text-center">
-					<img src="images/ciorlogo.png">
+					<img src="../themes/manager/manager_light/design/images/ciorlogo.png">
 
-					<h1>CIOpenReview Installer</h1>
+					<h1>CIOpenReview <?php echo $installer->get_version();?> Installer</h1>
 
 					<div class="col-md-12">
 						<p>Full installation Instructions Are Available on <u><a target="_blank"

@@ -106,7 +106,7 @@ if (!file_exists('application/config/database.php')) {
 	header("Location: install", 301);
 	exit;
 }
-if (file_exists('install') && is_dir('install')) {
+if (file_exists('install/index.php') && is_dir('install')) {
 	echo('<div align="center" style="min-height:30px; color" red;><h3>The \'install\' directory has not been deleted - Please delete the install directory to remove this message</h3></div>');
 }
 
