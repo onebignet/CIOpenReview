@@ -30,30 +30,95 @@
 */
 
 }}
-<div id="sidebar">
-    <ul class="nav nav-stacked">
-        <li>{{= anchor('manager/home', lang('manager_menu_home')) }}</li>
-        <li>{{= anchor('manager/reviews', lang('manager_menu_reviews')) }}</li>
-        {{ if (pending_reviews_count()>0): }}
-        <li>{{= anchor('manager/reviews/pending', lang('manager_menu_reviews_pending')) }}
-            ({{= pending_reviews_count() }})
-        </li>
-        {{ endif }}
-        {{ if (pending_comments_count()>0): }}
-        <li>{{= anchor('manager/comments/pending', lang('manager_menu_comments_pending')) }}
-            ({{= pending_comments_count() }})
-        </li>
-        {{ endif }}
-        <li>{{= anchor('manager/categories', lang('manager_menu_categories')) }}</li>
-        <li>{{= anchor('manager/features', lang('manager_menu_features')) }}</li>
-        <li>{{= anchor('manager/ratings', lang('manager_menu_ratings')) }}</li>
-        <li>{{= anchor('manager/articles', lang('manager_menu_articles')) }}</li>
-        <li>{{= anchor('manager/pages', lang('manager_menu_custom_pages')) }}</li>
-        <li>{{= anchor('manager/ads', lang('manager_menu_ads')) }}</li>
-        <li>{{= anchor('manager/users', lang('manager_menu_users')) }}</li>
-        <li>{{= anchor('manager/site_settings/edit', lang('manager_menu_site_settings')) }}</li>
-        <li>{{= anchor('manager/theme_settings/edit', lang('manager_menu_theme_settings')) }}</li>
-        <li>{{= anchor('manager/maintenance', lang('manager_menu_maintenance')) }}</li>
-        <li>{{= anchor('http://ciopenreview.com', lang('manager_menu_support')) }}</li>
-    </ul>
-</div>
+
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{{= base_url('manager/home') }}">
+                    <i class="fa fa-home"></i> <span>{{= lang('manager_menu_home') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/reviews') }}">
+                    <i class="fa fa-comment"></i> <span>{{= lang('manager_menu_reviews') }}</span>
+                </a>
+            </li>
+            {{ if (pending_reviews_count()>0): }}
+            <ul class="treeview-menu menu-open" style="display: block;">
+                <li>
+                    <a href="{{= base_url('manager/reviews/pending') }}">
+                        <i class="fa fa-circle-o"></i><span>{{= lang('manager_menu_reviews_pending') }} </span>
+                        <span class="label label-primary pull-right">{{= pending_reviews_count() }}</span>
+                    </a>
+                </li>
+            </ul>
+            {{ endif }}
+            {{ if (pending_comments_count()>0): }}
+            <ul class="treeview-menu menu-open" style="display: block;">
+                <li>
+                    <a href="{{= base_url('manager/comments/pending') }}">
+                        <i class="fa fa-circle-o"></i><span>{{= lang('manager_menu_comments_pending') }} </span>
+                        <span class="label label-primary pull-right">{{= pending_comments_count() }}</span>
+                    </a>
+                </li>
+            </ul>
+            {{ endif }}
+            <li>
+                <a href="{{= base_url('manager/categories') }}">
+                    <i class="fa fa-list"></i> <span>{{= lang('manager_menu_categories') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/features') }}">
+                    <i class="fa fa-bell"></i> <span>{{= lang('manager_menu_features') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/ratings') }}">
+                    <i class="fa fa-star"></i> <span>{{= lang('manager_menu_ratings') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/articles') }}">
+                    <i class="fa fa-book"></i> <span>{{= lang('manager_menu_articles') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/pages') }}">
+                    <i class="fa fa-pagelines"></i> <span>{{= lang('manager_menu_custom_pages') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/ads') }}">
+                    <i class="fa fa-dollar"></i> <span>{{= lang('manager_menu_ads') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/users') }}">
+                    <i class="fa fa-users"></i> <span>{{= lang('manager_menu_users') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/site_settings/edit') }}">
+                    <i class="fa fa-gear"></i> <span>{{= lang('manager_menu_site_settings') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/theme_settings/edit') }}">
+                    <i class="fa fa-eyedropper"></i> <span>{{= lang('manager_menu_theme_settings') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{= base_url('manager/maintenance') }}">
+                    <i class="fa fa-wrench"></i> <span>{{= lang('manager_menu_maintenance') }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://ciopenreview.com">
+                    <i class="fa fa-support"></i> <span>{{= lang('manager_menu_support') }}</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+</aside>

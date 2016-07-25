@@ -37,8 +37,8 @@
     <link rel="stylesheet" type="text/css" href="{{= manager_template_path() }}assets/css/default.css">
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.6 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
     <!-- Ionicons -->
@@ -49,7 +49,7 @@
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
     -->
-    <link rel="stylesheet" href="{{= manager_template_path() }}dist/css/skins/skin-green.min.css">
+    <link rel="stylesheet" href="{{= manager_template_path() }}assets/css/skins/skin-green.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -74,46 +74,43 @@
             toolbar2: "print preview media | forecolor backcolor emoticons",
         });
 
+
+
     </script>
 </head>
-<body class="has-navbar-fixed-top page-index">
+<body class="hold-transition skin-green sidebar-mini">
 <!-- START OF NAVIGATION -->
-<nav class="navbar navbar-default navbar-static-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand"
-               href="#">CIOpenReview {{= lang('version_number').$this->Setting_model->get_setting_by_name('version_string') }}</a>
-        </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav pull-right">
+<header class="main-header">
+    <a class="logo"
+       href="#"><span
+                class="logo-lg"> CIOpenReview {{= lang('version_number').$this->Setting_model->get_setting_by_name('version_string') }}</span></a>
+    <nav class="navbar navbar-static-top" role="navigation">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+        </a>
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
                 {{ if ($this->secure->is_manager_logged_in($this->session)): }}
                 <li> {{= anchor('/manager/logout',lang('manager_logged_in_as').' ('.$this->session->userdata('name').') | '.lang('manager_log_out')) }}</li>
                 {{ endif }}
             </ul>
         </div>
         <!-- /.navbar-collapse -->
-    </div>
+    </nav>
     <!-- /.container-fluid -->
-</nav>
+</header>
 <!-- END OF NAVIGATION -->
 <div class="row">
     <div class="col-md-12">
 
         {{ if(isset($sidebar)): }}
         <div class="col-md-3">
-        {{= $sidebar }}
+            {{= $sidebar }}
         </div>
         {{ endif }}
         <div class="col-md-8">
-        {{= $content }}
+            {{= $content }}
         </div>
     </div>
 </div>
@@ -123,5 +120,13 @@
         </p>
     </div>
 </div>
+<!-- jQuery 2.2.4 -->
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script src="{{= manager_template_path() }}assets/js/app.min.js"></script>
+
 </body>
 </html>
