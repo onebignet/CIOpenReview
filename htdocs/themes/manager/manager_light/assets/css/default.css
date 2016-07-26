@@ -1,0 +1,10 @@
+.form-checkbox {
+    position: relative;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.form-row {
+    margin-bottom: 20px;
+}

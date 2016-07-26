@@ -57,6 +57,7 @@
                             class="btn btn-primary btn-success"
                             value="{{= lang('manager_login_forgot_submit') }}">{{= lang('manager_login_forgot_submit') }}</button>
                 </div>
+            </div>
         </form>
     </div>
 </div>

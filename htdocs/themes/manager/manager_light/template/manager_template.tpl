@@ -76,75 +76,73 @@
 
 
 
-
-
-
     </script>
 </head>
 <body class="hold-transition skin-green sidebar-mini">
-<!-- START OF NAVIGATION -->
-<header class="main-header">
-    <a class="logo"
-       href="#"><span
-                class="logo-lg"> CIOpenReview {{= lang('version_number').$this->Setting_model->get_setting_by_name('version_string') }}</span></a>
-    <nav class="navbar navbar-static-top" role="navigation">
-        <!-- Sidebar toggle button-->
-        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-            <span class="sr-only">Toggle navigation</span>
-        </a>
-        <div class="navbar-custom-menu">
-            <ul class="nav navbar-nav">
-                {{ if ($this->secure->is_manager_logged_in($this->session)): }}
-                <li> {{= anchor('/manager/logout',lang('manager_logged_in_as').' ('.$this->session->userdata('name').') | '.lang('manager_log_out')) }}</li>
-                {{ endif }}
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-    </nav>
-    <!-- /.container-fluid -->
-</header>
-<!-- END OF NAVIGATION -->
-<aside class="main-sidebar">
-    <section class="sidebar">
-        {{ if(isset($sidebar)): }}
-        {{= $sidebar }}
-        {{ endif }}
-    </section>
-</aside>
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            {{= $page_header }}
-            <small>{{= $page_description }}</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="{{= base_url('manager/home') }}"><i class="fa fa-dashboard"></i> Manager</a></li>
-            <li class="active">{{= $current_page }}</li>
-        </ol>
-    </section>
+<div class="wrapper">
+    <!-- START OF NAVIGATION -->
+    <header class="main-header">
+        <a class="logo"
+           href="#"><span
+                    class="logo-lg"> CIOpenReview {{= lang('version_number').$this->Setting_model->get_setting_by_name('version_string') }}</span></a>
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    {{ if ($this->secure->is_manager_logged_in($this->session)): }}
+                    <li> {{= anchor('/manager/logout',lang('manager_logged_in_as').' ('.$this->session->userdata('name').') | '.lang('manager_log_out')) }}</li>
+                    {{ endif }}
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+        <!-- /.container-fluid -->
+    </header>
+    <!-- END OF NAVIGATION -->
+    <aside class="main-sidebar">
+        <section class="sidebar">
+            {{ if(isset($sidebar)): }}
+            {{= $sidebar }}
+            {{ endif }}
+        </section>
+    </aside>
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                {{= $page_header }}
+                <small>{{= $page_description }}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{{= base_url('manager/home') }}"><i class="fa fa-dashboard"></i> Manager</a></li>
+                <li class="active">{{= $current_page }}</li>
+            </ol>
+        </section>
 
-    <!-- Main content -->
-    <section class="content">
+        <!-- Main content -->
+        <section class="content">
 
-        {{= $content }}
+            {{= $content }}
 
-    </section>
-    <!-- /.content -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <footer class="main-footer">
+        <p>Copyright &copy;2015 - {{= date("Y") }} <a class="footerlink" href="http://ciopenreview.com">CIOpenReview</a>
+        </p>
+    </footer>
+    <!-- jQuery 2.2.4 -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="{{= manager_template_path() }}assets/js/app.min.js"></script>
 </div>
-<!-- /.content-wrapper -->
-
-<footer class="main-footer">
-    <p>Copyright &copy;2015 - {{= date("Y") }} <a class="footerlink" href="http://ciopenreview.com">CIOpenReview</a>
-    </p>
-</footer>
-<!-- jQuery 2.2.4 -->
-<script src="https://code.jquery.com/jquery-2.2.4.min.js"
-        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-<!-- Bootstrap 3.3.7 -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<!-- AdminLTE App -->
-<script src="{{= manager_template_path() }}assets/js/app.min.js"></script>
-
 </body>
 </html>
