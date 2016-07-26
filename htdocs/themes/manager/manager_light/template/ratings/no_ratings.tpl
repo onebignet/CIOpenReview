@@ -45,7 +45,7 @@
         <table class="table">
             <tbody>
             <tr>
-                <th class="col-md-10">Feature Name</th>
+                <th class="col-md-10">Rating Name</th>
                 <th>Actions</th>
             </tr>
             <tr>
