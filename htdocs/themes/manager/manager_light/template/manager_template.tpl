@@ -119,7 +119,7 @@
             <small>{{= $page_description }}</small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Manager</a></li>
+            <li><a href="{{= base_url('manager/home') }}"><i class="fa fa-dashboard"></i> Manager</a></li>
             <li class="active">{{= $current_page }}</li>
         </ol>
     </section>

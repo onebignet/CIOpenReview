@@ -33,15 +33,13 @@
 <div id="content">
     <p>&nbsp;</p>
 
-    <p>&nbsp;</p>
+
     {{ if($message!=''): }}
-    <p>&nbsp;</p>
-
-    <h3 class="login_error">{{= $message }}</h3>
-
-    <p>&nbsp;</p>
-
+    <div class="callout callout-warning">
+        <p>{{= $message }}</p>
+    </div>
     {{ endif }}
+
     <div class="col-md-6 col-md-offset-3">
         <form class="loginform" action="{{= site_url('/manager/login/') }}" method="post">
             <div class="box box-success">
