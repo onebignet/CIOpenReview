@@ -30,145 +30,157 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_edit_theme_settings_title') }}</div>
-        <p>&nbsp;</p>
-        {{ if(isset($message)): }}
-        <p>&nbsp;</p>
-
-        <h3>{{= $message }}</h3>
-
-        <p>&nbsp;</p>
-        {{ endif }}
-        <p>&nbsp;</p>
-
-        <form id="form" class="myform" name="form" method="post" enctype="multipart/form-data"
-              action="{{= base_url() . 'manager/theme_settings/edit' }}">
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_theme') }}
-                        <span class="small">{{= lang('manager_theme_settings_form_theme_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    {{= form_dropdown('theme', $themes, $selected_theme) }}
+{{ if(isset($message)): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
+<form id="form" class="myform" name="form" method="post" enctype="multipart/form-data"
+      action="{{= base_url() . 'manager/theme_settings/edit' }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_edit_theme_settings_title') }}</h3>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-9">
+                    {{= lang('manager_theme_settings_form_theme') }}
+                    <p class="help-block">{{= lang('manager_theme_settings_form_theme_info') }}</p>
                     {{= form_error('theme') }}
                 </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_manager_theme') }}
-                        <span class="small">{{= lang('manager_theme_settings_form_manager_theme_info') }}</span>
-                    </label>
+                <div class="col-md-3">
+                    {{= form_dropdown('theme', $themes, $selected_theme, array('class' => 'form-control')) }}
                 </div>
-                <div class="formright">
-                    {{= form_dropdown('manager_theme', $manager_themes, $selected_manager_theme) }}
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    {{= lang('manager_theme_settings_form_manager_theme') }}
+                    <p class="help-block">{{= lang('manager_theme_settings_form_manager_theme_info') }}</p>
                     {{= form_error('manager_theme') }}
                 </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_logo_upload') }}
-                        <span class="small">{{= lang('manager_theme_settings_form_logo_upload_info') }}</span>
-                    </label>
+                <div class="col-md-3">
+                    {{= form_dropdown('theme', $manager_themes, $selected_manager_theme, array('class' => 'form-control')) }}
                 </div>
-                <div class="formright">
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    {{= lang('manager_theme_settings_form_logo_upload') }}
+                    <p class="help-block">{{= lang('manager_theme_settings_form_logo_upload_info') }}</p>
+                    {{= $upload_error }}
+                </div>
+                <div class="col-md-3">
                     <input type="file" name="userfile" size="20"/>
-                    <span class="error">{{= $upload_error }}</span>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_logo_preview') }}
-                    </label>
+            <div class="row form-row">
+                <div class="col-md-9">
+                    {{= lang('manager_theme_settings_form_logo_preview') }}
+                    {{= $upload_error }}
                 </div>
-                <div class="formright">
+                <div class="col-md-3">
                     <img src="{{= $current_logo }}" alt="">
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_max_upload_width') }}</label>
-                    <span class="small">{{= lang('manager_theme_settings_form_max_upload_width_info') }}</span>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_theme_settings_form_max_upload_width') }}</label>
+                            <p class="help-block">{{= lang('manager_site_settings_form_review_approval_info') }}</p>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('max_upload_width', $max_upload_width) }}"
+                                   name="max_upload_width"
+                                   id="max_upload_width">
+                        </div>
+                        {{= form_error('max_upload_width') }}
+                    </div>
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_theme_settings_form_max_upload_height') }}</label>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('max_upload_height', $max_upload_height) }}"
+                                   name="max_upload_height"
+                                   id="max_upload_height">
+                        </div>
+                        {{= form_error('max_upload_height') }}
+                    </div>
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_theme_settings_form_max_upload_filesize') }}</label>
+                            <p class="help-block">{{= lang('manager_theme_settings_form_max_upload_filesize_info') }}</p>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('max_upload_filesize', $max_upload_filesize) }}"
+                                   name="max_upload_filesize"
+                                   id="max_upload_filesize">
+                        </div>
+                        {{= form_error('max_upload_filesize') }}
+                    </div>
                 </div>
-                <div class="formright">
-                    <input class="short" type="text" name="max_upload_width" id="max_upload_width" size="2"
-                           value="{{= set_value('max_upload_width', $max_upload_width) }}"/>
-                    {{= form_error('max_upload_width') }}
+                <div class="col-md-6">
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_theme_settings_form_review_thumbnail_width') }}</label>
+                            <p class="help-block">{{= lang('manager_theme_settings_form_review_thumbnail_width_info') }}</p>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('review_thumb_max_width', $review_thumb_max_width) }}"
+                                   name="review_thumb_max_width"
+                                   id="review_thumb_max_width">
+                        </div>
+                        {{= form_error('review_thumb_max_width') }}
+                    </div>
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_theme_settings_form_review_thumbnail_height') }}</label>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('review_thumb_max_height', $review_thumb_max_height) }}"
+                                   name="review_thumb_max_height"
+                                   id="review_thumb_max_height">
+                        </div>
+                        {{= form_error('review_thumb_max_height') }}
+                    </div>
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_theme_settings_form_search_thumbnail_width') }}</label>
+                            <p class="help-block">{{= lang('manager_theme_settings_form_search_thumbnail_width_info') }}</p>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('search_thumb_max_width', $search_thumb_max_width) }}"
+                                   name="search_thumb_max_width"
+                                   id="search_thumb_max_width">
+                        </div>
+                        {{= form_error('search_thumb_max_width') }}
+                    </div>
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_theme_settings_form_search_thumbnail_height') }}</label>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('search_thumb_max_height', $search_thumb_max_height) }}"
+                                   name="search_thumb_max_height"
+                                   id="search_thumb_max_height">
+                        </div>
+                        {{= form_error('search_thumb_max_height') }}
+                    </div>
                 </div>
             </div>
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_max_upload_height') }}</label>
-                </div>
-                <div class="formright">
-                    <input class="short" type="text" name="max_upload_height" id="max_upload_height" size="2"
-                           value="{{= set_value('max_upload_height', $max_upload_height) }}"/>
-                    {{= form_error('max_upload_height') }}
-                </div>
-            </div>
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_max_upload_filesize') }}</label>
-                    <span class="small">{{= lang('manager_theme_settings_form_max_upload_filesize_info') }}</span>
-                </div>
-                <div class="formright">
-                    <input class="short" type="text" name="max_upload_filesize" id="max_upload_filesize" size="2"
-                           value="{{= set_value('max_upload_filesize', $max_upload_filesize) }}"/>
-                    {{= form_error('max_upload_filesize') }}
-                </div>
-            </div>
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_review_thumbnail_width') }}</label>
-                    <span class="small">{{= lang('manager_theme_settings_form_review_thumbnail_width_info') }}</span>
-                </div>
-                <div class="formright">
-                    <input class="short" type="text" name="review_thumb_max_width" id="review_thumb_max_width" size="2"
-                           value="{{= set_value('review_thumb_max_width', $review_thumb_max_width) }}"/>
-                    {{= form_error('review_thumb_max_width') }}
-                </div>
-            </div>
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_review_thumbnail_height') }}</label>
-                </div>
-                <div class="formright">
-                    <input class="short" type="text" name="review_thumb_max_height" id="review_thumb_max_height"
-                           size="2" value="{{= set_value('review_thumb_max_height', $review_thumb_max_height) }}"/>
-                    {{= form_error('review_thumb_max_height') }}
-                </div>
-            </div>
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_search_thumbnail_width') }}</label>
-                    <span class="small">{{= lang('manager_theme_settings_form_search_thumbnail_width_info') }}</span>
-                </div>
-                <div class="formright">
-                    <input class="short" type="text" name="search_thumb_max_width" id="search_thumb_max_width" size="2"
-                           value="{{= set_value('search_thumb_max_width', $search_thumb_max_width) }}"/>
-                    {{= form_error('search_thumb_max_width') }}
-                </div>
-            </div>
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_theme_settings_form_search_thumbnail_height') }}</label>
-                </div>
-                <div class="formright">
-                    <input class="short" type="text" name="search_thumb_max_height" id="search_thumb_max_height"
-                           size="2" value="{{= set_value('search_thumb_max_height', $search_thumb_max_height) }}"/>
-                    {{= form_error('search_thumb_max_height') }}
-                </div>
-            </div>
-            <input type="submit" name="settings_submit" id="button"
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="settings_submit" id="button" class="btn btn-primary btn-success"
                    value="{{= lang('manager_theme_settings_form_submit_button') }}"/>
-        </form>
+        </div>
     </div>
-</div>
+</form>
+
+
+</form>

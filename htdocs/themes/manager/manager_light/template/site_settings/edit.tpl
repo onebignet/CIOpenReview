@@ -31,7 +31,7 @@
 
 }}
 {{ if(isset($message)): }}
-<div class="callout callout-warning" xmlns="http://www.w3.org/1999/html">
+<div class="callout callout-warning">
     <p>{{= $message }}</p>
 </div>
 {{ endif }}
@@ -41,35 +41,38 @@
         <div class="box-header with-border">
             <h3 class="box-title">{{= lang('manager_edit_site_settings_title') }}</h3>
             <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_site_settings_form_site_name') }}</label>
+                    <input class="form-control type=" text" value="{{= set_value('site_name', $site_name) }}"
+                    name="site_name"
+                    id="site_name">
+                    {{= form_error('site_name') }}
+                    <p class="help-block">{{= lang('manager_site_settings_form_site_name_info') }}</p>
 
-            <label>{{= lang('manager_site_settings_form_site_name') }}</label>
+                    <label>{{= lang('manager_site_settings_form_site_email') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('site_email', $site_email) }}"
+                           name="site_email"
+                           id="site_email">
+                    {{= form_error('site_email') }}
+                    <p class="help-block">{{= lang('manager_site_settings_form_site_email_info') }}</p>
 
-            <input class="form-control pull-right" type="text" value="{{= set_value('site_name', $site_name) }}"
-                   name="site_name"
-                   id="site_name">
-            {{= form_error('site_name') }}
-            <p class="help-block">{{= lang('manager_site_settings_form_site_name_info') }}</p>
+                    <label>{{= lang('manager_site_settings_form_site_summary_title') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('site_summary_title', $site_summary_title) }}"
+                           name="site_summary_title"
+                           id="site_summary_title">
+                    {{= form_error('site_summary_title') }}
+                    <p class="help-block">{{= lang('manager_site_settings_form_site_summary_title_info') }}</p>
 
-            <label>{{= lang('manager_site_settings_form_site_email') }}</label>
-            <input class="form-control" type="text" value="{{= set_value('site_email', $site_email) }}"
-                   name="site_email"
-                   id="site_email">
-            {{= form_error('site_email') }}
-            <p class="help-block">{{= lang('manager_site_settings_form_site_email_info') }}</p>
-
-            <label>{{= lang('manager_site_settings_form_site_summary_title') }}</label>
-            <input class="form-control" type="text" value="{{= set_value('site_summary_title', $site_summary_title) }}"
-                   name="site_summary_title"
-                   id="site_summary_title">
-            {{= form_error('site_summary_title') }}
-            <p class="help-block">{{= lang('manager_site_settings_form_site_summary_title_info') }}</p>
-
-            <label>{{= lang('manager_site_settings_form_site_summary_text') }}</label>
-            <input class="form-control" type="text" value="{{= set_value('site_summary_text', $site_summary_text) }}"
-                   name="site_summary_text"
-                   id="site_summary_text">
-            {{= form_error('site_summary_text') }}
-
+                    <label>{{= lang('manager_site_settings_form_site_summary_text') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('site_summary_text', $site_summary_text) }}"
+                           name="site_summary_text"
+                           id="site_summary_text">
+                    {{= form_error('site_summary_text') }}
+                </div>
+            </div>
         </div>
         <div class="box-header with-border">
             <h3 class="box-title">{{= lang('manager_edit_settings_review_page_title') }}</h3>
@@ -551,7 +554,7 @@
             </div>
         </div>
         <div class="box-footer">
-            <input type="submit" name="settings_submit" id="button" class="btn btn-default btn-success"
+            <input type="submit" name="settings_submit" id="button" class="btn btn-primary btn-success"
                    value="{{= lang('manager_site_settings_form_submit_button') }}"/>
         </div>
     </div>
