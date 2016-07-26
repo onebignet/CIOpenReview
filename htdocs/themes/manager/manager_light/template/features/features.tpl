@@ -30,22 +30,36 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_features_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/feature/add', lang('manager_features_add_feature')) }}</b></p>
 
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($allfeatures as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">
-            {{= character_limiter($result->name, 50) }}
-        </p>
+<div class="box">
 
-        <p class="manager_narrow">{{= anchor('manager/feature/edit/'.$result->id, lang('manager_features_list_edit')) }}</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_features_title') }}</h3>
+        {{= anchor('manager/feature/add', lang('manager_features_add_feature'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-        <p class="manager_narrow">{{= anchor('manager/feature/delete/'.$result->id, lang('manager_features_list_delete'),' id="darkblue"') }}</p>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Feature Name</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($allfeatures as $result): }}
+            <tr>
+                <td>{{= character_limiter($result->name, 50) }}</td>
+                <td>
+                    {{= anchor('manager/feature/edit/'.$result->id, lang('manager_features_list_edit'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('manager/feature/delete/'.$result->id, lang('manager_features_list_delete'), array('class' => 'btn btn-danger')) }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>
