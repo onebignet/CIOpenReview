@@ -44,9 +44,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <label>{{= lang('manager_site_settings_form_site_name') }}</label>
-                    <input class="form-control type=" text" value="{{= set_value('site_name', $site_name) }}"
-                    name="site_name"
-                    id="site_name">
+                    <input class="form-control" type="text" value="{{= set_value('site_name', $site_name) }}"
+                           name="site_name"
+                           id="site_name">
                     {{= form_error('site_name') }}
                     <p class="help-block">{{= lang('manager_site_settings_form_site_name_info') }}</p>
 
