@@ -232,7 +232,7 @@ class Ad extends CI_Controller
 					$visible_on_review_page = isset($_POST['visible_on_review_page']) ? 1 : 0;
 					// add the ad
 					debug('add the ad');
-					$this->Ad_model->add_new_add($name, $orig_file_name, $remote_image_url, $height, $width, $text, $link, $visible_in_sidebar, $visible_in_lists, $visible_on_review_page);
+					$this->Ad_model->add_ad($name, $orig_file_name, $remote_image_url, $height, $width, $text, $link, $visible_in_sidebar, $visible_in_lists, $visible_on_review_page);
 					$data['message'] = lang('manager_ad_add_success');
 					// clear form validation data
 					$this->form_validation->clear_fields();
