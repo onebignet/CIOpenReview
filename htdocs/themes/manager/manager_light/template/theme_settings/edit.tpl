@@ -58,7 +58,7 @@
                     {{= form_error('manager_theme') }}
                 </div>
                 <div class="col-md-3">
-                    {{= form_dropdown('theme', $manager_themes, $selected_manager_theme, array('class' => 'form-control')) }}
+                    {{= form_dropdown('manager_theme', $manager_themes, $selected_manager_theme, array('class' => 'form-control')) }}
                 </div>
             </div>
             <div class="row">
