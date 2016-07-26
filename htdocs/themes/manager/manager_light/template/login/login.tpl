@@ -40,35 +40,30 @@
     <h3 class="login_error">{{= $message }}</h3>
 
     <p>&nbsp;</p>
+
     {{ endif }}
-    <form class="loginform" action="{{= site_url('/manager/login/') }}" method="post">
-        <div class="formblock">
-            <div class="loginleft">
-                <label>{{= lang('manager_login_username') }}</label>
-            </div>
-            <div class="loginright">
-                <input class="userpass" type="text" name="login_username" id="login_username"
-                       value="{{= set_value('login_username') }}">
-                {{= form_error('login_username') }}
-            </div>
-            <p>&nbsp;</p>
+    <div class="col-md-6 col-md-offset-3">
+        <form class="loginform" action="{{= site_url('/manager/login/') }}" method="post">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Login to CIOpenReview Manager</h3>
+                </div>
+                <div class="box-body">
+                    <label>{{= lang('manager_login_username') }}</label>
+                    <input class="form-control" type="text" placeholder="Username" name="login_username"
+                           id="login_username">
+                    <br>
+                    <label>{{= lang('manager_login_password') }}</label>
+                    <input class="form-control" type="password" placeholder="Password" name="login_password"
+                           id="login_password">
 
-            <div class="loginleft">
-                <label>{{= lang('manager_login_password') }}</label>
-            </div>
-            <div class="loginright">
-                <input class="userpass" type="password" name="login_password" id="login_password" value="">
-                {{= form_error('login_password') }}
-            </div>
-            <p>&nbsp;</p>
-
-            <div class="loginleft">
-                &nbsp;
-            </div>
-            <div class="loginforgot">
-                <label>{{= anchor('manager/forgot_login',lang('manager_login_forgot')) }}</label>
-            </div>
-            <input type="submit" name="login_submit" id="button" value="{{= lang('manager_login_submit') }}">
-        </div>
-    </form>
-</div>
+                </div>
+                <div class="box-footer">
+                    <div class="loginforgot">
+                        <label>{{= anchor('manager/forgot_login',lang('manager_login_forgot')) }}</label>
+                    </div>
+                    <button type="submit" name="login_submit" id="button"
+                            class="btn btn-primary btn-success" value="{{= lang('manager_login_submit') }}">{{= lang('manager_login_submit') }}</button>
+                </div>
+        </form>
+    </div>

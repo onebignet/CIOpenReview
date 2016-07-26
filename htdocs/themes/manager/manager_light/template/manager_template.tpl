@@ -76,6 +76,9 @@
 
 
 
+
+
+
     </script>
 </head>
 <body class="hold-transition skin-green sidebar-mini">
@@ -101,25 +104,40 @@
     <!-- /.container-fluid -->
 </header>
 <!-- END OF NAVIGATION -->
-<div class="row">
-    <div class="col-md-12">
-
+<aside class="main-sidebar">
+    <section class="sidebar">
         {{ if(isset($sidebar)): }}
-        <div class="col-md-3">
-            {{= $sidebar }}
-        </div>
+        {{= $sidebar }}
         {{ endif }}
-        <div class="col-md-8">
-            {{= $content }}
-        </div>
-    </div>
+    </section>
+</aside>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            {{= $page_header }}
+            <small>{{= $page_description }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Manager</a></li>
+            <li class="active">{{= $current_page }}</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+        {{= $content }}
+
+    </section>
+    <!-- /.content -->
 </div>
-<div class="row">
-    <div class="col-sm-12 text-center">
-        <p>Copyright &copy;2015 - {{= date("Y") }} <a class="footerlink" href="http://ciopenreview.com">CIOpenReview</a>
-        </p>
-    </div>
-</div>
+<!-- /.content-wrapper -->
+
+<footer class="main-footer">
+    <p>Copyright &copy;2015 - {{= date("Y") }} <a class="footerlink" href="http://ciopenreview.com">CIOpenReview</a>
+    </p>
+</footer>
 <!-- jQuery 2.2.4 -->
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
