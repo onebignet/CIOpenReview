@@ -43,7 +43,7 @@
             <p>&nbsp;</p>
             <div class="row">
                 <div class="col-md-9">
-                    {{= lang('manager_theme_settings_form_theme') }}
+                    <label>{{= lang('manager_theme_settings_form_theme') }}</label>
                     <p class="help-block">{{= lang('manager_theme_settings_form_theme_info') }}</p>
                     {{= form_error('theme') }}
                 </div>
@@ -53,7 +53,7 @@
             </div>
             <div class="row">
                 <div class="col-md-9">
-                    {{= lang('manager_theme_settings_form_manager_theme') }}
+                    <label> {{= lang('manager_theme_settings_form_manager_theme') }}</label>
                     <p class="help-block">{{= lang('manager_theme_settings_form_manager_theme_info') }}</p>
                     {{= form_error('manager_theme') }}
                 </div>
@@ -63,7 +63,7 @@
             </div>
             <div class="row">
                 <div class="col-md-9">
-                    {{= lang('manager_theme_settings_form_logo_upload') }}
+                    <label>{{= lang('manager_theme_settings_form_logo_upload') }}</label>
                     <p class="help-block">{{= lang('manager_theme_settings_form_logo_upload_info') }}</p>
                     {{= $upload_error }}
                 </div>
@@ -73,7 +73,7 @@
             </div>
             <div class="row form-row">
                 <div class="col-md-9">
-                    {{= lang('manager_theme_settings_form_logo_preview') }}
+                    <label>{{= lang('manager_theme_settings_form_logo_preview') }}</label>
                     {{= $upload_error }}
                 </div>
                 <div class="col-md-3">

@@ -30,187 +30,162 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_review_edit_title') }}</div>
-        {{ if(isset($message)): }}
-        <p>&nbsp;</p>
+{{
+/**
+* CIOpenReview
+*
+* An Open Source Review Site Script based on OpenReviewScript
+*
+* @package        CIOpenReview
+* @subpackage          manager
+* @author        CIOpenReview.com
+* @copyright           Copyright (c) 2015 CIOpenReview.com , Portions Copyright (c) 2011-2012, OpenReviewScript.org
+* @license        This file is part of CIOpenReview - free software licensed under the GNU General Public License version 2
+* @link        http://ciopenreview.com
+*/
+// ------------------------------------------------------------------------
+//
+/**    This file is part of CIOpenReview.
+*
+*    CIOpenReview is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 2 of the License, or
+*    (at your option) any later version.
+*
+*    CIOpenReview is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with CIOpenReview.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
-        <h3>{{= $message }}</h3>
-        {{ endif }}
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('manager/reviews', lang('manager_review_manage_back_to_reviews')) }}</strong></p>
-
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('review/show/'.$review->seo_title, lang('manager_review_preview'), 'target="_blank"') }}</strong>
-        </p>
-
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('manager/comments/show/'.$review->id, lang('manager_review_manage_comments')) }}</strong>
-        </p>
-
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('manager/review_ratings/show/'.$review->id, lang('manager_review_manage_ratings')) }}</strong>
-        </p>
-
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('manager/review_features/show/'.$review->id, lang('manager_review_manage_features')) }}</strong>
-        </p>
-
-        <p>&nbsp;</p>
-
-        <p>&nbsp;</p>
-
-        <form id="form" accept-charset="UTF-8" class="myform" name="form" method="post" enctype="multipart/form-data"
-              lang="ru" action="{{= base_url() . 'manager/review/edit/' . $review->id }}">
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_title') }}
-                        <span class="small">{{= lang('manager_review_form_title_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="title" id="title"
-                           value="{{= set_value('title', $review->title) }}"/>
+}}
+{{ if(isset($message)): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
+<form id="form" accept-charset="UTF-8" class="myform" name="form" method="post" enctype="multipart/form-data"
+      action="{{= base_url() . 'manager/review/edit/' . $review->id }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_review_edit_title') }}</h3>
+            <div class="pull-right">
+                {{= anchor('manager/reviews', lang('manager_review_manage_back_to_reviews'), array('class' => 'btn btn-default')) }}
+                {{= anchor('manager/comments/show/'.$review->id, lang('manager_review_manage_comments'), array('target' => '_blank','class' => 'btn btn-primary btn-success')) }}
+                {{= anchor('manager/review_ratings/show/'.$review->id, lang('manager_review_manage_ratings'), array('class' => 'btn btn-primary btn-success')) }}
+                {{= anchor('manager/review_features/show/'.$review->id, lang('manager_review_manage_features'), array('class' => 'btn btn-primary btn-success')) }}
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_title') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('title', $review->title) }}"
+                           name="title"
+                           id="title">
                     {{= form_error('title') }}
+                    <p class="help-block">{{= lang('manager_review_form_title_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_description') }}
-                        <span class="small">{{= lang('manager_review_form_description_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_description') }}</label>
                     <textarea cols="40" rows="10" class="long" name="description"
-                              id="description">{{= set_value('description', $review->description) }}</textarea>
+                              id="description">{{= set_value('description',$review->description) }}</textarea>
                     {{= form_error('description') }}
+                    <p class="help-block">{{= lang('manager_review_form_description_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_category') }}
-                        <span class="small">{{= lang('manager_review_form_category_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    {{= form_dropdown('category_id', $categories, $selected_category) }}
+            <div class="row">
+                <div class="col-md-9">
+                    <label>{{= lang('manager_review_form_category') }}</label>
+                    <p class="help-block">{{= lang('manager_review_form_category_info') }}</p>
                     {{= form_error('category_id') }}
                 </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_featured') }}
-                        <span class="small">{{= lang('manager_review_form_featured_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input name="featured" id="featured" type="checkbox" {{= $featured }}>
+                <div class="col-md-3">
+                    {{= form_dropdown('category_id', $categories, $selected_category, array('class' => 'form-control')) }}
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_tags') }}
-                        <span class="small">{{= lang('manager_review_form_tags_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input type="text" name="tags" id="tags" value="{{= set_value('tags', $review->tags) }}"/>
+            <div class="form-checkbox">
+                <label><input name="featured" id="featured"
+                              type="checkbox" {{= $featured }}> {{= lang('manager_review_form_featured') }}
+                </label>
+                <p class="help-block">{{= lang('manager_review_form_featured_info') }}</p>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_tags') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('title', $review->tags) }}"
+                           name="tags"
+                           id="tags">
                     {{= form_error('tags') }}
+                    <p class="help-block">{{= lang('manager_review_form_tags_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_current_image') }}
-                        <span class="small">{{= lang('manager_review_form_current_image_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <img src="{{= $current_image }}"/>
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_image_upload') }}
-                        <span class="small">{{= lang('manager_review_form_image_upload_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_image_upload') }}</label>
                     <input type="file" name="userfile" size="20"/>
                     <span class="error">{{= $upload_error }}</span>
+                    <p class="help-block">{{= lang('manager_review_form_upload_image_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_image_url') }}
-                        <span class="small">{{= lang('manager_review_form_image_url_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input type="text" name="image_url" id="image_url"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_image_url') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('image_url', $review->image_url) }}"
+                           name="image_url"
+                           id="image_url">
                     <span class="error">{{= $grab_error }}</span>
+                    <p class="help-block">{{= lang('manager_review_form_upload_image_url_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_vendor') }}
-                        <span class="small">{{= lang('manager_review_form_vendor_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="vendor" id="vendor"
-                           value="{{= set_value('vendor',$review->vendor) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_vendor') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('vendor', $review->vendor) }}"
+                           name="vendor"
+                           id="vendor">
                     {{= form_error('vendor') }}
+                    <p class="help-block">{{= lang('manager_review_form_vendor_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_link') }}
-                        <span class="small">{{= lang('manager_review_form_link_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="link" id="link"
-                           value="{{= set_value('link', $review->link) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_link') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('link', $review->link) }}"
+                           name="link"
+                           id="link">
                     {{= form_error('link') }}
+                    <p class="help-block">{{= lang('manager_review_form_link_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_meta_keywords') }}
-                        <span class="small">{{= lang('manager_review_form_meta_keywords_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="meta_keywords" id="titmeta_keywordsle"
-                           value="{{= set_value('meta_keywords', $review->meta_keywords) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_meta_keywords') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('meta_keywords', $review->meta_keywords) }}"
+                           name="meta_keywords"
+                           id="meta_keywords">
                     {{= form_error('meta_keywords') }}
+                    <p class="help-block">{{= lang('manager_review_form_meta_keywords_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_meta_description') }}
-                        <span class="small">{{= lang('manager_review_form_meta_description_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="meta_description" id="meta_description"
-                           value="{{= set_value('meta_description', $review->meta_description) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_meta_description') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('meta_description', $review->meta_description) }}"
+                           name="meta_description"
+                           id="meta_description">
                     {{= form_error('meta_description') }}
+                    <p class="help-block">{{= lang('manager_review_form_meta_description_info') }}</p>
                 </div>
             </div>
-            <input type="submit" name="review_submit" id="button"
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="review_submit" id="button" class="btn btn-primary btn-success"
                    value="{{= lang('manager_review_form_submit_button') }}"/>
-        </form>
-    </div>
-</div>
+        </div>
+</form>
