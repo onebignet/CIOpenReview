@@ -46,7 +46,8 @@
                     <h3 class="box-title">Forgotten Password</h3>
                 </div>
                 <div class="box-body">
-                    <label>{{= lang('manager_login_forgot_email_info') }}</label>
+                    <label>{{= lang('manager_user_form_email') }}</label>
+                    <p class="help-block">{{= lang('manager_login_forgot_email_info') }}</p>
                     <input class="form-control" type="text" type="text" name="login_email" id="login_email"
                            value="{{= set_value('login_email') }}">
                     {{= form_error('login_email') }}
