@@ -30,23 +30,37 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_categories_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/category/add', lang('manager_categories_add_category')) }}</b></p>
+<div class="box">
 
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($allcategories as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">
-            {{= character_limiter($result->name, 50) }}
-        </p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_categories_title') }}</h3>
+        {{= anchor('manager/category/add', lang('manager_categories_add_category'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-        <p class="manager_narrow">{{= anchor('manager/category/edit/'.$result->id, lang('manager_categories_list_edit')) }}</p>
-        {{ if (count($allcategories)>1): }}
-        <p class="manager_narrow">{{= anchor('manager/category/delete/'.$result->id, lang('manager_categories_list_delete'),' id="darkblue"') }}</p>
-        {{ endif }}
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Category Name</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($allcategories as $result): }}
+            <tr>
+                <td>{{= character_limiter($result->name, 50) }}</td>
+                <td>
+                    {{= anchor('manager/category/edit/'.$result->id, lang('manager_categories_list_edit'), array('class' => 'btn btn-default')) }}
+                    {{ if (count($allcategories)>1): }}
+                    {{= anchor('manager/category/delete/'.$result->id, lang('manager_categories_list_delete'), array('class' => 'btn btn-danger')) }}
+                    {{ endif }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>
