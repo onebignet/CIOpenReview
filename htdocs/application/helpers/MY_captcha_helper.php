@@ -45,15 +45,15 @@ function create_captcha($data = '', $img_path = '', $img_url = '', $font_path = 
 	}
 
 	if ($img_path == '' OR $img_url == '') {
-		return FALSE;
+		return "Image Path: $img_path is missing.";;
 	}
 
 	if (!@is_dir($img_path)) {
-		return FALSE;
+		return "Image Path: $img_path is not a valid directory.";
 	}
 
 	if (!is_writable($img_path)) {
-		return FALSE;
+		return "Image Path: $img_path is not writable.";
 	}
 
 	if (!extension_loaded('gd')) {
@@ -201,7 +201,6 @@ function create_captcha($data = '', $img_path = '', $img_url = '', $font_path = 
 	$img = "<img src=\"$img_url$img_name\" width=\"$img_width\" height=\"$img_height\" style=\"border:0;\" alt=\" \" />";
 
 	ImageDestroy($im);
-
 	return array('word' => $word, 'time' => $now, 'image' => $img);
 }
 /* End of file MY_captcha_helper.php */
