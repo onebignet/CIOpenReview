@@ -30,25 +30,41 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_users_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/user/add',lang('manager_users_add_user')) }}</b></p>
+<div class="box">
 
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($allusers as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">{{= $result->name }}</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_users_title') }}</h3>
+        {{= anchor('manager/user/add', lang('manager_users_add_user'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-        <p class="manager_narrow">{{= $result->level }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/user/edit/'.$result->id, lang('manager_user_list_edit')) }}</p>
-        {{ if(($enough_managers_to_delete) OR ($result->level<10)): }}
-        <p class="manager_narrow">{{= anchor('manager/user/delete/'.$result->id, lang('manager_user_list_delete'),'id="darkblue"') }}</p>
-        {{ else: }}
-        <p class="manager_narrow" style="width:150px;">{{= lang('manager_user_list_cant_delete') }}</p>
-        {{ endif }}
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-8">User Name</th>
+                <th class="col-md-1">Level</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($allusers as $result): }}
+            <tr>
+                <td>{{= character_limiter($result->name, 50) }}</td>
+                <td>{{= $result->level }}</td>
+                <td>
+                    {{= anchor('manager/user/edit/'.$result->id, lang('manager_features_list_edit'), array('class' => 'btn btn-default')) }}
+                    {{ if(($enough_managers_to_delete) OR ($result->level<10)): }}
+                    {{= anchor('manager/user/delete/'.$result->id, lang('manager_user_list_delete'), array('class' => 'btn btn-danger')) }}
+                    {{ else: }}
+                    <br>{{= lang('manager_user_list_cant_delete') }}
+                    {{ endif }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

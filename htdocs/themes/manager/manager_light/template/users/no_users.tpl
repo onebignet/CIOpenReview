@@ -30,16 +30,32 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_users_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/user/add',lang('manager_users_add_user')) }}</b></p>
 
-    <p class="break">&nbsp;</p>
+<div class="box">
 
-    <p class="break">&nbsp;</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_users_title') }}</h3>
+        {{= anchor('manager/user/add', lang('manager_users_add_user'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-    <p>{{= lang('manager_users_no_users') }}</p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+        <div class="box-tools">
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-9">User Name</th>
+                <th class="col-md-1">Level</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    {{= lang('manager_users_no_users') }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

@@ -30,22 +30,35 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_ads_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/ad/add',lang('manager_ads_add_ad')) }}</b></p>
+<div class="box">
 
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($allads as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">
-            &nbsp;{{= $result->name }}
-        </p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_ads_title') }}</h3>
+        {{= anchor('manager/ad/add', lang('manager_ads_add_ad'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-        <p class="manager_narrow">{{= anchor('manager/ad/edit/'.$result->id, lang('manager_ads_list_edit')) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/ad/delete/'.$result->id, lang('manager_ads_list_delete'),' id="darkblue"') }}</p>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Feature Name</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($allads as $result): }}
+            <tr>
+                <td>&nbsp;{{= $result->name }}</td>
+                <td>
+                    {{= anchor('manager/ad/edit/'.$result->id, lang('manager_ads_list_edit'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('manager/ad/delete/'.$result->id, lang('manager_ads_list_delete'), array('class' => 'btn btn-danger')) }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>
