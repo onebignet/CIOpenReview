@@ -30,16 +30,31 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_articles_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/article/add',lang('manager_articles_add_article')) }}</b></p>
 
-    <p class="break">&nbsp;</p>
+<div class="box">
 
-    <p class="break">&nbsp;</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_articles_title') }}</h3>
+        {{= anchor('manager/article/add', lang('manager_articles_add_article'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-    <p>{{= lang('manager_article_no_articles') }}</p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+        <div class="box-tools">
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Article Name</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{= lang('manager_article_no_articles') }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>
