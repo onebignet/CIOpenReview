@@ -8,3 +8,7 @@
 .form-row {
     margin-bottom: 20px;
 }
+
+.btn-no-underline {
+    text-decoration: none;
+}

@@ -32,7 +32,6 @@
 }}
 
 <div class="box">
-
     <div class="box-header">
         <h3 class="box-title">{{= lang('manager_comments_title').'"'.$review->title.'"' }}</h3>
         {{= anchor('manager/comment/add/'.$review->id, lang('manager_comments_add_comment'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}

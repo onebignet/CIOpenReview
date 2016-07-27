@@ -30,53 +30,45 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_review_features_add_title') . '"' . $review->title . '"' }}</div>
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">{{= lang('manager_review_features_go_back') }}
-            <strong>"{{= anchor('manager/review_features/show/'.$review->id, $review->title) }}"</strong></p>
-
-        <p>&nbsp;</p>
-        {{ if(isset($message)): }}
-        <p>&nbsp;</p>
-
-        <h3>{{= $message }}</h3>
-
-        <p>&nbsp;</p>
-        {{ endif }}
-        <p>&nbsp;</p>
-
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/review_feature/add/' . $review->id }}">
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_features_form_feature') }}
-                        <span class="small">{{= lang('manager_review_features_form_feature_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    {{= form_dropdown('feature_id', $features, $selected_feature) }}
+{{ if(isset($message)): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/review_feature/add/' . $review->id }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_review_features_add_title') . '"' . $review->title . '"' }}</h3>
+            <div class="pull-right">
+                {{= anchor('manager/review_features/show/'.$review->id, lang('manager_review_features_go_back').' "'.$review->title.'"', array('class' => 'btn btn-default')) }}
+            </div>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-9">
+                    <label>{{= lang('manager_review_features_form_feature') }}</label>
+                    <p class="help-block">{{= lang('manager_review_features_form_feature_info') }}</p>
                     {{= form_error('feature_id') }}
                 </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_features_form_value') }}
-                        <span class="small">{{= lang('manager_review_features_form_value_info') }}</span>
-
-                    </label>
+                <div class="col-md-3">
+                    {{= form_dropdown('feature_id', $features, $selected_feature,array('class' => 'form-control')) }}
                 </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="value" id="value"
-                           value="{{= set_value('value',$review_feature->value) }}"/>
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <label>{{= lang('manager_review_features_form_value') }}</label>
+                    <p class="help-block">{{= lang('manager_review_features_form_value_info') }}</p>
                     {{= form_error('value') }}
                 </div>
+                <div class="col-md-3">
+                    <input class="form-control" type="text" name="value" id="value"
+                           value="{{= set_value('value',$review_feature->value) }}"/>
+                </div>
             </div>
-            <input type="submit" name="review_feature_submit" style="width:300px" id="button"
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="review_feature_submit" id="button" class="btn btn-primary btn-success"
                    value="{{= lang('manager_review_features_form_submit_button') }}"/>
-        </form>
+        </div>
     </div>
-</div>
+</form>
