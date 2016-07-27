@@ -42,7 +42,7 @@
     <div class="box-body">
         <div class="row">
             <div class="col-md-12">
-                <label>{{= lang('manager_feature_delete_warning') }}</label>
+                <label>{{= lang('manager_rating_delete_warning') }}</label>
             </div>
             <div class="col-md-2 col-md-offset-5">
                 {{= anchor('manager/rating/deleted/'.$rating->id,lang('manager_rating_delete_confirm'), array('class' => 'btn btn-primary btn-danger')) }}
