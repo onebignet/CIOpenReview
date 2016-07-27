@@ -30,76 +30,68 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_page_edit_name') }}</div>
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('manager/pages', lang('manager_page_manage_back_to_pages')) }}</strong></p>
 
-        <p>&nbsp;</p>
+{{ if(isset($message)): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
 
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('page/show/'.$page->seo_name, lang('manager_page_preview'), 'target="_blank"') }}</strong>
-        </p>
-
-        <p>&nbsp;</p>
-
-        <p>&nbsp;</p>
-
-        <p>&nbsp;</p>
-
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/page/edit/' . $page->id }}">
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_page_form_name') }}
-                        <span class="small">{{= lang('manager_page_form_name_info') }}</span>
-
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="name" id="name"
-                           value="{{= set_value('name',$page->name) }}"/>
-                    {{= form_error('name') }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/page/edit/' . $page->id }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_page_edit_title') }}</h3>
+            <div class="pull-right">
+                {{= anchor('manager/pages', lang('manager_page_manage_back_to_pages'), array('class' => 'btn btn-default')) }}
+                {{= anchor('page/show/'.$page->seo_name, lang('manager_page_preview'), array('target' => '_blank','class' => 'btn btn-primary btn-success')) }}
+            </div>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_page_form_name') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('name', $page->name) }}"
+                           name="name"
+                           id="name">
+                    {{= form_error('title') }}
+                    <p class="help-block">{{= lang('manager_page_form_name_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_page_form_content') }}
-                        <span class="small">{{= lang('manager_page_form_content_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_page_form_content') }}</label>
                     <textarea cols="40" rows="10" class="long" name="content"
                               id="pagecontent">{{= set_value('content',$page->content) }}</textarea>
                     {{= form_error('content') }}
+                    <p class="help-block">{{= lang('manager_page_form_content_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_page_form_meta_keywords') }}
-                        <span class="small">{{= lang('manager_page_form_meta_keywords_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="meta_keywords" id="meta_keywords"
-                           value="{{= set_value('meta_keywords',$page->meta_keywords) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_page_form_meta_keywords') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('meta_keywords', $page->meta_keywords) }}"
+                           name="meta_keywords"
+                           id="meta_keywords">
                     {{= form_error('meta_keywords') }}
+                    <p class="help-block">{{= lang('manager_page_form_meta_keywords_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_page_form_meta_description') }}
-                        <span class="small">{{= lang('manager_page_form_meta_description_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="meta_description" id="meta_description"
-                           value="{{= set_value('meta_description',$page->meta_description) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_page_form_meta_description') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('meta_description', $page->meta_description) }}"
+                           name="meta_description"
+                           id="meta_description">
                     {{= form_error('meta_description') }}
+                    <p class="help-block">{{= lang('manager_page_form_meta_description_info') }}</p>
                 </div>
             </div>
-            <input type="submit" name="page_submit" id="button" value="{{= lang('manager_page_form_submit_button') }}"/>
-        </form>
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="page_submit" id="button" class="btn btn-primary btn-success"
+                   value="{{= lang('manager_page_form_submit_button') }}"/>
+        </div>
     </div>
-</div>
+</form>
