@@ -47,7 +47,7 @@
                     <input class="form-control" type="text" value="{{= set_value('name', $page->name) }}"
                            name="name"
                            id="name">
-                    {{= form_error('title') }}
+                    {{= form_error('name') }}
                     <p class="help-block">{{= lang('manager_page_form_name_info') }}</p>
                 </div>
             </div>
