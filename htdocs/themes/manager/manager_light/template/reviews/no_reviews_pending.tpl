@@ -30,16 +30,28 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_reviews_pending_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/',lang('manager_reviews_back_to_manager')) }}</b></p>
+<div class="box">
 
-    <p class="break">&nbsp;</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_reviews_pending_title') }}</h3>
 
-    <p class="break">&nbsp;</p>
-
-    <p>{{= lang('manager_reviews_no_pending_reviews') }}</p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-6">Review Name</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td colspan="3"><p>{{= lang('manager_reviews_no_pending_reviews') }}</p></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

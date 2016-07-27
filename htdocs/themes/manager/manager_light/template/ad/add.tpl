@@ -30,138 +30,142 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_ad_add_title') }}</div>
-        <p>&nbsp;</p>
-        {{ if(isset($message)): }}
-        <p>&nbsp;</p>
+<script type="text/javascript">
+        tinymce.init({
+            mode: "exact",
+            elements: "text",
+            theme: "modern",
+            plugins: [
+                "advlist autolink lists link image charmap preview hr anchor pagebreak",
+                "searchreplace wordcount visualblocks visualchars code",
+                "insertdatetime media nonbreaking table contextmenu directionality",
+                "emoticons template paste textcolor colorpicker textpattern imagetools"
+            ],
+            toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+            toolbar2: "print preview media | forecolor backcolor emoticons",
+        });
 
-        <h3>{{= $message }}</h3>
 
-        <p>&nbsp;</p>
-        {{ endif }}
-        <p>&nbsp;</p>
 
-        <form id="form" class="myform" name="form" method="post" enctype="multipart/form-data"
-              enctype="multipart/form-data" action="{{= base_url() . 'manager/ad/add' }}">
 
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_name') }}
-                        <span class="small">{{= lang('manager_ad_form_name_info') }}</span>
-
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="name" id="name"
-                           value="{{= set_value('name', $ad->name) }}"/>
-                    {{= form_error('name') }}
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_text') }}
-                        <span class="small">{{= lang('manager_ad_form_text_info') }}</span>
-
-                    </label>
-                </div>
-                <div class="formright">
-                    <textarea cols="40" rows="8" name="text" class="strong"
-                              id="text">{{= set_value('text', $ad->text) }}</textarea>
-                    {{= form_error('text') }}
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_link') }}
-                        <span class="small">{{= lang('manager_ad_form_link_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="link" id="link"
-                           value="{{= set_value('link', $ad->link) }}"/>
-                    {{= form_error('link') }}
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_image_upload') }}
-                        <span class="small">{{= lang('manager_ad_form_image_upload_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input type="file" name="userfile" size="20"/>
-                    <span class="error">{{= $upload_error }}</span>
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_image_url') }}
-                        <span class="small">{{= lang('manager_ad_form_image_url_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input type="text" name="remote_image_url" id="remote_image_url"
-                           value="{{= set_value('remote_image_url',$ad->image_url) }}"/>
-                    <span class="error">{{= $url_error }}</span>
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_image_width') }}
-                        <span class="small">{{= lang('manager_ad_form_image_width_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input type="text" name="image_width" id="image_width"
-                           value="{{= set_value('image_width',$ad->image_width) }}"/>
-                    <span class="error">{{= $image_width_error }}</span>
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_image_height') }}
-                        <span class="small">{{= lang('manager_ad_form_image_height_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input type="text" name="image_height" id="image_height"
-                           value="{{= set_value('image_height',$ad->image_height) }}"/>
-                    <span class="error">{{= $image_height_error }}</span>
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_visible_in_sidebar') }}
-                        <span class="small">{{= lang('manager_ad_form_visible_in_sidebar_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input name="visible_in_sidebar" id="approved" type="checkbox" CHECKED>
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_visible_in_lists') }}
-                        <span class="small">{{= lang('manager_ad_form_visible_in_lists_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input name="visible_in_lists" id="approved" type="checkbox" CHECKED>
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_ad_form_visible_on_review_page') }}
-                        <span class="small">{{= lang('manager_ad_form_visible_on_review_page_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input name="visible_on_review_page" id="approved" type="checkbox" CHECKED>
-                </div>
-            </div>
-            <input type="submit" name="ad_submit" id="button" value="{{= lang('manager_ad_form_submit_button') }}"/>
-        </form>
-    </div>
+</script>
+{{ if(isset($message)): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
 </div>
+{{ endif }}
+
+<form id="form" class="myform" name="form" method="post" enctype="multipart/form-data"
+      enctype="multipart/form-data" action="{{= base_url() . 'manager/ad/add' }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_ad_add_title') }}</h3>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_ad_form_name') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('name', $ad->name) }}"
+                           name="name"
+                           id="name">
+                    {{= form_error('name') }}
+                    <p class="help-block">{{= lang('manager_ad_form_name_info') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_ad_form_text') }}</label>
+                    <textarea cols="40" rows="10" class="form-control" name="text"
+                              id="text">{{= set_value('text',$ad->text) }}</textarea>
+                    {{= form_error('text') }}
+                    <p class="help-block">{{= lang('manager_ad_form_text_info') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_ad_form_link') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('link', $ad->link) }}"
+                           name="link"
+                           id="link">
+                    {{= form_error('link') }}
+                    <p class="help-block">{{= lang('manager_ad_form_link_info') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <label>{{= lang('manager_ad_form_image_upload') }}</label>
+
+                    <span class="label label-danger">{{= $upload_error }}</span>
+                    <p class="help-block">{{= lang('manager_ad_form_image_upload_info') }}</p>
+                </div>
+                <div class="col-md-3">
+                    <input type="file" name="userfile" size="20"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_ad_form_image_url') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('remote_image_url', $ad->remote_image_url) }}"
+                           name="remote_image_url"
+                           id="remote_image_url">
+                    {{= form_error('remote_image_url') }}
+                    <p class="help-block">{{= lang('manager_ad_form_image_url_info') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_ad_form_image_width') }}</label>
+                            <p class="help-block">{{= lang('manager_ad_form_image_width_info') }}</p>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('image_width', $ad->image_width) }}"
+                                   name="image_width"
+                                   id="image_width">
+                        </div>
+                        {{= form_error('image_width') }}
+                    </div>
+                    <div class="row form-row">
+                        <div class="col-md-10">
+                            <label>{{= lang('manager_ad_form_image_height') }}</label>
+                            <p class="help-block">{{= lang('manager_ad_form_image_height_info') }}</p>
+                        </div>
+                        <div class="col-xs-2">
+                            <input class="form-control" type="text"
+                                   value="{{= set_value('image_height', $ad->image_height) }}"
+                                   name="image_height"
+                                   id="image_height">
+                        </div>
+                        {{= form_error('image_height') }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-checkbox">
+                        <label><input name="visible_in_sidebar" id="approved"
+                                      type="checkbox" CHECKED> {{= lang('manager_ad_form_visible_in_sidebar') }}
+                        </label>
+                        <p class="help-block">{{= lang('manager_ad_form_visible_in_sidebar_info') }}</p>
+                    </div>
+                    <div class="form-checkbox">
+                        <label><input name="visible_in_lists" id="approved"
+                                      type="checkbox" CHECKED> {{= lang('manager_ad_form_visible_in_lists') }}
+                        </label>
+                        <p class="help-block">{{= lang('manager_ad_form_visible_in_lists_info') }}</p>
+                    </div>
+                    <div class="form-checkbox">
+                        <label><input name="visible_on_review_page" id="approved"
+                                      type="checkbox" CHECKED> {{= lang('manager_ad_form_visible_on_review_page') }}
+                        </label>
+                        <p class="help-block">{{= lang('manager_ad_form_visible_on_review_page_info') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="ad_submit" id="button" class="btn btn-primary btn-success"
+                   value="{{= lang('manager_ad_form_submit_button') }}"/>
+        </div>
+    </div>
+</form>

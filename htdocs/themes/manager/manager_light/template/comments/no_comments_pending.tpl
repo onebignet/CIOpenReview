@@ -30,16 +30,31 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_comments_pending_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/',lang('manager_comments_back_to_manager')) }}</b></p>
+<div class="box">
 
-    <p class="break">&nbsp;</p>
-
-    <p class="break">&nbsp;</p>
-
-    <p>{{= lang('manager_comments_no_pending_comments') }}</p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_comments_pending_title') }}</h3>
+        <div class="pull-right">
+            {{= anchor('manager/',lang('manager_comments_back_to_manager'), array('class' => 'btn btn-success')) }}
+        </div>
+        <div class="box-tools">
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Comment</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{= lang('manager_comments_no_pending_comments') }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

@@ -30,16 +30,31 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_ratings_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/rating/add',lang('manager_ratings_add_rating')) }}</b></p>
 
-    <p class="break">&nbsp;</p>
+<div class="box">
 
-    <p class="break">&nbsp;</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_ratings_title') }}</h3>
+        {{= anchor('manager/rating/add', lang('manager_ratings_add_rating'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-    <p>{{= lang('manager_rating_no_ratings') }}</p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+        <div class="box-tools">
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Rating Name</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{= lang('manager_rating_no_ratings') }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

@@ -30,39 +30,46 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_reviews_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/review/add',lang('manager_reviews_add_review')) }}</b></p>
+<div class="box">
 
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach($allreviews as $result): }}
-    <div class="manager_row">
-        <p class="manager_left_2">{{= anchor('review/show/'.$result->seo_title, character_limiter($result->title, 50),'target="_blank"') }}
-        </p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_reviews_title') }}</h3>
+        {{= anchor('manager/review/add',lang('manager_reviews_add_review'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-        <p class="manager_narrow">
-            {{ if ($result->approved > 0): }}
-            <span class="approved"></span>
-            {{ else: }}
-            <span class="pending"></span>
-            {{ endif }}
-        </p>
-
-        <p class="manager_narrow">{{= anchor('manager/review/edit/'.$result->id, lang('manager_review_list_edit')) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/review/delete/'.$result->id, lang('manager_review_list_delete'),'id="darkblue"') }}</p>
-        {{ if ($result->approved > 0): }}
-        <p class="manager_narrow">{{= anchor('manager/review/unapprove/'.$result->id, lang('manager_reviews_not_approve'),' id="darkblue"') }}</p>
-        {{ else: }}
-        <p class="manager_narrow">{{= anchor('manager/review/approve/'.$result->id, lang('manager_reviews_approve'),' id="darkblue"') }}</p>
-        {{ endif }}
-        <p class="manager_narrow">{{= anchor('manager/review_features/show/'.$result->id, lang('manager_review_list_features')) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/review_ratings/show/'.$result->id, lang('manager_review_list_ratings')) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/comments/show/'.$result->id, lang('manager_review_list_comments')) }}</p>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-6">Review Name</th>
+                <th>Update</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach($allreviews as $result): }}
+            <tr>
+                <td>{{= anchor('review/show/'.$result->seo_title, character_limiter($result->title, 50),'target="_blank"') }}</td>
+                <td>
+                    {{= anchor('manager/review_features/show/'.$result->id, lang('manager_review_list_features'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('manager/review_ratings/show/'.$result->id, lang('manager_review_list_ratings'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('manager/comments/show/'.$result->id, lang('manager_review_list_comments'), array('class' => 'btn btn-default')) }}
+                </td>
+                <td>
+                    {{= anchor('manager/review/edit/'.$result->id, lang('manager_review_list_edit'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('manager/review/delete/'.$result->id, lang('manager_review_list_delete'), array('class' => 'btn btn-danger')) }}
+                    {{ if ($result->approved > 0): }}
+                    {{= anchor('manager/review/unapprove/'.$result->id, lang('manager_reviews_not_approve'), array('class' => 'btn btn-warning')) }}
+                    {{ else: }}
+                    {{= anchor('manager/review/approve/'.$result->id, lang('manager_reviews_approve'), array('class' => 'btn btn-success')) }}
+                    {{ endif }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

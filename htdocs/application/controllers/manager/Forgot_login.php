@@ -81,7 +81,7 @@ class Forgot_login extends CI_Controller
 						'rules' => 'trim|required'
 					)
 				);
-				$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+				$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 				$this->form_validation->set_rules($config);
 				debug('validate form data');
 				// validate the form data

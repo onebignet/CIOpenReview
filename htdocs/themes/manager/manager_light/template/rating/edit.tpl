@@ -30,28 +30,32 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_rating_edit_title') }}</div>
-        <p>&nbsp;</p>
 
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/rating/edit/' . $rating->id }}">
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_rating_form_name') }}
-                        <span class="small">{{= lang('manager_rating_form_name_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="name" id="name"
-                           value="{{= set_value('name', $rating->name) }}"/>
+{{ if(isset($message)): }}
+<div class="callout callout-warning" xmlns="http://www.w3.org/1999/html">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/rating/edit/' . $rating->id }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_rating_edit_title') }}</h3>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_rating_form_name') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('name', $rating->name) }}"
+                           name="name"
+                           id="name">
                     {{= form_error('name') }}
+                    <p class="help-block">{{= lang('manager_rating_form_name_info') }}</p>
                 </div>
             </div>
-            <input type="submit" name="rating_submit" id="button"
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="rating_submit" id="button" class="btn btn-primary btn-success"
                    value="{{= lang('manager_rating_form_submit_button') }}"/>
-        </form>
+        </div>
     </div>
-</div>
+</form>

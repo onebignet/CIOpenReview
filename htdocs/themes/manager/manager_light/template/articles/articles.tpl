@@ -30,20 +30,35 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_articles_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/article/add',lang('manager_articles_add_article')) }}</b></p>
+<div class="box">
 
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($allarticles as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">{{= anchor('article/show/'.$result->seo_title, character_limiter($result->title, 50),'target="_blank"') }}</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_articles_title') }}</h3>
+        {{= anchor('manager/article/add', lang('manager_articles_add_article'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-        <p class="manager_narrow">{{= anchor('manager/article/edit/'.$result->id, lang('manager_article_list_edit')) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/article/delete/'.$result->id, lang('manager_article_list_delete'),'id="darkblue"') }}</p>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Article Name</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($allarticles as $result): }}
+            <tr>
+                <td>{{= anchor('article/show/'.$result->seo_title, character_limiter($result->title, 50),'target="_blank"') }}</td>
+                <td>
+                    {{= anchor('manager/article/edit/'.$result->id, lang('manager_article_list_edit'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('manager/article/delete/'.$result->id, lang('manager_article_list_delete'), array('class' => 'btn btn-danger')) }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

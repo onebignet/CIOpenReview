@@ -30,16 +30,30 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_reviews_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/review/add',lang('manager_reviews_add_review')) }}</b></p>
+<div class="box">
 
-    <p class="break">&nbsp;</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_reviews_title') }}</h3>
+        {{= anchor('manager/review/add',lang('manager_reviews_add_review'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-    <p class="break">&nbsp;</p>
-
-    <p>{{= lang('manager_review_no_reviews') }}</p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-6">Review Name</th>
+                <th>Update</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td colspan="3"><p>{{= lang('manager_review_no_reviews') }}</p></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

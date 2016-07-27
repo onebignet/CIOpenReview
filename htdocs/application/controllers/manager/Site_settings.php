@@ -275,7 +275,7 @@ class Site_settings extends CI_Controller
 					'rules' => 'trim|required|callback__more_than_zero|max_length[2]|numeric'
 				)
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			$this->form_validation->set_message('_more_than_zero', lang('manager_more_than_zero'));
 			// validate the form data

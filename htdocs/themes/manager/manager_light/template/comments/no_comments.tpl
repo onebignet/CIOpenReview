@@ -14,20 +14,31 @@
 // ------------------------------------------------------------------------
 //
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_comments_title').'"'.$review->title.'"' }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/comment/add/'.$review->id,lang('manager_comments_add_comment')) }}</b>
-    </p>
+<div class="box">
 
-    <p class="nav_links">
-        <b>{{= anchor('manager/review/edit/'.$review->id,lang('manager_comments_back_to_review')) }}</b></p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_comments_title').'"'.$review->title.'"' }}</h3>
+        {{= anchor('manager/comment/add/'.$review->id,lang('manager_comments_add_comment'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-    <p class="break">&nbsp;</p>
-
-    <p class="break">&nbsp;</p>
-
-    <p>{{= lang('manager_comments_no_comments') }}</p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+        <div class="pull-right">
+            {{= anchor('manager/review/edit/'.$review->id,lang('manager_comments_back_to_review'), array('class' => 'btn btn-default')) }}
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Comment</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{= lang('manager_comments_no_comments') }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

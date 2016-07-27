@@ -30,45 +30,56 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_review_features_title').'"'.$review->title.'"' }}</div>
-    <p class="nav_links">
-        <b>{{= anchor('manager/review_feature/add/'.$review->id,lang('manager_review_features_add_feature')) }}</b></p>
-
-    <p class="nav_links">
-        <b>{{= anchor('manager/review/edit/'.$review->id,lang('manager_review_features_back_to_review')) }}</b></p>
-
-    <p class="break">&nbsp;</p>
-    {{ if ($this->session->flashdata('message')): }}
-    <p>&nbsp;</p>
-
-    <h3>{{= $this->session->flashdata('message') }}</h3>
-    {{ endif }}
-    <p class="break">&nbsp;</p>
-
-    <div class="header_row">{{= lang('manager_review_feature_edit_title') }}</div>
-    <form id="form" class="myform" name="form" method="post"
-          action="{{= base_url() . 'manager/review_features/edit/' . $review->id }}">
-        {{ foreach ($allreviewfeatures as $index=>$result): }}
-        <p>
-                        <span>
-                              {{= form_dropdown('feature_id'.$index, $features, $result->feature_id, 'class="dropdown_left"') }}
-                            {{= form_error('feature_id'.$index) }}
-                        </span>
-                        <span>
-                              <input class="input_right" type="text" name="value{{= $index }}" id="value{{= $index }}"
-                                     value="{{= set_value('value', $result->value) }}"/>
-                            {{= form_error('value'.$index) }}
-                        </span>
-            <span class="right_link"">{{= anchor('manager/review_feature/delete/'.$result->id,lang('manager_review_features_list_delete'),'id="darkblue"') }}</span>
-            <input type="hidden" name="review_feature_id{{= $index }}" value="{{= $result->review_feature_id }}"/>
-        </p>
-        {{ endforeach }}
-        <input type="hidden" name="feature_count" value="{{= count($allreviewfeatures) }}"/>
-
-        <div class="break"><p>&nbsp;</p></div>
-        <input type="hidden" name="review_features_submit" value="1">
-        <input type="submit" name="review_features_submit" style="width:300px" id="button"
-               value="{{= lang('manager_review_features_form_submit_button') }}"/>
-    </form>
+{{ if ($this->session->flashdata('message')): }}
+<div class="callout callout-warning">
+    <p>{{= $this->session->flashdata('message') }}</p>
 </div>
+{{ endif }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/review_features/edit/' . $review->id }}">
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">{{= lang('manager_review_features_title').'"'.$review->title.'"' }}</h3>
+            {{= anchor('manager/review_feature/add/'.$review->id, lang('manager_review_features_add_feature'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
+            <div class="pull-right">
+                {{= anchor('manager/review/edit/'.$review->id,lang('manager_review_features_back_to_review'), array('class' => 'btn btn-default')) }}
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th class="col-md-6">Feature</th>
+                    <th>Value</th>
+                    <th>Actions</th>
+                </tr>
+                {{ foreach ($allreviewfeatures as $index=>$result): }}
+                <input type="hidden" name="review_feature_id{{= $index }}" value="{{= $result->review_feature_id }}"/>
+                <tr>
+                    <td>
+                        {{= form_dropdown('feature_id'.$index, $features, $result->feature_id, 'class="form-control"') }}
+                        {{= form_error('feature_id'.$index) }}
+                    </td>
+                    <td>
+                        <input class="form-control" type="text" name="value{{= $index }}" id="value{{= $index }}"
+                               value="{{= set_value('value', $result->value) }}"/>
+                        {{= form_error('value'.$index) }}
+                    </td>
+                    <td>
+                        {{= anchor('manager/review_feature/delete/'.$result->review_feature_id, lang('manager_review_features_list_delete'), array('class' => 'btn btn-danger')) }}
+                    </td>
+                </tr>
+                {{ endforeach }}
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+
+            <input type="hidden" name="feature_count" value="{{= count($allreviewfeatures) }}"/>
+            <input type="submit" name="review_features_submit" class="btn btn-primary btn-success" id="button"
+                   value="{{= lang('manager_review_features_form_submit_button') }}"/>
+        </div>
+    </div>
+</form>

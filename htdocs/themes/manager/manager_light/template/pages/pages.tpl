@@ -30,22 +30,36 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_pages_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/page/add',lang('manager_pages_add_page')) }}</b></p>
+<div class="box">
 
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($allpages as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">{{= anchor('page/show/'.$result->seo_name, character_limiter($result->name, 50),'target="_blank"') }}</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_pages_title') }}</h3>
+        {{= anchor('manager/page/add', lang('manager_pages_add_page'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-        <p class="manager_narrow">{{= anchor('manager/page/edit/'.$result->id, lang('manager_page_list_edit')) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/page/delete/'.$result->id, lang('manager_page_list_delete'),'id="darkblue"') }}</p>
-
-        <p class="manager_narrow">{{= anchor('/page/show/'.$result->seo_name, lang('manager_page_list_preview'),'target="_blank"') }}</p>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-9">Feature Name</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($allpages as $result): }}
+            <tr>
+                <td>{{= anchor('page/show/'.$result->seo_name, character_limiter($result->name, 50),'target="_blank"') }}</td>
+                <td>
+                    {{= anchor('manager/page/edit/'.$result->id, lang('manager_page_list_edit'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('/page/show/'.$result->seo_name, lang('manager_page_list_preview'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('manager/page/delete/'.$result->id, lang('manager_page_list_delete'), array('class' => 'btn btn-danger')) }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

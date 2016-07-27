@@ -100,7 +100,7 @@ class Review_feature extends CI_Controller
 								'rules' => 'trim|required|min_length[1]|max_length[512]'
 							),
 						);
-						$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+						$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 						$this->form_validation->set_rules($config);
 						$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_feature'));
 						// validate the form data
@@ -184,7 +184,7 @@ class Review_feature extends CI_Controller
 					'rules' => 'trim|required|min_length[1]|max_length[512]'
 				),
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_feature'));
 			// validate the form data
@@ -273,8 +273,6 @@ class Review_feature extends CI_Controller
 			$this->Review_feature_model->delete_review_feature_by_id($id);
 			// delete the review feature
 			debug('delete the review feature');
-			$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_feature/deleted', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
-			$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
 			// redirect back to review features list for this review
 			redirect('/manager/review_features/show/' . $data['review']->id);
 		} else {

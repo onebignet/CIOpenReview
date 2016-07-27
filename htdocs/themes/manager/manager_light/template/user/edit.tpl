@@ -30,88 +30,80 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_user_edit_name') }}</div>
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('manager/users', lang('manager_user_manage_back_to_users')) }}</strong></p>
-
-        <p>&nbsp;</p>
-
-        <p>&nbsp;</p>
-
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/user/edit/' . $user->id }}">
-            {{ if ((($last_manager) && ($user->level >= 10))): }}
-            <div class="formblock">
-                <div class="formright" id="darkblue">
-                    <label style="text-align:justify;">{{= lang('manager_user_last_user') }}</label>
-                    <input type="hidden" name="level" id="level" value="10"/>
-                </div>
+{{ if(isset($message)): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
+{{ if ((($last_manager) && ($user->level >= 10))): }}
+<div class="callout callout-warning">
+    <p>{{= lang('manager_user_last_user') }}</p>
+</div>
+{{ endif }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/user/edit/' . $user->id }}">
+    {{ if ((($last_manager) && ($user->level >= 10))): }}
+    <input type="hidden" name="level" id="level" value="10"/>
+    {{ endif }}
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_user_edit_name') }}</h3>
+            <div class="pull-right">
+                {{= anchor('manager/users', lang('manager_user_manage_back_to_users'), array('class' => 'btn btn-default')) }}
             </div>
             <p>&nbsp;</p>
-            {{ endif }}
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_user_form_name') }}
-                        <span class="small">{{= lang('manager_user_form_name_info') }}</span>
-                        {{= form_error('name') }}
-                        {{ if(isset($name_error)): }}
-                        <span id="darkblue">{{= $name_error }}</span>
-                        {{ endif }}
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="name" id="name"
-                           value="{{= set_value('name',$user->name) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_user_form_name') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('name', $user->name) }}"
+                           name="name"
+                           id="name">
                     {{= form_error('name') }}
+                    {{ if(isset($name_error)): }}
+                    <span class="label label-danger">{{= $name_error }}</span>
+                    {{ endif }}
+                    <p class="help-block">{{= lang('manager_user_form_name_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_user_form_password') }}
-                        <span class="small">{{= lang('manager_user_form_password_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="password" name="password" id="password"
-                           value="{{= set_value('password',$user->password) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_user_form_password') }}</label>
+                    <input class="form-control" type="password" value="{{= set_value('password', $user->password) }}"
+                           name="password"
+                           id="password">
                     {{= form_error('password') }}
+                    <p class="help-block">{{= lang('manager_user_form_password_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_user_form_email') }}
-                        <span class="small">{{= lang('manager_user_form_email_info') }}</span>
-
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="email" id="email"
-                           value="{{= set_value('email',$user->email) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_user_form_email') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('email', $user->email) }}"
+                           name="email"
+                           id="email">
                     {{= form_error('email') }}
                     {{ if(isset($email_error)): }}
-                    <span id="darkblue">{{= $email_error }}</span>
+                    <span class="label label-danger">{{= $email_error }}</span>
                     {{ endif }}
+                    <p class="help-block">{{= lang('manager_user_form_email_info') }}</p>
                 </div>
             </div>
             {{ if ( ! (($last_manager) && ($user->level >= 10))): }}
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_user_form_level') }}
-                        <span class="small">{{= lang('manager_user_form_level_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="level" id="level"
-                           value="{{= set_value('level',$user->level) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_user_form_level') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('level', $user->level) }}"
+                           name="level"
+                           id="level">
                     {{= form_error('level') }}
+                    <p class="help-block">{{= lang('manager_user_form_level_info') }}</p>
                 </div>
             </div>
             {{ endif }}
-            <input type="submit" name="user_submit" id="button" value="{{= lang('manager_user_form_submit_button') }}"/>
-        </form>
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="user_submit" id="button" class="btn btn-primary btn-success"
+                   value="{{= lang('manager_user_form_submit_button') }}"/>
+        </div>
     </div>
-</div>
+</form>

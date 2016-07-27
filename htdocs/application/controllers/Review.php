@@ -139,15 +139,22 @@ class Review extends CI_Controller
 					'img_url' => site_url() . 'uploads/captcha/'
 				);
 				$cap = create_captcha($vals);
-				$cap_data = array(
-					'captcha_time' => $cap['time'],
-					'ip_address' => $this->input->ip_address(),
-					'word' => $cap['word']
-				);
-				// insert temporary captcha data
-				$query = $this->db->insert_string('captcha', $cap_data);
-				$this->db->query($query);
-				$data['captcha_image'] = $cap['image'];
+				if (is_array($cap)) {
+					$cap_data = array(
+						'captcha_time' => $cap['time'],
+						'ip_address' => $this->input->ip_address(),
+						'word' => $cap['word']
+					);
+					// insert temporary captcha data
+					$query = $this->db->insert_string('captcha', $cap_data);
+					$this->db->query($query);
+					$data['captcha_image'] = $cap['image'];
+				} else {
+					if (is_string($cap > 1)) {
+						debug('CAPTCHA ERROR: ' . $cap);
+						$data['captcha_image'] = $cap;
+					}
+				}
 				// count the 'page view' for this review
 				$this->Review_model->add_view($data['review']->id);
 				// show the review page

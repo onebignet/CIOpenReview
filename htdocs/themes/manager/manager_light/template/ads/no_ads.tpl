@@ -30,16 +30,31 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_ads_title') }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/ad/add',lang('manager_ads_add_ad')) }}</b></p>
 
-    <p class="break">&nbsp;</p>
+<div class="box">
 
-    <p class="break">&nbsp;</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_ads_title') }}</h3>
+        {{= anchor('manager/ad/add', lang('manager_ads_add_ad'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-    <p>{{= lang('manager_ads_no_ads') }}</p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+        <div class="box-tools">
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Ad Name</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{= lang('manager_ads_no_ads') }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

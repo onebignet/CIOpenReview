@@ -87,7 +87,7 @@ class Category extends CI_Controller
 					'rules' => 'trim|required|min_length[2]|max_length[512]'
 				)
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			// validate the form data
 			if ($this->form_validation->run() === FALSE) {
@@ -149,7 +149,7 @@ class Category extends CI_Controller
 						'rules' => 'trim|required|min_length[2]|max_length[512]'
 					)
 				);
-				$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+				$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 				$this->form_validation->set_rules($config);
 				// validate the form data
 				if ($this->form_validation->run() === FALSE) {
@@ -314,7 +314,7 @@ class Category extends CI_Controller
 							'rules' => 'callback__more_than_zero'
 						)
 					);
-					$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+					$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 					$this->form_validation->set_rules($config);
 					$this->form_validation->set_message('_more_than_zero', lang('manager_category_form_validate_select_category'));
 					// validate form
@@ -347,7 +347,7 @@ class Category extends CI_Controller
 				}
 			} else {
 				// category does not exist... redirect to categories list
-				debug('category not found - redirecting to "manager/categoties"');
+				debug('category not found - redirecting to "manager/categories"');
 				redirect('/manager/categories', '301');
 			}
 		} else {

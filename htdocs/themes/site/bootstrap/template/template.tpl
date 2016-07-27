@@ -8,13 +8,13 @@
     <meta name="description" content="{{= $meta_description }}"/>
     <title>{{= $page_title }}</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
     <link href="{{= template_path() }}assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{= template_path() }}assets/css/{{= $this->setting['template_color_theme'] }}.css">
     {{ if ($lightbox): }}
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/css/lightbox.min.css">
+          href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/css/lightbox.min.css">
     {{ endif }}
 
     <link rel="alternate" type="application/rss+xml" title="Latest Reviews (RSS2.0)" href="{{= base_url() . 'rss' }}"/>
@@ -151,7 +151,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-12 text-center">
-                    <p?>Copyright &copy;{{= date("Y"); }} Powered by <a
+                    <p?>Copyright &copy;2015 - {{= date("Y"); }} Powered by <a
                             href="http://ciopenreview.com">CIOpenReview</a></p>
                 </div>
             </div>
@@ -161,7 +161,7 @@
 <!-- END OF 'MAIN' SECTION -->
 
 <!-- Bootstrap Javascript -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"
         type="text/javascript"></script>
 <script src="{{= template_path() }}assets/js/script.js"
@@ -183,9 +183,9 @@
     });
 </script>
 {{ if ($lightbox): }}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/js/lightbox.min.js" type="text/javascript"></script>
 {{ endif }}
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <script>
     (function (i, s, o, g, r, a, m) {

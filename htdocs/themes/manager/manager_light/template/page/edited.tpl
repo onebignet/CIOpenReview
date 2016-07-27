@@ -30,16 +30,6 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_page_edit_name') }}</div>
-        <p>&nbsp;</p>
-
-        <h2>{{= lang('manager_page_edit_success') }}</h2>
-
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>-> {{= anchor('manager/pages',lang('manager_page_manage_back_to_pages')) }}</strong></p>
-    </div>
+<div class="callout callout-info" xmlns="http://www.w3.org/1999/html">
+    <p>{{= lang('manager_page_edit_success') }}</p>
 </div>

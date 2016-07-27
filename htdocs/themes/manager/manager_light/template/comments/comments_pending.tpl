@@ -30,20 +30,37 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_comments_pending_title') }}</div>
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($pendingcomments as $result): }}
-    <div class="manager_row_2">
-        <p class="manager_left">&#8220;{{= character_limiter($result->quotation, 512) }}&#8221;<br><span
-                    class="manager_small_text">{{= lang('manager_comments_list_review') }}{{= anchor('review/show/'.$result->seo_title, '&#8220;'.$result->title.'&#8221;)',' id="darkblue" target="_blank"') }}</span>
-        </p>
+<div class="box">
 
-        <p class="manager_narrow">{{= anchor('manager/comment/delete_pending/'.$result->id, lang('manager_comments_list_delete'),' id="darkblue"') }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/comment/approve_pending/'.$result->id, lang('manager_comments_approve'),' id="darkblue"') }}</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_comments_pending_title') }}</h3>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-9">Comment</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($pendingcomments as $result): }}
+            <tr>
+                <td>
+                    <blockquote>&#8220;{{= character_limiter($result->quotation, 512) }}&#8221;
+                        <small>{{= lang('manager_comments_list_review') }}{{= anchor('review/show/'.$result->seo_title, '&#8220;'.$result->title.'&#8221;',array('class' => '')) }}</small>
+                    </blockquote>
+                </td>
+                <td>
+                    {{= anchor('manager/comment/delete_pending/'.$result->id, lang('manager_comments_list_delete'), array('class' => 'btn btn-danger')) }}
+                    {{= anchor('manager/comment/approve_pending/'.$result->id, lang('manager_comments_approve'), array('class' => 'btn btn-primary btn-success')) }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>

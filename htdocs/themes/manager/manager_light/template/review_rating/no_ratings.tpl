@@ -30,17 +30,20 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_review_ratings_title') }}</div>
-    <p class="break">&nbsp;</p>
 
-    <p>{{= lang('manager_review_ratings_no_ratings') }}</p>
+<div class="box">
 
-    <p class="break">&nbsp;</p>
-
-    <p class="nav_links">
-        <b>{{= anchor('manager/review/edit/'.$review->id,lang('manager_review_ratings_back_to_review')) }}</b></p>
-
-    <div class="break"><p>&nbsp;</p></div>
-    <div class="break"><p>&nbsp;</p></div>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_review_ratings_title') }}</h3>
+        <div class="pull-right">
+            {{= anchor('manager/review/edit/'.$review->id,lang('manager_review_ratings_back_to_review'), array('class' => 'btn btn-default')) }}
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="callout callout-info">
+            <p>{{= lang('manager_review_ratings_no_ratings') }}</p>
+        </div>
+    </div>
+    <!-- /.box-body -->
 </div>

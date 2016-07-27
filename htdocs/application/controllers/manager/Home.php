@@ -74,6 +74,12 @@ class Home extends CI_Controller
 		$data['action_required'] = ($data['reviews_to_approve'] OR $data['comments_to_approve']) ? TRUE : FALSE;
 		$data['topreviews'] = $this->Review_model->most_viewed();
 		$data['topclicks'] = $this->Review_model->most_clicks();
+
+		//Manager Page header data
+		$data['page_header'] = lang('open_review_script_manager');
+		$data['page_description'] = lang('open_review_script_manager');
+		$data['current_page'] = lang('manager_menu_home');
+
 		debug('loaded data for home page');
 		// display home page
 		debug('loading "manager/home" view');

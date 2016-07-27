@@ -117,7 +117,7 @@ class Review_features extends CI_Controller
 				$review_feature_id = $this->input->post('review_feature_id' . $index);
 				$feature_id = $this->input->post('feature_id' . $index);
 				$value = $this->input->post('value' . $index);
-				$update_review_feature = $this->Review_feature_model->update_reviewfeature($review_feature_id, $feature_id, $value);
+				$update_review_feature = $this->Review_feature_model->update_review_feature($review_feature_id, $feature_id, $value);
 			}
 			debug('redirecting to "manager/review_features/show/"' . $id);
 			redirect('/manager/review_features/show/' . $id, '301');

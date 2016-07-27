@@ -30,113 +30,131 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_category_edit_title') }}</div>
-        <p>&nbsp;</p>
-
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/category/edit/' . $category->id }}">
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_category_form_name') }}
-                        <span class="small">{{= lang('manager_category_form_name_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="name" id="name"
-                           value="{{= set_value('name', $category->name) }}"/>
+{{ if(isset($message)): }}
+<div class="callout callout-warning" xmlns="http://www.w3.org/1999/html">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/category/edit/' . $category->id }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_category_edit_title') }}</h3>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_category_form_name') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('name', $category->name) }}"
+                           name="name"
+                           id="name">
                     {{= form_error('name') }}
+                    <p class="help-block">{{= lang('manager_category_form_name_info') }}</p>
                 </div>
             </div>
-            <p>&nbsp;</p>
-            <input type="submit" name="category_submit" id="button"
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="category_submit" id="button" class="btn btn-primary btn-success"
                    value="{{= lang('manager_category_form_submit_button') }}"/>
-        </form>
+        </div>
     </div>
-    <p class="break">&nbsp;</p>
-    {{ if($features): }}
-    {{ if($categorydefaultfeatures): }}
-    <h2>{{= lang('manager_category_edit_list_features') }}</h2>
+</form>
 
-    <p class="break">&nbsp;</p>
-    {{ foreach ($categorydefaultfeatures as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">{{= character_limiter($result->name, 50) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/category/delete_default_feature/'.$result->id, lang('manager_category_default_feature_list_delete'),'id="darkblue"') }}</p>
-    </div>
-    {{ endforeach }}
-    {{ endif }}
-    <div class="myform">
-        <p>&nbsp;</p>
-
-        <h2>{{= lang('manager_category_add_default_feature_for_category') }}</h2>
-
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/category/edit/' . $category->id }}">
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_category_default_feature_feature') }}
-                        <span class="small">{{= lang('manager_category_default_feature_feature_info') }}</span>
-                    </label>
+{{ if($features): }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/category/edit/' . $category->id }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_category_edit_list_features') }}</h3>
+            <p>&nbsp;</p>
+            <div class="row">
+                {{ if($categorydefaultfeatures): }}
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="col-md-10">Feature Name</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ foreach ($categorydefaultfeatures as $result): }}
+                        <tr>
+                            <td>{{= character_limiter($result->name, 50) }}</td>
+                            <td>{{= anchor('manager/category/delete_default_feature/'.$result->id, lang('manager_category_default_feature_list_delete'),array('class' => 'btn btn-primary btn-danger')) }}</td>
+                        </tr>
+                        {{ endforeach }}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="formright">
-                    {{= form_dropdown('feature_id', $features) }}
+                {{ endif }}
+            </div>
+        </div>
+        <div class="box-header with-border">
+            <div class="row">
+                <div class="col-md-9">
+                    <label>{{= lang('manager_category_default_feature_feature') }}</label>
+                    <p class="help-block">{{= lang('manager_category_default_feature_feature_info') }}</p>
                     {{= form_error('feature_id') }}
                 </div>
-                <p>&nbsp;</p>
-
-                <p>&nbsp;</p>
-
-                <p>&nbsp;</p>
-                <input type="submit" name="category_default_feature_submit" id="button" style="width:300px;"
-                       value="{{= lang('manager_category_default_feature_submit') }}"/>
-            </div>
-        </form>
-    </div>
-    {{ endif }}
-    <p class="break">&nbsp;</p>
-    {{ if($ratings): }}
-    {{ if($categorydefaultratings): }}
-    <h2>{{= lang('manager_category_edit_list_ratings') }}</h2>
-
-    <p class="break">&nbsp;</p>
-    {{ foreach ($categorydefaultratings as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">{{= character_limiter($result->name, 50) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/category/delete_default_rating/'.$result->id, lang('manager_category_default_rating_list_delete'),'id="darkblue"') }}</p>
-    </div>
-    {{ endforeach }}
-    {{ endif }}
-    <div class="myform">
-        <p>&nbsp;</p>
-
-        <h2>{{= lang('manager_category_add_default_rating_for_category') }}</h2>
-
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/category/edit/' . $category->id }}">
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_category_default_rating_rating') }}
-                        <span class="small">{{= lang('manager_category_default_rating_rating_info') }}</span>
-                    </label>
+                <div class="col-md-3">
+                    {{= form_dropdown('feature_id', $features, $selected_feature,array('class' => 'form-control')) }}
                 </div>
-                <div class="formright">
-                    {{= form_dropdown('rating_id', $ratings) }}
+            </div>
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="category_default_feature_submit" id="button" class="btn btn-primary btn-success"
+                   value="{{= lang('manager_category_default_feature_submit') }}"/>
+        </div>
+    </div>
+</form>
+{{ endif }}
+
+{{ if($ratings): }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/category/edit/' . $category->id }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_category_edit_list_ratings') }}</h3>
+            <p>&nbsp;</p>
+            <div class="row">
+                {{ if($categorydefaultratings): }}
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="col-md-10">Rating Name</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ foreach ($categorydefaultratings as $result): }}
+                        <tr>
+                            <td>{{= character_limiter($result->name, 50) }}</td>
+                            <td>{{= anchor('manager/category/delete_default_rating/'.$result->id, lang('manager_category_default_rating_list_delete'),array('class' => 'btn btn-primary btn-danger')) }}</td>
+                        </tr>
+                        {{ endforeach }}
+                        </tbody>
+                    </table>
+                </div>
+                {{ endif }}
+            </div>
+        </div>
+        <div class="box-header with-border">
+            <div class="row">
+                <div class="col-md-9">
+                    <label>{{= lang('manager_category_default_rating_rating') }}</label>
+                    <p class="help-block">{{= lang('manager_category_default_rating_rating_info') }}</p>
                     {{= form_error('rating_id') }}
                 </div>
-                <p>&nbsp;</p>
-
-                <p>&nbsp;</p>
-
-                <p>&nbsp;</p>
-                <input type="submit" name="category_default_rating_submit" id="button" style="width:300px;"
-                       value="{{= lang('manager_category_default_rating_submit') }}"/>
+                <div class="col-md-3">
+                    {{= form_dropdown('rating_id', $ratings, $selected_rating,array('class' => 'form-control')) }}
+                </div>
             </div>
-        </form>
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="category_default_rating_submit" id="button" class="btn btn-primary btn-success"
+                   value="{{= lang('manager_category_default_rating_submit') }}"/>
+        </div>
     </div>
-    {{ endif }}
-</div>
+</form>
+{{ endif }}

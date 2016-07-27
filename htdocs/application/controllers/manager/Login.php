@@ -87,7 +87,7 @@ class Login extends CI_Controller
 						'rules' => 'trim|required'
 					)
 				);
-				$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+				$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 				$this->form_validation->set_rules($config);
 				debug('validate form data');
 				// get 'last_page' session variable... this is stored when user tries to access a manager page, then we can redirect them after logging in

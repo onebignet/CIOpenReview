@@ -30,19 +30,35 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_reviews_pending_title') }}</div>
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($pendingreviews as $result): }}
-    <div class="manager_row_2">
-        <p class="manager_left">{{= anchor('review/show/'.$result->seo_title, character_limiter($result->title, 50),'target="_blank"') }}
-            <span class="pending"></span></p>
+<div class="box">
 
-        <p class="manager_narrow">{{= anchor('manager/review/delete_pending/' . $result->id, lang('manager_reviews_list_delete'), ' id="darkblue"') }}</p>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_reviews_pending_title') }}</h3>
+        {{= anchor('manager/review/add',lang('manager_reviews_add_review'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
 
-        <p class="manager_narrow">{{= anchor('manager/review/approve_pending/' . $result->id, lang('manager_reviews_approve'), ' id="darkblue"') }}</p>
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-10">Review Name</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($pendingreviews as $result): }}
+            <tr>
+                <td>{{= anchor('review/show/'.$result->seo_title, character_limiter($result->title, 50),'target="_blank"') }}</td>
+                <td>
+                    {{= anchor('manager/review/approve_pending/'.$result->id, lang('manager_reviews_approve'), array('class' => 'btn btn-success')) }}
+                    {{= anchor('manager/review/delete_pending/' . $result->id, lang('manager_reviews_list_delete'), array('class' => 'btn btn-danger')) }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>
