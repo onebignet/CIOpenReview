@@ -40,8 +40,8 @@ class Installer
     //Initialize some variables that will be needed
     private $minimum_php_version_code = "50204";
     private $minimum_php_version_string = "5.2.4";
-    private $build_number = "10004";
-    private $version_string = "1.0.4";
+    private $build_number = "10100";
+    private $version_string = "1.1.0";
     private $failure_codes = array(
         'php_version_fail' => "Your version of PHP is too old to be able to run CodeIgniter. You will not be able to install this script",
         'permissions_fail' => "Not all the required files and directories are writable. You will not be able to install and run the script until you have made them writable",
@@ -94,6 +94,29 @@ class Installer
     }
 
     //Verfies that a certain value is more than the minimum requirement (ex PHP POST size)
+
+    private
+    function show_success($message)
+    {
+        echo '<td class="success">' . $message . '</td>';
+    }
+
+    private
+    function show_error($message)
+    {
+        echo '<td class="danger">' . $message . '</td>';
+    }
+
+    //Verifies that certain functionality is enables or disabled (ex. register_globals)
+
+    private
+    function set_error($error_code)
+    {
+        $this->error[] = $error_code;
+    }
+
+    //Check to see if we have the minimum PHP version to run CI3.0
+
     public function is_more_than($name, $value, $required, $append = "")
     {
         if ($value >= $required) {
@@ -108,7 +131,6 @@ class Installer
         return $this->version_string;
     }
 
-    //Verifies that certain functionality is enables or disabled (ex. register_globals)
     public function is_on_or_off($name, $value, $required, $error_key)
     {
 
@@ -128,7 +150,6 @@ class Installer
 
     }
 
-    //Check to see if we have the minimum PHP version to run CI3.0
     public function check_php_version()
     {
         //Older versions to not have PHP_VERSION_ID
@@ -146,6 +167,8 @@ class Installer
             $this->show_error("PHP Version is older than " . $this->minimum_php_version_string . ". Script will <b>NOT RUN</b>");
         }
     }
+
+    //Check to see if we have Apache, NGINX, or an unknown server
 
     public function check_for_available_updates()
     {
@@ -173,6 +196,14 @@ class Installer
 
     }
 
+    private
+    function show_warning($message)
+    {
+        echo '<td class="warning">' . $message . '</td>';
+    }
+
+    //Check to see if mod_rewrite is enabled for Apache, or try_files for NGINX
+
     public function notify_of_installation()
     {
         if (function_exists('curl_init')) {
@@ -191,151 +222,33 @@ class Installer
 
     }
 
-    public function notify_of_upgrade()
-    {
-        if (function_exists('curl_init')) {
-            $post_fields = array(
-                'build_number' => $this->get_installed_build(),
-                'version_string' => $this->get_installed_version()
-            );
-            $curl = curl_init("http://ciopenreview.com/api/notify_upgrade");
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($curl, CURLOPT_POST, 1);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $post_fields);
-
-            curl_exec($curl);
-            curl_close($curl);
-        }
-
-    }
-
-    //Check to see if we have Apache, NGINX, or an unknown server
-    public function check_server_software()
-    {
-        //If server is Apache or NGINX all is well, else warn that it is unknown
-        if ($this->is_apache() || $this->is_nginx()) {
-            $this->show_success("Server software is: " . $_SERVER['SERVER_SOFTWARE']);
-        } else {
-            $this->show_warning("Server software (" . $_SERVER['SERVER_SOFTWARE'] . ") is unknown. This may cause unpredictable results ");
-        }
-    }
-
-
-    public function check_installed_version()
-    {
-
-        $current_version = $this->get_installed_version();
-
-        if ($current_version) {
-            $this->show_success("Current version of application: " . $current_version);
-        } else {
-            $this->show_success("Current version of application: Not Installed ");
-        }
-
-    }
-
-    //Check to see if mod_rewrite is enabled for Apache, or try_files for NGINX
-    public function check_url_rewrite()
-    {
-
-        if ($this->is_apache()) {
-            //If apache, the .htaccess file should work
-            $filename = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . 'test_rewrite.php';
-            if ($this->curl_check($filename)) {
-                $this->show_success("Your Apache server has the correct mod_rewrite settings");
-            } else {
-                $this->set_error('rewrite_fail_apache');
-                $this->show_error("Your Apache server <b>DOES NOT</b> have the correct mod_rewrite settings. Please ensure mod_rewrite is enabled");
-            }
-        } else if ($this->is_nginx()) {
-            //If NGINX, test index.php to verify CI is forwarding properly
-            $filename = 'http://' . $_SERVER['HTTP_HOST'] . '/nginx_rewrite_test';
-            if ($this->curl_check($filename)) {
-                $this->show_success("Your NGINX server has the correct try_files settings");
-            } else {
-                $this->set_error('rewrite_fail_nginx');
-                $this->show_error('Your NGINX server <b>DOES NOT</b> have the correct try_files settings. Please ensure nginx.conf is properly configured as outlined <a href="http://wiki.nginx.org/Codeigniter">Here</a>');
-            }
-        } else {
-            $this->set_error('rewrite_unknown');
-            $this->show_warning("Unable to detect server type/version or rewrite configs");
-        }
-    }
-
     //Check to see if a PHP function exists
-    public function check_function_exists($name, $function_name, $fail_code)
-    {
-        if (function_exists($function_name)) {
-            $this->show_success($name . " support is enabled");
-        } else {
-            $this->set_error($fail_code);
-            $this->show_error($name . " support is <b>NOT</b> enabled!");
-        }
-    }
 
-    //Check to see if the mail() function works
-    public function check_email_system()
+    private
+    function get_installed_build()
     {
-        $headers = 'From: install@ciopenreview.com' . "\r\n" .
-            'Reply-To: install@ciopenreview.com' . "\r\n" .
-            'X-Mailer: PHP/' . phpversion();
+        $db = array();
+        $build = NULL;
 
-        if (mail('null@localhost', 'Test', 'Test', $headers)) {
-            $this->show_success("The mail server seems to be responding correctly");
-        } else {
-            $this->show_error("The mail server <strong>IS NOT</strong> responding correctly");
-            $this->set_error("mail_fail");
-        }
-    }
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config(FALSE);
 
-    //Checks for critical errors
-    public function is_critical_error()
-    {
-        //If no errors, return false
-        if (count($this->error) == 0) {
+        //Return false on error
+        if (!$mysqli) {
             return FALSE;
         }
 
-        foreach ($this->error as $error) {
-            if (in_array($error, $this->critical_errors)) {
-                //There is a critical error
-                return TRUE;
-            }
+        if ($result = $mysqli->query("select `value` from `setting` WHERE `name`='build_code'")) {
+            $row = $result->fetch_object();
+            $build = $row->value;
+            $result->close();
+
         }
 
-        //No critical errors
-        return FALSE;
+        return $build;
     }
 
-    //Display a summary of errprs/warning on sytage_1
-    public function show_precheck_errors_and_warnings()
-    {
-        //If there are no errors
-        if (count($this->error) == 0) {
-            $this->alert_success("All checks have passed! You can install without issue!");
-
-            return TRUE;
-        }
-
-        $error_string_list = array();
-        //Look for critical errors
-        foreach ($this->error as $error) {
-            if (in_array($error, $this->critical_errors)) {
-                //Display critical errors first
-                $this->alert_error($this->failure_codes[$error]);
-
-                return FALSE;
-            }
-            $error_string_list[] = $this->failure_codes[$error];
-        }
-
-        //If there are no critical errors, display the warnings
-        $error_string = implode("<br><br>", $error_string_list);
-        $this->alert_warning($error_string);
-
-        return FALSE;
-
-    }
+    //Check to see if the mail() function works
 
     private function create_db_connection_from_config($verbose = TRUE)
     {
@@ -365,34 +278,253 @@ class Installer
         return NULL;
     }
 
-    public function update_database_structure()
-    {
-        $db_queries = NULL;
+    //Checks for critical errors
 
-        //If no install/update is needed...do not make changes!
-        if (!$this->is_install_needed()) {
-            return;
+    public function notify_of_upgrade()
+    {
+        if (function_exists('curl_init')) {
+            $post_fields = array(
+                'build_number' => $this->get_installed_build(),
+                'version_string' => $this->get_installed_version()
+            );
+            $curl = curl_init("http://ciopenreview.com/api/notify_upgrade");
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $post_fields);
+
+            curl_exec($curl);
+            curl_close($curl);
         }
 
+    }
+
+    //Display a summary of errprs/warning on sytage_1
+
+    private
+    function get_installed_version()
+    {
+        $db = array();
+        $version = NULL;
+
         //Connect to DB
-        $mysqli = $this->create_db_connection_from_config();
+        $mysqli = $this->create_db_connection_from_config(FALSE);
 
         //Return false on error
-        if (!$mysqli || $mysqli->connect_error) {
+        if (!$mysqli) {
             return FALSE;
         }
 
-        //Cycle through the install.sql and execute all queries
-        include($this->path_to_sql_file);
-        foreach ($db_queries as $query) {
-            $mysqli->query($query);
+        if ($result = $mysqli->query("select `value` from `setting` WHERE `name`='version_string'")) {
+            $row = $result->fetch_object();
+            $version = $row->value;
+            $result->close();
+
         }
 
-        //Display errors, if any
-        return $this->display_all_errors();
+        return $version;
+    }
+
+    public function check_server_software()
+    {
+        //If server is Apache or NGINX all is well, else warn that it is unknown
+        if ($this->is_apache() || $this->is_nginx()) {
+            $this->show_success("Server software is: " . $_SERVER['SERVER_SOFTWARE']);
+        } else {
+            $this->show_warning("Server software (" . $_SERVER['SERVER_SOFTWARE'] . ") is unknown. This may cause unpredictable results ");
+        }
+    }
+
+    private
+    function is_apache()
+    {
+        if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), "apache") !== FALSE) {
+            return TRUE;
+        }
+
+        return FALSE;
     }
 
     //Create the database.php config file needed by CI
+
+    private
+    function is_nginx()
+    {
+        if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), "nginx") !== FALSE) {
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    //Verify the database variables
+
+    public function check_installed_version()
+    {
+
+        $current_version = $this->get_installed_version();
+
+        if ($current_version) {
+            $this->show_success("Current version of application: " . $current_version);
+        } else {
+            $this->show_success("Current version of application: Not Installed ");
+        }
+
+    }
+
+    //Validate the site settings
+
+    public function check_url_rewrite()
+    {
+
+        if ($this->is_apache()) {
+            //If apache, the .htaccess file should work
+            $filename = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . 'test_rewrite.php';
+            if ($this->curl_check($filename)) {
+                $this->show_success("Your Apache server has the correct mod_rewrite settings");
+            } else {
+                $this->set_error('rewrite_fail_apache');
+                $this->show_error("Your Apache server <b>DOES NOT</b> have the correct mod_rewrite settings. Please ensure mod_rewrite is enabled");
+            }
+        } else if ($this->is_nginx()) {
+            //If NGINX, test index.php to verify CI is forwarding properly
+            $filename = 'http://' . $_SERVER['HTTP_HOST'] . '/nginx_rewrite_test';
+            if ($this->curl_check($filename)) {
+                $this->show_success("Your NGINX server has the correct try_files settings");
+            } else {
+                $this->set_error('rewrite_fail_nginx');
+                $this->show_error('Your NGINX server <b>DOES NOT</b> have the correct try_files settings. Please ensure nginx.conf is properly configured as outlined <a href="http://wiki.nginx.org/Codeigniter">Here</a>');
+            }
+        } else {
+            $this->set_error('rewrite_unknown');
+            $this->show_warning("Unable to detect server type/version or rewrite configs");
+        }
+    }
+
+    //Update the database with the new site_vars;
+
+    private
+    function curl_check($url)
+    {
+        if (function_exists('curl_init')) {
+            $curl = curl_init($url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1");
+
+            $response = curl_exec($curl);
+            curl_close($curl);
+
+            //We are looking for a specific response for apache/NGINX
+            if (trim($response) == 'yes' || strpos($response, "404 Page Not Found") !== FALSE) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+    }
+
+    //Add an error into the error array
+
+    public function check_function_exists($name, $function_name, $fail_code)
+    {
+        if (function_exists($function_name)) {
+            $this->show_success($name . " support is enabled");
+        } else {
+            $this->set_error($fail_code);
+            $this->show_error($name . " support is <b>NOT</b> enabled!");
+        }
+    }
+
+    //Show a basic green table row
+
+    public function check_email_system()
+    {
+        $headers = 'From: install@ciopenreview.com' . "\r\n" .
+            'Reply-To: install@ciopenreview.com' . "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+
+        if (mail('null@localhost', 'Test', 'Test', $headers)) {
+            $this->show_success("The mail server seems to be responding correctly");
+        } else {
+            $this->show_error("The mail server <strong>IS NOT</strong> responding correctly");
+            $this->set_error("mail_fail");
+        }
+    }
+
+    public function is_critical_error()
+    {
+        //If no errors, return false
+        if (count($this->error) == 0) {
+            return FALSE;
+        }
+
+        foreach ($this->error as $error) {
+            if (in_array($error, $this->critical_errors)) {
+                //There is a critical error
+                return TRUE;
+            }
+        }
+
+        //No critical errors
+        return FALSE;
+    }
+
+    public function show_precheck_errors_and_warnings()
+    {
+        //If there are no errors
+        if (count($this->error) == 0) {
+            $this->alert_success("All checks have passed! You can install without issue!");
+
+            return TRUE;
+        }
+
+        $error_string_list = array();
+        //Look for critical errors
+        foreach ($this->error as $error) {
+            if (in_array($error, $this->critical_errors)) {
+                //Display critical errors first
+                $this->alert_error($this->failure_codes[$error]);
+
+                return FALSE;
+            }
+            $error_string_list[] = $this->failure_codes[$error];
+        }
+
+        //If there are no critical errors, display the warnings
+        $error_string = implode("<br><br>", $error_string_list);
+        $this->alert_warning($error_string);
+
+        return FALSE;
+
+    }
+
+
+    //Show a basic yellow table row
+
+    private
+    function alert_success($message)
+    {
+        echo '<div class="alert alert-success">' . $message . '</div>';
+    }
+
+
+//Show a green alert
+
+    private
+    function alert_error($message)
+    {
+        echo '<div class="alert alert-danger">' . $message . '</div>';
+    }
+
+//Show a yellow alert
+
+    private
+    function alert_warning($message)
+    {
+        echo '<div class="alert alert-warning">' . $message . '</div>';
+    }
+
+//Show a red alert
+
     public function create_database_file()
     {
 
@@ -444,7 +576,71 @@ class Installer
 
     }
 
-    //Verify the database variables
+//Is this Apache?
+
+    public function is_install_needed()
+    {
+        if ($this->get_installed_build() >= $this->build_number) {
+            $this->alert_success("You are currently running the latest version of CIOpenReview (" . $this->version_string . ")");
+            session_destroy();
+
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
+//Is this NGINX?
+
+    public function update_database_structure()
+    {
+        $db_queries = NULL;
+
+        //If no install/update is needed...do not make changes!
+        if (!$this->is_install_needed()) {
+            return;
+        }
+
+        //Connect to DB
+        $mysqli = $this->create_db_connection_from_config();
+
+        //Return false on error
+        if (!$mysqli || $mysqli->connect_error) {
+            return FALSE;
+        }
+
+        //Cycle through the install.sql and execute all queries
+        include($this->path_to_sql_file);
+        foreach ($db_queries as $query) {
+            $mysqli->query($query);
+        }
+
+        //Display errors, if any
+        return $this->display_all_errors();
+    }
+
+//Open a curl connection to a remote URL
+
+    private
+    function display_all_errors()
+    {
+        if (sizeof($this->error_list) !== 0) {
+
+            $error_string = implode("<br><br>", $this->error_list);
+            $this->alert_error($error_string);
+
+            unset($this->error_list);
+            $this->error_list = array();
+
+            return FALSE;
+
+        }
+
+        return TRUE;
+    }
+
+//Check the installed build of CIOpenReview
+
     public function validate_database_vars()
     {
         $this->db_hostname = $this->sanitize($_POST['hostname']);
@@ -486,7 +682,19 @@ class Installer
         return $this->display_all_errors();
     }
 
-    //Validate the site settings
+//Check the installed version of CIOpenReview
+
+    public
+    function sanitize($input)
+    {
+        $input = trim($input);
+        return filter_var($input, FILTER_SANITIZE_STRING);
+
+    }
+
+
+//Display all of the errors in the errors[] array
+
     public function validate_site_vars()
     {
 
@@ -531,7 +739,8 @@ class Installer
         return $this->display_all_errors();
     }
 
-    //Update the database with the new site_vars;
+//Is an install needed in the first place or are we already up-to-date?
+
     public function load_site_vars_into_db()
     {
         //If no install/update is needed...do not make changes!
@@ -579,21 +788,7 @@ class Installer
 
     }
 
-    //Add an error into the error array
-
-    public function is_install_needed()
-    {
-        if ($this->get_installed_build() >= $this->build_number) {
-            $this->alert_success("You are currently running the latest version of CIOpenReview (" . $this->version_string . ")");
-            session_destroy();
-
-            return FALSE;
-        }
-
-        return TRUE;
-    }
-
-    //Show a basic green table row
+//Complete the installation by updating the DB build number. This should make the installer no-longer work.
 
     public function complete_installation()
     {
@@ -673,7 +868,6 @@ class Installer
         return $value;
     }
 
-
     public function delete_install_dir()
     {
         if ($this->remove_directory("../install")) {
@@ -687,8 +881,22 @@ class Installer
         return FALSE;
     }
 
-
-    //Show a basic yellow table row
+    private function remove_directory($path)
+    {
+        if (is_dir($path)) {
+            $objects = scandir($path);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (is_dir($path . "/" . $object))
+                        $this->remove_directory($path . "/" . $object);
+                    else
+                        unlink($path . "/" . $object);
+                }
+            }
+            return rmdir($path);
+        }
+        return FALSE;
+    }
 
     public function db_exists()
     {
@@ -718,9 +926,6 @@ class Installer
         }
         return FALSE;
     }
-
-
-//Show a green alert
 
     public
     function login_manager($username, $password)
@@ -769,7 +974,12 @@ class Installer
         return FALSE;
     }
 
-//Show a yellow alert
+    public
+    function set_session_vars($session_username, $session_token)
+    {
+        $this->session_username = $session_username;
+        $this->session_token = $session_token;
+    }
 
     public
     function validate_token($username, $token)
@@ -805,215 +1015,16 @@ class Installer
         return FALSE;
     }
 
-//Show a red alert
-
     public
     function validation_error()
     {
         $this->alert_error("Please provide your CIOpenReview login credentials in order to proceed.");
     }
 
-//Is this Apache?
-
-    public
-    function set_session_vars($session_username, $session_token)
-    {
-        $this->session_username = $session_username;
-        $this->session_token = $session_token;
-    }
-
-//Is this NGINX?
-
     public
     function get_session_token()
     {
         return $this->session_token;
-    }
-
-//Open a curl connection to a remote URL
-
-    private
-    function set_error($error_code)
-    {
-        $this->error[] = $error_code;
-    }
-
-//Check the installed build of CIOpenReview
-
-    private
-    function show_success($message)
-    {
-        echo '<td class="success">' . $message . '</td>';
-    }
-
-//Check the installed version of CIOpenReview
-
-    private
-    function show_error($message)
-    {
-        echo '<td class="danger">' . $message . '</td>';
-    }
-
-
-//Display all of the errors in the errors[] array
-
-    private
-    function show_warning($message)
-    {
-        echo '<td class="warning">' . $message . '</td>';
-    }
-
-//Is an install needed in the first place or are we already up-to-date?
-
-    private
-    function alert_success($message)
-    {
-        echo '<div class="alert alert-success">' . $message . '</div>';
-    }
-
-//Complete the installation by updating the DB build number. This should make the installer no-longer work.
-
-    private
-    function alert_warning($message)
-    {
-        echo '<div class="alert alert-warning">' . $message . '</div>';
-    }
-
-    private
-    function alert_error($message)
-    {
-        echo '<div class="alert alert-danger">' . $message . '</div>';
-    }
-
-    private
-    function is_apache()
-    {
-        if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), "apache") !== FALSE) {
-            return TRUE;
-        }
-
-        return FALSE;
-    }
-
-    private
-    function is_nginx()
-    {
-        if (strpos(strtolower($_SERVER['SERVER_SOFTWARE']), "nginx") !== FALSE) {
-            return TRUE;
-        }
-
-        return FALSE;
-    }
-
-    private
-    function curl_check($url)
-    {
-        if (function_exists('curl_init')) {
-            $curl = curl_init($url);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1");
-
-            $response = curl_exec($curl);
-            curl_close($curl);
-
-            //We are looking for a specific response for apache/NGINX
-            if (trim($response) == 'yes' || strpos($response, "404 Page Not Found") !== FALSE) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
-    }
-
-    private
-    function get_installed_build()
-    {
-        $db = array();
-        $build = NULL;
-
-        //Connect to DB
-        $mysqli = $this->create_db_connection_from_config(FALSE);
-
-        //Return false on error
-        if (!$mysqli) {
-            return FALSE;
-        }
-
-        if ($result = $mysqli->query("select `value` from `setting` WHERE `name`='build_code'")) {
-            $row = $result->fetch_object();
-            $build = $row->value;
-            $result->close();
-
-        }
-
-        return $build;
-    }
-
-    private
-    function get_installed_version()
-    {
-        $db = array();
-        $version = NULL;
-
-        //Connect to DB
-        $mysqli = $this->create_db_connection_from_config(FALSE);
-
-        //Return false on error
-        if (!$mysqli) {
-            return FALSE;
-        }
-
-        if ($result = $mysqli->query("select `value` from `setting` WHERE `name`='version_string'")) {
-            $row = $result->fetch_object();
-            $version = $row->value;
-            $result->close();
-
-        }
-
-        return $version;
-    }
-
-    private
-    function display_all_errors()
-    {
-        if (sizeof($this->error_list) !== 0) {
-
-            $error_string = implode("<br><br>", $this->error_list);
-            $this->alert_error($error_string);
-
-            unset($this->error_list);
-            $this->error_list = array();
-
-            return FALSE;
-
-        }
-
-        return TRUE;
-    }
-
-    private function remove_directory($path)
-    {
-        if (is_dir($path)) {
-            $objects = scandir($path);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (is_dir($path . "/" . $object))
-                        $this->remove_directory($path . "/" . $object);
-                    else
-                        unlink($path . "/" . $object);
-                }
-            }
-            return rmdir($path);
-        }
-        return FALSE;
-    }
-
-    public
-    function sanitize($input)
-    {
-        $input = trim($input);
-        return filter_var($input, FILTER_SANITIZE_STRING);
-
     }
 
 
