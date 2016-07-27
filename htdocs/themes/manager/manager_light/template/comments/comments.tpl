@@ -30,40 +30,40 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">{{= lang('manager_comments_title').'"'.$review->title.'"' }}</div>
-    <p class="nav_links"><b>{{= anchor('manager/comment/add/'.$review->id, lang('manager_comments_add_comment')) }}</b>
-    </p>
 
-    <p class="nav_links">
-        <b>{{= anchor('manager/review/edit/'.$review->id, lang('manager_comments_back_to_review')) }}</b></p>
+<div class="box">
 
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
-    <div class="break"></div>
-    {{ foreach ($allcomments as $result): }}
-    <div class="manager_row">
-        <p class="manager_left">
-            {{= character_limiter($result->quotation, 50) }}
-        </p>
-
-        <p class="manager_narrow">
-            {{ if ($result->approved > 0): }}
-            <span class="approved"></span>
-            {{ else: }}
-            <span class="pending"></span>
-            {{ endif }}
-        </p>
-
-        <p class="manager_narrow">{{= anchor('manager/comment/edit/'.$result->id, lang('manager_comments_list_edit')) }}</p>
-
-        <p class="manager_narrow">{{= anchor('manager/comment/deleted/'.$result->id, lang('manager_comments_list_delete'),' id="darkblue"') }}</p>
-
-        {{ if ($result->approved > 0): }}
-        <p class="manager_narrow">{{= anchor('manager/comment/unapprove/'.$result->id, lang('manager_comments_not_approve'),' id="darkblue"') }}</p>
-        {{ else: }}
-        <p class="manager_narrow">{{= anchor('manager/comment/approve/'.$result->id, lang('manager_comments_approve'),' id="darkblue"') }}</p>
-        {{ endif }}
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_comments_title').'"'.$review->title.'"' }}</h3>
+        {{= anchor('manager/comment/add/'.$review->id, lang('manager_comments_add_comment'), array('class' => 'btn btn-success', 'style' => 'margin-left: 20px;')) }}
+        <div class="box-tools">
+            {{= lang('manager_page') }}{{= $pagination }}
+        </div>
     </div>
-    {{ endforeach }}
-    <div class="pagenav">{{= lang('manager_page') }}{{= $pagination }}</div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="col-md-9">Comment</th>
+                <th>Actions</th>
+            </tr>
+            {{ foreach ($allcomments as $result): }}
+            <tr>
+                <td>{{= character_limiter($result->quotation, 50) }}</td>
+                <td>
+                    {{= anchor('manager/comment/edit/'.$result->id, lang('manager_comments_list_edit'), array('class' => 'btn btn-default')) }}
+                    {{= anchor('manager/comment/deleted/'.$result->id, lang('manager_comments_list_delete'), array('class' => 'btn btn-danger')) }}
+                    {{ if ($result->approved > 0): }}
+                    {{= anchor('manager/comment/unapprove/'.$result->id, lang('manager_comments_not_approve'), array('class' => 'btn btn-primary btn-success')) }}
+                    {{ else: }}
+                    {{= anchor('manager/comment/approve/'.$result->id, lang('manager_comments_approve'), array('class' => 'btn btn-primary btn-warning')) }}
+                    {{ endif }}
+                </td>
+            </tr>
+            {{ endforeach }}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
 </div>
