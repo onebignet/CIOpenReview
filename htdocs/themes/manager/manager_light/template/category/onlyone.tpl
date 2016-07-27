@@ -30,17 +30,6 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_category_delete_title') }}</div>
-        <p>&nbsp;</p>
-
-        <h2>{{= lang('manager_category_no_delete_last_one') }}</h2>
-
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>->&nbsp;{{= anchor('manager/categories',lang('manager_category_manage_back_to_categories')) }}</strong>
-        </p>
-    </div>
+<div class="callout callout-danger" xmlns="http://www.w3.org/1999/html">
+    <p>{{= lang('manager_category_no_delete_last_one') }}</p>
 </div>

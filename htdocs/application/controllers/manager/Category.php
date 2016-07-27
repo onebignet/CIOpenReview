@@ -335,9 +335,8 @@ class Category extends CI_Controller
 						debug('delete the category');
 						$this->Category_model->delete_category($id);
 						// display the 'category/deleted' page
-						debug('loading "manager/category/deleted" view');
-						$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/category/deleted', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
-						$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
+						debug('category deleted - redirecting to "manager/categories"');
+						redirect('/manager/categories', 301);
 					}
 				} else {
 					// form not submitted so just show the form
@@ -347,7 +346,7 @@ class Category extends CI_Controller
 				}
 			} else {
 				// category does not exist... redirect to categories list
-				debug('category not found - redirecting to "manager/categoties"');
+				debug('category not found - redirecting to "manager/categories"');
 				redirect('/manager/categories', '301');
 			}
 		} else {

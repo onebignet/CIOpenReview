@@ -30,32 +30,36 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_category_delete_title') . '&#8220;' . $category->name . '&#8221;' }}</div>
-        <p>&nbsp;</p>
+<div class="box">
 
-        <h3>{{= lang('manager_category_delete_warning') }}</h3>
-
-        <p>&nbsp;</p>
-        {{= anchor('manager/categories', lang('manager_category_delete_cancel')) }}</h3>
-        <p>&nbsp;</p>
-
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/category/delete/'.$category->id }}">
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_review_form_category') }}
-                        <span class="small">{{= lang('manager_category_move_name_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    {{= form_dropdown('category_id', $categories, $selected) }}
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_category_delete_title').'&#8220;'.$category->name.'&#8221;' }}</h3>
+        <div class="box-tools">
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                <label>{{= lang('manager_category_delete_warning') }}</label>
+            </div>
+        </div>
+        <div class="row">
+            <form id="form" class="myform" name="form" method="post"
+                  action="{{= base_url() . 'manager/category/delete/'.$category->id }}">
+                <div class="col-md-9">
+                    <label>{{= lang('manager_review_form_category') }}</label>
+                    <p class="help-block">{{= lang('manager_category_move_name_info') }}</p>
                     {{= form_error('category_id') }}
                 </div>
-            </div>
-            <input type="submit" name="category_delete_submit" id="button"
-                   value="{{= lang('manager_category_delete_submit_button') }}"/>
-        </form>
+                <div class="col-md-3">
+                    {{= form_dropdown('category_id', $categories, $selected,array('class' => 'form-control')) }}
+                </div>
+        </div>
     </div>
+    <div class="box-footer">
+        <input type="submit" name="category_delete_submit" id="button" class="btn btn-primary btn-danger"
+               value="{{= lang('manager_category_delete_submit_button') }}"/>
+    </div>
+    <!-- /.box-body -->
 </div>
