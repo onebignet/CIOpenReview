@@ -30,93 +30,82 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_article_add_title') }}</div>
-        <p>&nbsp;</p>
-        {{ if(isset($message)): }}
-        <p>&nbsp;</p>
+{{ if(isset($message)): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
 
-        <h3>{{= $message }}</h3>
-
-        <p>&nbsp;</p>
-        {{ endif }}
-        <form id="form" class="myform" name="form" method="post" action="{{= base_url() . 'manager/article/add' }}">
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_article_form_title') }}
-                        <span class="small">{{= lang('manager_article_form_title_info') }}</span>
-
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="title" id="title"
-                           value="{{= set_value('title',$article->title) }}"/>
+<form id="form" class="myform" name="form" method="post" action="{{= base_url() . 'manager/article/add' }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_article_add_title') }}</h3>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_article_form_title') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('title', $title) }}"
+                           name="title"
+                           id="title">
                     {{= form_error('title') }}
+                    <p class="help-block">{{= lang('manager_article_form_title_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_article_form_description') }}
-                        <span class="small">{{= lang('manager_article_form_description_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_article_form_description') }}</label>
                     <textarea cols="40" rows="10" class="long" name="description"
                               id="description">{{= set_value('description',$article->description) }}</textarea>
                     {{= form_error('description') }}
+                    <p class="help-block">{{= lang('manager_article_form_description_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_article_form_link_text') }}
-                        <span class="small">{{= lang('manager_article_form_link_text_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="link_text" id="link_text"
-                           value="{{= set_value('link_text',$article->link_text) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_article_form_link_text') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('link_text', $article->link_text) }}"
+                           name="link_text"
+                           id="link_text">
                     {{= form_error('link_text') }}
+                    <p class="help-block">{{= lang('manager_article_form_link_text_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_article_form_link_url') }}
-                        <span class="small">{{= lang('manager_article_form_link_url_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="link_url" id="link_url"
-                           value="{{= set_value('link_url',$article->link_url) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_article_form_link_url') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('link_url', $article->link_url) }}"
+                           name="link_url"
+                           id="link_url">
                     {{= form_error('link_url') }}
+                    <p class="help-block">{{= lang('manager_article_form_link_url_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_article_form_meta_keywords') }}
-                        <span class="small">{{= lang('manager_article_form_meta_keywords_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="meta_keywords" id="meta_keywords"
-                           value="{{= set_value('meta_keywords',$article->meta_keywords) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_article_form_meta_keywords') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('meta_keywords', $article->meta_keywords) }}"
+                           name="meta_keywords"
+                           id="meta_keywords">
                     {{= form_error('meta_keywords') }}
+                    <p class="help-block">{{= lang('manager_article_form_meta_keywords_info') }}</p>
                 </div>
             </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_article_form_meta_description') }}
-                        <span class="small">{{= lang('manager_article_form_meta_description_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="meta_description" id="meta_description"
-                           value="{{= set_value('meta_description',$article->meta_description) }}"/>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_article_form_meta_description') }}</label>
+                    <input class="form-control" type="text"
+                           value="{{= set_value('meta_description', $article->meta_description) }}"
+                           name="meta_description"
+                           id="meta_description">
                     {{= form_error('meta_description') }}
+                    <p class="help-block">{{= lang('manager_article_form_meta_description_info') }}</p>
                 </div>
             </div>
-            <input type="submit" name="article_submit" id="button"
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="article_submit" id="button" class="btn btn-primary btn-success"
                    value="{{= lang('manager_article_form_submit_button') }}"/>
-        </form>
+        </div>
     </div>
-</div>
+</form>
