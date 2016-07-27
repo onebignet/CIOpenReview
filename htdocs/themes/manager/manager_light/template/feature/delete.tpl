@@ -30,16 +30,26 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_feature_delete_title').'&#8220;'.$feature->name.'&#8221;' }}</div>
-        <p>&nbsp;</p>
+<div class="box">
 
-        <h3>{{= lang('manager_feature_delete_warning') }}</h3>
-
-        <p>&nbsp;</p>
-
-        <h3>{{= anchor('manager/feature/deleted/'.$feature->id,lang('manager_feature_delete_confirm')) }}
-            &nbsp;|&nbsp;{{= anchor('manager/features',lang('manager_feature_delete_cancel')) }}</h3>
+    <div class="box-header">
+        <h3 class="box-title">{{= lang('manager_feature_delete_title').'&#8220;'.$feature->name.'&#8221;' }}</h3>
+        <div class="box-tools">
+        </div>
     </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                <label>{{= lang('manager_feature_delete_warning') }}</label>
+            </div>
+            <div class="col-md-2 col-md-offset-5">
+                {{= anchor('manager/feature/deleted/'.$feature->id,lang('manager_review_delete_confirm'), array('class' => 'btn btn-primary btn-danger')) }}
+                &nbsp;{{= anchor('manager/features',lang('manager_feature_delete_cancel'), array('class' => 'btn btn-default')) }}
+            </div>
+
+        </div>
+
+    </div>
+    <!-- /.box-body -->
 </div>
