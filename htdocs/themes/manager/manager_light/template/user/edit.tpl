@@ -60,7 +60,7 @@
                            id="name">
                     {{= form_error('name') }}
                     {{ if(isset($name_error)): }}
-                    <span class="error">{{= $name_error }}</span>
+                    <span class="label label-danger">{{= $name_error }}</span>
                     {{ endif }}
                     <p class="help-block">{{= lang('manager_user_form_name_info') }}</p>
                 </div>
@@ -83,7 +83,7 @@
                            id="email">
                     {{= form_error('email') }}
                     {{ if(isset($email_error)): }}
-                    <span class="error">{{= $email_error }}</span>
+                    <span class="label label-danger">{{= $email_error }}</span>
                     {{ endif }}
                     <p class="help-block">{{= lang('manager_user_form_email_info') }}</p>
                 </div>

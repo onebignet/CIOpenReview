@@ -94,7 +94,7 @@
                 <div class="col-md-9">
                     <label>{{= lang('manager_ad_form_image_upload') }}</label>
 
-                    <span class="error">{{= $upload_error }}</span>
+                    <span class="label label-danger">{{= $upload_error }}</span>
                     <p class="help-block">{{= lang('manager_ad_form_image_upload_info') }}</p>
                 </div>
                 <div class="col-md-3">

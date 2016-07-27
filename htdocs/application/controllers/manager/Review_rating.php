@@ -114,7 +114,7 @@ class Review_rating extends CI_Controller
 								'rules' => 'callback__more_than_zero2',
 							),
 						);
-						$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+						$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 						$this->form_validation->set_rules($config);
 						$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_rating'));
 						$this->form_validation->set_message('more_than_zero2', lang('manager_review_form_validate_value'));
@@ -199,7 +199,7 @@ class Review_rating extends CI_Controller
 					'rules' => 'callback__more_than_zero2',
 				),
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_rating'));
 			$this->form_validation->set_message('_more_than_zero2', lang('manager_review_form_validate_value'));

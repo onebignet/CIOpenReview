@@ -100,7 +100,7 @@ class Review_feature extends CI_Controller
 								'rules' => 'trim|required|min_length[1]|max_length[512]'
 							),
 						);
-						$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+						$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 						$this->form_validation->set_rules($config);
 						$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_feature'));
 						// validate the form data
@@ -184,7 +184,7 @@ class Review_feature extends CI_Controller
 					'rules' => 'trim|required|min_length[1]|max_length[512]'
 				),
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_feature'));
 			// validate the form data

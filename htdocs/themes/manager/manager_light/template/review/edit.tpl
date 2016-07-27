@@ -125,9 +125,17 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <label>{{= lang('manager_review_form_current_image') }}</label>
+                    <p>&nbsp;</p>
+                    <img src="{{= $current_image }}"/>
+                    <p>&nbsp;</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     <label>{{= lang('manager_review_form_image_upload') }}</label>
                     <input type="file" name="userfile" size="20"/>
-                    <span class="error">{{= $upload_error }}</span>
+                    <span class="label label-danger">{{= $upload_error }}</span>
                     <p class="help-block">{{= lang('manager_review_form_upload_image_info') }}</p>
                 </div>
             </div>
@@ -137,7 +145,7 @@
                     <input class="form-control" type="text" value="{{= set_value('image_url', $review->image_url) }}"
                            name="image_url"
                            id="image_url">
-                    <span class="error">{{= $grab_error }}</span>
+                    <span class="label label-danger">{{= $grab_error }}</span>
                     <p class="help-block">{{= lang('manager_review_form_upload_image_url_info') }}</p>
                 </div>
             </div>

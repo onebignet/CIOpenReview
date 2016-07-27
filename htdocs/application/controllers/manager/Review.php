@@ -148,7 +148,7 @@ class Review extends CI_Controller
 					'rules' => 'max_length[255]'
 				)
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			$this->form_validation->set_message('_validate_tags', lang('manager_review_form_validate_tags'));
 			$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_category'));
@@ -396,7 +396,7 @@ class Review extends CI_Controller
 					'rules' => 'max_length[255]'
 				)
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			$this->form_validation->set_message('_validate_tags', lang('manager_review_form_validate_tags'));
 			$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_category'));
@@ -583,6 +583,7 @@ class Review extends CI_Controller
 					$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
 				} else {
 					// error uploading so reload the form
+					$data['message'] = lang('manager_review_form_fail') . ' - ' . $data['upload_error'];
 					$data['current_image'] = base_url() . 'uploads/images/' . $data['review']->image_name . '_list_thumb.' . $data['review']->image_extension;
 					$data['selected_category'] = $data['review']->category_id;
 					$data['review']->image_url = '';

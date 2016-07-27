@@ -113,7 +113,7 @@ class Article extends CI_Controller
 					'rules' => 'max_length[255]'
 				)
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			// validate the form data
 			if ($this->form_validation->run() === FALSE) {
@@ -200,7 +200,7 @@ class Article extends CI_Controller
 					'rules' => 'max_length[255]'
 				)
 			);
-			$this->form_validation->set_error_delimiters('<br><span class="error">', '</span>');
+			$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 			$this->form_validation->set_rules($config);
 			// validate the form data
 			debug('validate form data');
