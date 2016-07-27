@@ -30,16 +30,6 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_ad_edit_title') }}</div>
-        <p>&nbsp;</p>
-
-        <h2>{{= lang('manager_ad_edit_success') }}</h2>
-
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link"><strong>->
-                &nbsp;{{= anchor('manager/ads',lang('manager_ad_manage_back_to_ads')) }}</strong></p>
-    </div>
+<div class="callout callout-info" xmlns="http://www.w3.org/1999/html">
+    <p>{{= lang('manager_ad_edit_success') }}</p>
 </div>
