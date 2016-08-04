@@ -30,16 +30,6 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_comment_add_title') }}</div>
-        <p>&nbsp;</p>
-
-        <h2>{{= lang('manager_comment_add_success') }}</h2>
-
-        <p>&nbsp;</p>
-
-        <p>&nbsp;</p>
-        {{= anchor('manager/comments/show/'.$review->id,lang('manager_comments_go_back')) }}
-    </div>
+<div class="callout callout-info" xmlns="http://www.w3.org/1999/html">
+    <p>{{= lang('manager_comment_add_success') }}</p>
 </div>
