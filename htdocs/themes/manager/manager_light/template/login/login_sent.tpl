@@ -30,8 +30,6 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">
-        {{= lang('manager_login_forgot_login_sent') }}
-    </div>
+<div class="callout callout-info">
+    <p>{{= lang('manager_login_forgot_login_sent') }}</p>
 </div>
