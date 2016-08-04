@@ -124,6 +124,8 @@ class Review_rating extends CI_Controller
 							// validation failed - reload page with error message(s)
 							$data['review'] = $review;
 							$data['message'] = lang('manager_review_rating_form_fail');
+                            $data['selected_rating'] = $this->input->post('rating_id');
+                            $data['selected_value'] = $this->input->post('value_id');
 							debug('loading "review_rating/add" view');
 							$sections = array('content' => 'manager/' . $this->setting['current_manager_theme'] . '/template/review_rating/add', 'sidebar' => 'manager/' . $this->setting['current_manager_theme'] . '/template/sidebar');
 							$this->template->load('manager/' . $this->setting['current_manager_theme'] . '/template/manager_template', $sections, $data);
