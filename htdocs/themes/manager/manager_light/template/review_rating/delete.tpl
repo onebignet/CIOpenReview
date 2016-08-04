@@ -33,7 +33,7 @@
 <div class="box">
 
     <div class="box-header">
-        <h3 class="box-title">{{= lang('manager_review_feature_delete_title') }}</h3>
+        <h3 class="box-title">{{= lang('manager_review_rating_delete_title') }}</h3>
         <div class="box-tools">
         </div>
     </div>
@@ -41,7 +41,7 @@
     <div class="box-body">
         <div class="row">
             <div class="col-md-12">
-                <label>{{= lang('manager_review_feature_delete_warning') }}</label>
+                <label>{{= lang('manager_review_rating_delete_warning') }}</label>
             </div>
             <div class="col-md-2 col-md-offset-5">
                 {{= anchor('manager/review_rating/deleted/'.$review_rating->id,lang('manager_review_rating_delete_confirm'), array('class' => 'btn btn-primary btn-danger')) }}
