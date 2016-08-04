@@ -30,17 +30,6 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_comment_delete_title') }}</div>
-        <p>&nbsp;</p>
-
-        <h2>{{= lang('manager_comment_delete_success') }}</h2>
-
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">
-            <strong>->&nbsp;{{= anchor('manager/comments/show/'.$review->id,lang('manager_comment_manage_back_to_comments')) }}</strong>
-        </p>
-    </div>
+<div class="callout callout-info" xmlns="http://www.w3.org/1999/html">
+    <p>{{= lang('manager_comment_delete_success') }}</p>
 </div>

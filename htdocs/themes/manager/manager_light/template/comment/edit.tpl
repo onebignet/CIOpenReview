@@ -30,57 +30,51 @@
 */
 
 }}
-<div id="content">
-    <div class="myform">
-        <div class="header_row">{{= lang('manager_comment_edit_title') }}</div>
-        <p>&nbsp;</p>
-
-        <p class="manager_right_link">{{= lang('manager_comments_go_back') }}
-            <strong>"{{= anchor('manager/comments/show/' . $review->id, $review->title) }}"</strong></p>
-
-        <p>&nbsp;</p>
-
-        <p>&nbsp;</p>
-
-        <form id="form" class="myform" name="form" method="post"
-              action="{{= base_url() . 'manager/comment/edit/' . $comment->id }}">
-
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_comment_form_quotation') }}
-                        <span class="small">{{= lang('manager_comment_form_quotation_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="quotation" id="quotation"
-                           value="{{= set_value('quotation', $comment->quotation) }}"/>
-                    {{= form_error('quotation') }}
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_comment_form_source') }}
-                        <span class="small">{{= lang('manager_comment_form_source_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input class="strong" type="text" name="source" id="source"
-                           value="{{= set_value('source', $comment->source) }}"/>
-                    {{= form_error('source') }}
-                </div>
-            </div>
-            <div class="formblock">
-                <div class="formleft">
-                    <label>{{= lang('manager_comment_form_approved') }}
-                        <span class="small">{{= lang('manager_comment_form_approved_info') }}</span>
-                    </label>
-                </div>
-                <div class="formright">
-                    <input name="approved" id="approved" type="checkbox" {{= $checked }}>
-                </div>
-            </div>
-            <input type="submit" name="comment_submit" id="button"
-                   value="{{= lang('manager_comment_form_submit_button') }}"/>
-        </form>
-    </div>
+{{ if(isset($message)): }}
+<div class="callout callout-warning" xmlns="http://www.w3.org/1999/html">
+    <p>{{= $message }}</p>
 </div>
+{{ endif }}
+<form id="form" class="myform" name="form" method="post"
+      action="{{= base_url() . 'manager/comment/edit/' . $comment->id }}">
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{= lang('manager_comment_add_title') . '"' . $review->title . '"' }}</h3>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_comment_form_quotation') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('quotation', $comment->quotation) }}"
+                           name="quotation"
+                           id="quotation">
+                    {{= form_error('quotation') }}
+                    <p class="help-block">{{= lang('manager_comment_form_quotation_info') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>{{= lang('manager_comment_form_source') }}</label>
+                    <input class="form-control" type="text" value="{{= set_value('source', $comment->source) }}"
+                           name="source"
+                           id="source">
+                    {{= form_error('source') }}
+                    <p class="help-block">{{= lang('manager_comment_form_source_info') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-checkbox">
+                        <label><input name="approved" id="approved"
+                                      type="checkbox" {{= $checked }}> {{= lang('manager_comment_form_approved') }}
+                        </label>
+                        <p class="help-block">{{= lang('manager_comment_form_approved_info') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-footer">
+            <input type="submit" name="comment_submit" id="button" class="btn btn-primary btn-success"
+                   value="{{= lang('manager_comment_form_submit_button') }}"/>
+        </div>
+    </div>
+</form>
