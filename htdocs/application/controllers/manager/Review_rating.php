@@ -117,7 +117,7 @@ class Review_rating extends CI_Controller
 						$this->form_validation->set_error_delimiters('<br><span class="label label-danger">', '</span>');
 						$this->form_validation->set_rules($config);
 						$this->form_validation->set_message('_more_than_zero', lang('manager_review_form_validate_rating'));
-						$this->form_validation->set_message('more_than_zero2', lang('manager_review_form_validate_value'));
+                        $this->form_validation->set_message('_more_than_zero2', lang('manager_review_form_validate_value'));
 						// validate the form data
 						if ($this->form_validation->run() === FALSE) {
 							debug('form validation failed');
