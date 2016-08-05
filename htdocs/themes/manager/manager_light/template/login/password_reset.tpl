@@ -30,9 +30,7 @@
 */
 
 }}
-<div id="content">
-    <div class="header_row">
-        {{= lang('manager_login_forgot_password_is_reset') }}
-    </div>
+<div class="callout callout-info">
+    <p>{{= lang('manager_login_forgot_password_is_reset') }}</p>
     <p>{{= anchor('manager/home', lang('manager_login_forgot_login_link')) }}</p>
 </div>

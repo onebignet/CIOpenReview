@@ -29,8 +29,6 @@
 *    along with CIOpenReview.  If not, see <http://www.gnu.org/licenses/>.
 */
 }}
-<div id="content">
-    <div class="header_row">
-        <p>{{= lang('sitemap_not_done') }}</p>
-    </div>
+<div class="callout callout-warning">
+    <p>{{= lang('sitemap_not_done') }}</p>
 </div>

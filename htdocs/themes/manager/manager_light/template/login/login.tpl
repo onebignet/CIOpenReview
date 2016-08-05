@@ -30,38 +30,35 @@
 */
 
 }}
-<div id="content">
-    <p>&nbsp;</p>
+{{ if($message!=''): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
 
+<div class="col-md-6 col-md-offset-3">
+    <form class="loginform" action="{{= site_url('/manager/login/') }}" method="post">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Login to CIOpenReview Manager</h3>
+            </div>
+            <div class="box-body">
+                <label>{{= lang('manager_login_username') }}</label>
+                <input class="form-control" type="text" placeholder="Username" name="login_username"
+                       id="login_username">
+                <br>
+                <label>{{= lang('manager_login_password') }}</label>
+                <input class="form-control" type="password" placeholder="Password" name="login_password"
+                       id="login_password">
 
-    {{ if($message!=''): }}
-    <div class="callout callout-warning">
-        <p>{{= $message }}</p>
-    </div>
-    {{ endif }}
-
-    <div class="col-md-6 col-md-offset-3">
-        <form class="loginform" action="{{= site_url('/manager/login/') }}" method="post">
-            <div class="box box-success">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Login to CIOpenReview Manager</h3>
+            </div>
+            <div class="box-footer">
+                <div class="loginforgot">
+                    <label>{{= anchor('manager/forgot_login',lang('manager_login_forgot')) }}</label>
                 </div>
-                <div class="box-body">
-                    <label>{{= lang('manager_login_username') }}</label>
-                    <input class="form-control" type="text" placeholder="Username" name="login_username"
-                           id="login_username">
-                    <br>
-                    <label>{{= lang('manager_login_password') }}</label>
-                    <input class="form-control" type="password" placeholder="Password" name="login_password"
-                           id="login_password">
-
-                </div>
-                <div class="box-footer">
-                    <div class="loginforgot">
-                        <label>{{= anchor('manager/forgot_login',lang('manager_login_forgot')) }}</label>
-                    </div>
-                    <button type="submit" name="login_submit" id="button"
-                            class="btn btn-primary btn-success" value="{{= lang('manager_login_submit') }}">{{= lang('manager_login_submit') }}</button>
-                </div>
-        </form>
-    </div>
+                <button type="submit" name="login_submit" id="button"
+                        class="btn btn-primary btn-success"
+                        value="{{= lang('manager_login_submit') }}">{{= lang('manager_login_submit') }}</button>
+            </div>
+    </form>
+</div>

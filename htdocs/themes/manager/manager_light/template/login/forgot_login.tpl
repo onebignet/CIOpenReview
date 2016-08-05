@@ -30,34 +30,30 @@
 */
 
 }}
-<div id="content">
-    <p>&nbsp;</p>
+{{ if($message!=''): }}
+<div class="callout callout-warning">
+    <p>{{= $message }}</p>
+</div>
+{{ endif }}
 
-    {{ if($message!=''): }}
-    <div class="callout callout-warning">
-        <p>{{= $message }}</p>
-    </div>
-    {{ endif }}
-
-    <div class="col-md-6 col-md-offset-3">
-        <form class="loginform" action="{{= site_url('/manager/forgot_login') }}" method="post">
-            <div class="box box-success">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Forgotten Password</h3>
-                </div>
-                <div class="box-body">
-                    <label>{{= lang('manager_user_form_email') }}</label>
-                    <p class="help-block">{{= lang('manager_login_forgot_email_info') }}</p>
-                    <input class="form-control" type="text" type="text" name="login_email" id="login_email"
-                           value="{{= set_value('login_email') }}">
-                    {{= form_error('login_email') }}
-                </div>
-                <div class="box-footer">
-                    <button type="submit" name="login_forgot_submit" id="button"
-                            class="btn btn-primary btn-success"
-                            value="{{= lang('manager_login_forgot_submit') }}">{{= lang('manager_login_forgot_submit') }}</button>
-                </div>
+<div class="col-md-6 col-md-offset-3">
+    <form class="loginform" action="{{= site_url('/manager/forgot_login') }}" method="post">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Forgotten Password</h3>
             </div>
-        </form>
-    </div>
+            <div class="box-body">
+                <label>{{= lang('manager_user_form_email') }}</label>
+                <p class="help-block">{{= lang('manager_login_forgot_email_info') }}</p>
+                <input class="form-control" type="text" type="text" name="login_email" id="login_email"
+                       value="{{= set_value('login_email') }}">
+                {{= form_error('login_email') }}
+            </div>
+            <div class="box-footer">
+                <button type="submit" name="login_forgot_submit" id="button"
+                        class="btn btn-primary btn-success"
+                        value="{{= lang('manager_login_forgot_submit') }}">{{= lang('manager_login_forgot_submit') }}</button>
+            </div>
+        </div>
+    </form>
 </div>

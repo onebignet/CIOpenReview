@@ -30,6 +30,6 @@
 */
 
 }}
-<div class="callout callout-info" xmlns="http://www.w3.org/1999/html">
+<div class="callout callout-info">
     <p>{{= lang('manager_user_edit_success') }}</p>
 </div>

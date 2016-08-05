@@ -29,9 +29,7 @@
 *    along with CIOpenReview.  If not, see <http://www.gnu.org/licenses/>.
 */
 }}
-<div id="content">
-    <div class="header_row">
-        <p>{{= lang('sitemap_complete') }}</p>
-    </div>
+<div class="callout callout-info">
+    <p>{{= lang('sitemap_complete') }}</p>
     <h2><a href="../sitemap.xml">sitemap.xml</a></h2>
 </div>
