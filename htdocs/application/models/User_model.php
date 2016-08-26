@@ -53,6 +53,7 @@ class User_model extends CI_Model
 	{
 		parent::__construct();
 		$this->load->helper('security');
+		$this->load->helper('string');
 		$this->load->database();
 	}
 
