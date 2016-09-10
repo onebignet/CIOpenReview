@@ -70,7 +70,7 @@ class Rss extends CI_Controller
 		// get data for rss feed
 		$data['encoding'] = 'utf-8';
 		$data['title'] = $this->setting['site_name'];
-		$data['link'] = base_url() . '/rss';
+        $data['link'] = base_url('rss');
 		$data['description'] = lang('rss_description');
 		$data['language'] = 'en';
 		$data['creator'] = $this->setting['site_name'];
