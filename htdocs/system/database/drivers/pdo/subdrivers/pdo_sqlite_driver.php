@@ -98,29 +98,6 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Show table query
-	 *
-	 * Generates a platform-specific query string so that the table names can be fetched
-	 *
-	 * @param	bool	$prefix_limit
-	 * @return	string
-	 */
-	protected function _list_tables($prefix_limit = FALSE)
-	{
-		$sql = 'SELECT "NAME" FROM "SQLITE_MASTER" WHERE "TYPE" = \'table\'';
-
-		if ($prefix_limit === TRUE && $this->dbprefix !== '')
-		{
-			return $sql.' AND "NAME" LIKE \''.$this->escape_like_str($this->dbprefix)."%' "
-				.sprintf($this->_like_escape_str, $this->_like_escape_chr);
-		}
-
-		return $sql;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Fetch Field Names
 	 *
 	 * @param	string	$table	Table name
@@ -181,6 +158,28 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 		}
 
 		return $retval;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Show table query
+     *
+     * Generates a platform-specific query string so that the table names can be fetched
+     *
+     * @param    bool $prefix_limit
+     * @return    string
+     */
+    protected function _list_tables($prefix_limit = FALSE)
+    {
+        $sql = 'SELECT "NAME" FROM "SQLITE_MASTER" WHERE "TYPE" = \'table\'';
+
+        if ($prefix_limit === TRUE && $this->dbprefix !== '') {
+            return $sql . ' AND "NAME" LIKE \'' . $this->escape_like_str($this->dbprefix) . "%' "
+            . sprintf($this->_like_escape_str, $this->_like_escape_chr);
+        }
+
+        return $sql;
 	}
 
 	// --------------------------------------------------------------------

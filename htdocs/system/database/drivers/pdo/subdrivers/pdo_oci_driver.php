@@ -130,24 +130,52 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Database version number
+     * Returns an object with field data
 	 *
-	 * @return	string
+     * @param    string $table
+     * @return    array
 	 */
-	public function version()
+    public function field_data($table)
 	{
-		if (isset($this->data_cache['version']))
+        if (strpos($table, '.') !== FALSE)
 		{
-			return $this->data_cache['version'];
-		}
+            sscanf($table, '%[^.].%s', $owner, $table);
+		} else {
+            $owner = $this->username;
+        }
 
-		$version_string = parent::version();
-		if (preg_match('#Release\s(?<version>\d+(?:\.\d+)+)#', $version_string, $match))
+        $sql = 'SELECT COLUMN_NAME, DATA_TYPE, CHAR_LENGTH, DATA_PRECISION, DATA_LENGTH, DATA_DEFAULT, NULLABLE
+			FROM ALL_TAB_COLUMNS
+			WHERE UPPER(OWNER) = ' . $this->escape(strtoupper($owner)) . '
+				AND UPPER(TABLE_NAME) = ' . $this->escape(strtoupper($table));
+
+        if (($query = $this->query($sql)) === FALSE)
 		{
-			return $this->data_cache['version'] = $match[1];
+            return FALSE;
 		}
+        $query = $query->result_object();
 
-		return FALSE;
+        $retval = array();
+        for ($i = 0, $c = count($query); $i < $c; $i++) {
+            $retval[$i] = new stdClass();
+            $retval[$i]->name = $query[$i]->COLUMN_NAME;
+            $retval[$i]->type = $query[$i]->DATA_TYPE;
+
+            $length = ($query[$i]->CHAR_LENGTH > 0)
+                ? $query[$i]->CHAR_LENGTH : $query[$i]->DATA_PRECISION;
+            if ($length === NULL) {
+                $length = $query[$i]->DATA_LENGTH;
+            }
+            $retval[$i]->max_length = $length;
+
+            $default = $query[$i]->DATA_DEFAULT;
+            if ($default === NULL && $query[$i]->NULLABLE === 'N') {
+                $default = '';
+            }
+            $retval[$i]->default = $query[$i]->COLUMN_DEFAULT;
+        }
+
+        return $retval;
 	}
 
 	// --------------------------------------------------------------------
@@ -197,62 +225,6 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver {
 		return 'SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS
 			WHERE UPPER(OWNER) = '.$this->escape(strtoupper($owner)).'
 				AND UPPER(TABLE_NAME) = '.$this->escape(strtoupper($table));
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Returns an object with field data
-	 *
-	 * @param	string	$table
-	 * @return	array
-	 */
-	public function field_data($table)
-	{
-		if (strpos($table, '.') !== FALSE)
-		{
-			sscanf($table, '%[^.].%s', $owner, $table);
-		}
-		else
-		{
-			$owner = $this->username;
-		}
-
-		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, CHAR_LENGTH, DATA_PRECISION, DATA_LENGTH, DATA_DEFAULT, NULLABLE
-			FROM ALL_TAB_COLUMNS
-			WHERE UPPER(OWNER) = '.$this->escape(strtoupper($owner)).'
-				AND UPPER(TABLE_NAME) = '.$this->escape(strtoupper($table));
-
-		if (($query = $this->query($sql)) === FALSE)
-		{
-			return FALSE;
-		}
-		$query = $query->result_object();
-
-		$retval = array();
-		for ($i = 0, $c = count($query); $i < $c; $i++)
-		{
-			$retval[$i]			= new stdClass();
-			$retval[$i]->name		= $query[$i]->COLUMN_NAME;
-			$retval[$i]->type		= $query[$i]->DATA_TYPE;
-
-			$length = ($query[$i]->CHAR_LENGTH > 0)
-				? $query[$i]->CHAR_LENGTH : $query[$i]->DATA_PRECISION;
-			if ($length === NULL)
-			{
-				$length = $query[$i]->DATA_LENGTH;
-			}
-			$retval[$i]->max_length		= $length;
-
-			$default = $query[$i]->DATA_DEFAULT;
-			if ($default === NULL && $query[$i]->NULLABLE === 'N')
-			{
-				$default = '';
-			}
-			$retval[$i]->default		= $query[$i]->COLUMN_DEFAULT;
-		}
-
-		return $retval;
 	}
 
 	// --------------------------------------------------------------------
@@ -321,6 +293,27 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver {
 
 		return 'SELECT * FROM (SELECT inner_query.*, rownum rnum FROM ('.$sql.') inner_query WHERE rownum < '.($this->qb_offset + $this->qb_limit + 1).')'
 			.($this->qb_offset ? ' WHERE rnum >= '.($this->qb_offset + 1): '');
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Database version number
+     *
+     * @return    string
+     */
+    public function version()
+    {
+        if (isset($this->data_cache['version'])) {
+            return $this->data_cache['version'];
+        }
+
+        $version_string = parent::version();
+        if (preg_match('#Release\s(?<version>\d+(?:\.\d+)+)#', $version_string, $match)) {
+            return $this->data_cache['version'] = $match[1];
+        }
+
+        return FALSE;
 	}
 
 }

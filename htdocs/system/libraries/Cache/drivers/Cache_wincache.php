@@ -70,6 +70,20 @@ class CI_Cache_wincache extends CI_Driver {
 	// ------------------------------------------------------------------------
 
 	/**
+     * is_supported()
+     *
+     * Check to see if WinCache is available on this system, bail if it isn't.
+     *
+     * @return    bool
+     */
+    public function is_supported()
+    {
+        return (extension_loaded('wincache') && ini_get('wincache.ucenabled'));
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Get
 	 *
 	 * Look for a value in the cache. If it exists, return the data,
@@ -199,19 +213,5 @@ class CI_Cache_wincache extends CI_Driver {
 		}
 
 		return FALSE;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * is_supported()
-	 *
-	 * Check to see if WinCache is available on this system, bail if it isn't.
-	 *
-	 * @return	bool
-	 */
-	public function is_supported()
-	{
-		return (extension_loaded('wincache') && ini_get('wincache.ucenabled'));
 	}
 }

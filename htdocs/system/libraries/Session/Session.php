@@ -91,6 +91,7 @@ class CI_Session {
 		// Note: BC workaround
 		elseif (config_item('sess_use_database'))
 		{
+            log_message('debug', 'Session: "sess_driver" is empty; using BC fallback to "sess_use_database".');
 			$this->_driver = 'database';
 		}
 
@@ -321,6 +322,22 @@ class CI_Session {
 	// ------------------------------------------------------------------------
 
 	/**
+     * Session regenerate
+     *
+     * Legacy CI_Session compatibility method
+     *
+     * @param    bool $destroy Destroy old session data flag
+     * @return    void
+     */
+    public function sess_regenerate($destroy = FALSE)
+    {
+        $_SESSION['__ci_last_regenerate'] = time();
+        session_regenerate_id($destroy);
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Handle temporary variables
 	 *
 	 * Clears old "flash" data, marks the new one for deletion and handles
@@ -360,67 +377,6 @@ class CI_Session {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Mark as flash
-	 *
-	 * @param	mixed	$key	Session data key(s)
-	 * @return	bool
-	 */
-	public function mark_as_flash($key)
-	{
-		if (is_array($key))
-		{
-			for ($i = 0, $c = count($key); $i < $c; $i++)
-			{
-				if ( ! isset($_SESSION[$key[$i]]))
-				{
-					return FALSE;
-				}
-			}
-
-			$new = array_fill_keys($key, 'new');
-
-			$_SESSION['__ci_vars'] = isset($_SESSION['__ci_vars'])
-				? array_merge($_SESSION['__ci_vars'], $new)
-				: $new;
-
-			return TRUE;
-		}
-
-		if ( ! isset($_SESSION[$key]))
-		{
-			return FALSE;
-		}
-
-		$_SESSION['__ci_vars'][$key] = 'new';
-		return TRUE;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Get flash keys
-	 *
-	 * @return	array
-	 */
-	public function get_flash_keys()
-	{
-		if ( ! isset($_SESSION['__ci_vars']))
-		{
-			return array();
-		}
-
-		$keys = array();
-		foreach (array_keys($_SESSION['__ci_vars']) as $key)
-		{
-			is_int($_SESSION['__ci_vars'][$key]) OR $keys[] = $key;
-		}
-
-		return $keys;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Unmark flash
 	 *
 	 * @param	mixed	$key	Session data key(s)
@@ -438,114 +394,6 @@ class CI_Session {
 		foreach ($key as $k)
 		{
 			if (isset($_SESSION['__ci_vars'][$k]) && ! is_int($_SESSION['__ci_vars'][$k]))
-			{
-				unset($_SESSION['__ci_vars'][$k]);
-			}
-		}
-
-		if (empty($_SESSION['__ci_vars']))
-		{
-			unset($_SESSION['__ci_vars']);
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Mark as temp
-	 *
-	 * @param	mixed	$key	Session data key(s)
-	 * @param	int	$ttl	Time-to-live in seconds
-	 * @return	bool
-	 */
-	public function mark_as_temp($key, $ttl = 300)
-	{
-		$ttl += time();
-
-		if (is_array($key))
-		{
-			$temp = array();
-
-			foreach ($key as $k => $v)
-			{
-				// Do we have a key => ttl pair, or just a key?
-				if (is_int($k))
-				{
-					$k = $v;
-					$v = $ttl;
-				}
-				else
-				{
-					$v += time();
-				}
-
-				if ( ! isset($_SESSION[$k]))
-				{
-					return FALSE;
-				}
-
-				$temp[$k] = $v;
-			}
-
-			$_SESSION['__ci_vars'] = isset($_SESSION['__ci_vars'])
-				? array_merge($_SESSION['__ci_vars'], $temp)
-				: $temp;
-
-			return TRUE;
-		}
-
-		if ( ! isset($_SESSION[$key]))
-		{
-			return FALSE;
-		}
-
-		$_SESSION['__ci_vars'][$key] = $ttl;
-		return TRUE;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Get temp keys
-	 *
-	 * @return	array
-	 */
-	public function get_temp_keys()
-	{
-		if ( ! isset($_SESSION['__ci_vars']))
-		{
-			return array();
-		}
-
-		$keys = array();
-		foreach (array_keys($_SESSION['__ci_vars']) as $key)
-		{
-			is_int($_SESSION['__ci_vars'][$key]) && $keys[] = $key;
-		}
-
-		return $keys;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Unmark flash
-	 *
-	 * @param	mixed	$key	Session data key(s)
-	 * @return	void
-	 */
-	public function unmark_temp($key)
-	{
-		if (empty($_SESSION['__ci_vars']))
-		{
-			return;
-		}
-
-		is_array($key) OR $key = array($key);
-
-		foreach ($key as $k)
-		{
-			if (isset($_SESSION['__ci_vars'][$k]) && is_int($_SESSION['__ci_vars'][$k]))
 			{
 				unset($_SESSION['__ci_vars'][$k]);
 			}
@@ -584,6 +432,20 @@ class CI_Session {
 	// ------------------------------------------------------------------------
 
 	/**
+     * __set()
+     *
+     * @param    string $key Session data key
+     * @param    mixed $value Session data value
+     * @return    void
+     */
+    public function __set($key, $value)
+    {
+        $_SESSION[$key] = $value;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * __isset()
 	 *
 	 * @param	string	$key	'session_id' or a session data key
@@ -602,59 +464,90 @@ class CI_Session {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * __set()
+     * Session destroy
 	 *
-	 * @param	string	$key	Session data key
-	 * @param	mixed	$value	Session data value
+     * Legacy CI_Session compatibility method
+     *
 	 * @return	void
 	 */
-	public function __set($key, $value)
+    public function sess_destroy()
 	{
-		$_SESSION[$key] = $value;
+        session_destroy();
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Session destroy
+     * Get userdata reference
 	 *
 	 * Legacy CI_Session compatibility method
 	 *
+     * @returns    array
+     */
+    public function &get_userdata()
+    {
+        return $_SESSION;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Set userdata
+     *
+     * Legacy CI_Session compatibility method
+     *
+     * @param    mixed $data Session data key or an associative array
+     * @param    mixed $value Value to store
 	 * @return	void
 	 */
-	public function sess_destroy()
+    public function set_userdata($data, $value = NULL)
 	{
-		session_destroy();
+        if (is_array($data)) {
+            foreach ($data as $key => &$value) {
+                $_SESSION[$key] = $value;
+            }
+
+            return;
+        }
+
+        $_SESSION[$data] = $value;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Session regenerate
+     * Unset userdata
 	 *
 	 * Legacy CI_Session compatibility method
 	 *
-	 * @param	bool	$destroy	Destroy old session data flag
+     * @param    mixed $key Session data key(s)
 	 * @return	void
 	 */
-	public function sess_regenerate($destroy = FALSE)
+    public function unset_userdata($key)
 	{
-		$_SESSION['__ci_last_regenerate'] = time();
-		session_regenerate_id($destroy);
+        if (is_array($key)) {
+            foreach ($key as $k) {
+                unset($_SESSION[$k]);
+            }
+
+            return;
+        }
+
+        unset($_SESSION[$key]);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Get userdata reference
+     * All userdata (fetch)
 	 *
 	 * Legacy CI_Session compatibility method
 	 *
-	 * @returns	array
+     * @return    array    $_SESSION, excluding flash data items
 	 */
-	public function &get_userdata()
+    public function all_userdata()
 	{
-		return $_SESSION;
+        return $this->userdata();
 	}
 
 	// ------------------------------------------------------------------------
@@ -699,66 +592,45 @@ class CI_Session {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Set userdata
+     * Get flash keys
 	 *
-	 * Legacy CI_Session compatibility method
-	 *
-	 * @param	mixed	$data	Session data key or an associative array
-	 * @param	mixed	$value	Value to store
-	 * @return	void
+     * @return    array
 	 */
-	public function set_userdata($data, $value = NULL)
+    public function get_flash_keys()
 	{
-		if (is_array($data))
+        if (!isset($_SESSION['__ci_vars']))
 		{
-			foreach ($data as $key => &$value)
-			{
-				$_SESSION[$key] = $value;
-			}
+            return array();
+        }
 
-			return;
+        $keys = array();
+        foreach (array_keys($_SESSION['__ci_vars']) as $key) {
+            is_int($_SESSION['__ci_vars'][$key]) OR $keys[] = $key;
 		}
 
-		$_SESSION[$data] = $value;
+        return $keys;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Unset userdata
+     * Get temp keys
 	 *
-	 * Legacy CI_Session compatibility method
-	 *
-	 * @param	mixed	$data	Session data key(s)
-	 * @return	void
+     * @return    array
 	 */
-	public function unset_userdata($key)
+    public function get_temp_keys()
 	{
-		if (is_array($key))
+        if (!isset($_SESSION['__ci_vars']))
 		{
-			foreach ($key as $k)
-			{
-				unset($_SESSION[$k]);
-			}
+            return array();
+        }
 
-			return;
+        $keys = array();
+        foreach (array_keys($_SESSION['__ci_vars']) as $key) {
+            is_int($_SESSION['__ci_vars'][$key]) && $keys[] = $key;
 		}
 
-		unset($_SESSION[$key]);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * All userdata (fetch)
-	 *
-	 * Legacy CI_Session compatibility method
-	 *
-	 * @return	array	$_SESSION, excluding flash data items
-	 */
-	public function all_userdata()
-	{
-		return $this->userdata();
+        return $keys;
 	}
 
 	// ------------------------------------------------------------------------
@@ -828,6 +700,40 @@ class CI_Session {
 	// ------------------------------------------------------------------------
 
 	/**
+     * Mark as flash
+     *
+     * @param    mixed $key Session data key(s)
+     * @return    bool
+     */
+    public function mark_as_flash($key)
+    {
+        if (is_array($key)) {
+            for ($i = 0, $c = count($key); $i < $c; $i++) {
+                if (!isset($_SESSION[$key[$i]])) {
+                    return FALSE;
+                }
+            }
+
+            $new = array_fill_keys($key, 'new');
+
+            $_SESSION['__ci_vars'] = isset($_SESSION['__ci_vars'])
+                ? array_merge($_SESSION['__ci_vars'], $new)
+                : $new;
+
+            return TRUE;
+        }
+
+        if (!isset($_SESSION[$key])) {
+            return FALSE;
+        }
+
+        $_SESSION['__ci_vars'][$key] = 'new';
+        return TRUE;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Keep flashdata
 	 *
 	 * Legacy CI_Session compatibility method
@@ -893,6 +799,53 @@ class CI_Session {
 	// ------------------------------------------------------------------------
 
 	/**
+     * Mark as temp
+     *
+     * @param    mixed $key Session data key(s)
+     * @param    int $ttl Time-to-live in seconds
+     * @return    bool
+     */
+    public function mark_as_temp($key, $ttl = 300)
+    {
+        $ttl += time();
+
+        if (is_array($key)) {
+            $temp = array();
+
+            foreach ($key as $k => $v) {
+                // Do we have a key => ttl pair, or just a key?
+                if (is_int($k)) {
+                    $k = $v;
+                    $v = $ttl;
+                } else {
+                    $v += time();
+                }
+
+                if (!isset($_SESSION[$k])) {
+                    return FALSE;
+                }
+
+                $temp[$k] = $v;
+            }
+
+            $_SESSION['__ci_vars'] = isset($_SESSION['__ci_vars'])
+                ? array_merge($_SESSION['__ci_vars'], $temp)
+                : $temp;
+
+            return TRUE;
+        }
+
+        if (!isset($_SESSION[$key])) {
+            return FALSE;
+        }
+
+        $_SESSION['__ci_vars'][$key] = $ttl;
+        return TRUE;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Unset tempdata
 	 *
 	 * Legacy CI_Session compatibility method
@@ -903,6 +856,33 @@ class CI_Session {
 	public function unset_tempdata($key)
 	{
 		$this->unmark_temp($key);
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Unmark flash
+     *
+     * @param    mixed $key Session data key(s)
+     * @return    void
+     */
+    public function unmark_temp($key)
+    {
+        if (empty($_SESSION['__ci_vars'])) {
+            return;
+        }
+
+        is_array($key) OR $key = array($key);
+
+        foreach ($key as $k) {
+            if (isset($_SESSION['__ci_vars'][$k]) && is_int($_SESSION['__ci_vars'][$k])) {
+                unset($_SESSION['__ci_vars'][$k]);
+            }
+        }
+
+        if (empty($_SESSION['__ci_vars'])) {
+            unset($_SESSION['__ci_vars']);
+        }
 	}
 
 }
