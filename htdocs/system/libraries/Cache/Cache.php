@@ -49,6 +49,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class CI_Cache extends CI_Driver_Library {
 
 	/**
+     * Cache key prefix
+     *
+     * @var    string
+     */
+    public $key_prefix = '';
+    /**
 	 * Valid cache drivers
 	 *
 	 * @var array
@@ -61,34 +67,24 @@ class CI_Cache extends CI_Driver_Library {
 		'redis',
 		'wincache'
 	);
-
 	/**
 	 * Path of cache files (if file-based cache)
 	 *
 	 * @var string
 	 */
 	protected $_cache_path = NULL;
-
 	/**
 	 * Reference to the driver
 	 *
 	 * @var mixed
 	 */
 	protected $_adapter = 'dummy';
-
 	/**
 	 * Fallback driver
 	 *
 	 * @var string
 	 */
 	protected $_backup_driver = 'dummy';
-
-	/**
-	 * Cache key prefix
-	 *
-	 * @var	string
-	 */
-	public $key_prefix = '';
 
 	/**
 	 * Constructor
@@ -125,6 +121,25 @@ class CI_Cache extends CI_Driver_Library {
 	// ------------------------------------------------------------------------
 
 	/**
+     * Is the requested driver supported in this environment?
+     *
+     * @param    string $driver The driver to test
+     * @return    array
+     */
+    public function is_supported($driver)
+    {
+        static $support;
+
+        if (!isset($support, $support[$driver])) {
+            $support[$driver] = $this->{$driver}->is_supported();
+        }
+
+        return $support[$driver];
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Get
 	 *
 	 * Look for a value in the cache. If it exists, return the data
@@ -231,25 +246,5 @@ class CI_Cache extends CI_Driver_Library {
 	public function get_metadata($id)
 	{
 		return $this->{$this->_adapter}->get_metadata($this->key_prefix.$id);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Is the requested driver supported in this environment?
-	 *
-	 * @param	string	$driver	The driver to test
-	 * @return	array
-	 */
-	public function is_supported($driver)
-	{
-		static $support;
-
-		if ( ! isset($support, $support[$driver]))
-		{
-			$support[$driver] = $this->{$driver}->is_supported();
-		}
-
-		return $support[$driver];
 	}
 }

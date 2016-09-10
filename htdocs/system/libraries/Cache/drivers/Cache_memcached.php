@@ -294,8 +294,7 @@ class CI_Cache_memcached extends CI_Driver {
 		if ($this->_memcached instanceof Memcache)
 		{
 			$this->_memcached->close();
-		}
-		elseif ($this->_memcached instanceof Memcached)
+		} elseif ($this->_memcached instanceof Memcached && method_exists($this->_memcached, 'quit'))
 		{
 			$this->_memcached->quit();
 		}

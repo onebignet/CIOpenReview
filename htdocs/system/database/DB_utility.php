@@ -93,6 +93,19 @@ abstract class CI_DB_utility {
 	// --------------------------------------------------------------------
 
 	/**
+     * Determine if a particular database exists
+     *
+     * @param    string $database_name
+     * @return    bool
+     */
+    public function database_exists($database_name)
+    {
+        return in_array($database_name, $this->list_databases());
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * List databases
 	 *
 	 * @return	array
@@ -123,19 +136,6 @@ abstract class CI_DB_utility {
 		}
 
 		return $this->db->data_cache['db_names'];
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Determine if a particular database exists
-	 *
-	 * @param	string	$database_name
-	 * @return	bool
-	 */
-	public function database_exists($database_name)
-	{
-		return in_array($database_name, $this->list_databases());
 	}
 
 	// --------------------------------------------------------------------

@@ -144,21 +144,13 @@ class CI_Cache_redis extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Get cache
+     * Check if Redis driver is supported
 	 *
-	 * @param	string	$key	Cache ID
-	 * @return	mixed
+     * @return    bool
 	 */
-	public function get($key)
+    public function is_supported()
 	{
-		$value = $this->_redis->get($key);
-
-		if ($value !== FALSE && isset($this->_serialized[$key]))
-		{
-			return unserialize($value);
-		}
-
-		return $value;
+        return extension_loaded('redis');
 	}
 
 	// ------------------------------------------------------------------------
@@ -300,13 +292,20 @@ class CI_Cache_redis extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Check if Redis driver is supported
+     * Get cache
 	 *
-	 * @return	bool
+     * @param    string $key Cache ID
+     * @return    mixed
 	 */
-	public function is_supported()
+    public function get($key)
 	{
-		return extension_loaded('redis');
+        $value = $this->_redis->get($key);
+
+        if ($value !== FALSE && isset($this->_serialized[$key])) {
+            return unserialize($value);
+        }
+
+        return $value;
 	}
 
 	// ------------------------------------------------------------------------

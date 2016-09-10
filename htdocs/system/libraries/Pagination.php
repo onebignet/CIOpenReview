@@ -49,6 +49,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class CI_Pagination {
 
 	/**
+     * Items per page
+     *
+     * @var    int
+     */
+    public $per_page = 10;
+    /**
+     * Current page
+     *
+     * @var    int
+     */
+    public $cur_page = 0;
+    /**
 	 * Base URL
 	 *
 	 * The page that we're linking to
@@ -56,28 +68,24 @@ class CI_Pagination {
 	 * @var	string
 	 */
 	protected $base_url		= '';
-
 	/**
 	 * Prefix
 	 *
 	 * @var	string
 	 */
 	protected $prefix = '';
-
 	/**
 	 * Suffix
 	 *
 	 * @var	string
 	 */
 	protected $suffix = '';
-
 	/**
 	 * Total number of items
 	 *
 	 * @var	int
 	 */
 	protected $total_rows = 0;
-
 	/**
 	 * Number of links to show
 	 *
@@ -87,21 +95,6 @@ class CI_Pagination {
 	 * @var	int
 	 */
 	protected $num_links = 2;
-
-	/**
-	 * Items per page
-	 *
-	 * @var	int
-	 */
-	public $per_page = 10;
-
-	/**
-	 * Current page
-	 *
-	 * @var	int
-	 */
-	public $cur_page = 0;
-
 	/**
 	 * Use page numbers flag
 	 *
@@ -392,6 +385,28 @@ class CI_Pagination {
 	// --------------------------------------------------------------------
 
 	/**
+     * Parse attributes
+     *
+     * @param    array $attributes
+     * @return    void
+     */
+    protected function _parse_attributes($attributes)
+    {
+        isset($attributes['rel']) OR $attributes['rel'] = TRUE;
+        $this->_link_types = ($attributes['rel'])
+            ? array('start' => 'start', 'prev' => 'prev', 'next' => 'next')
+            : array();
+        unset($attributes['rel']);
+
+        $this->_attributes = '';
+        foreach ($attributes as $key => $value) {
+            $this->_attributes .= ' ' . $key . '="' . $value . '"';
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * Generate the pagination links
 	 *
 	 * @return	string
@@ -653,29 +668,6 @@ class CI_Pagination {
 
 		// Add the wrapper HTML if exists
 		return $this->full_tag_open.$output.$this->full_tag_close;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Parse attributes
-	 *
-	 * @param	array	$attributes
-	 * @return	void
-	 */
-	protected function _parse_attributes($attributes)
-	{
-		isset($attributes['rel']) OR $attributes['rel'] = TRUE;
-		$this->_link_types = ($attributes['rel'])
-			? array('start' => 'start', 'prev' => 'prev', 'next' => 'next')
-			: array();
-		unset($attributes['rel']);
-
-		$this->_attributes = '';
-		foreach ($attributes as $key => $value)
-		{
-			$this->_attributes .= ' '.$key.'="'.$value.'"';
-		}
 	}
 
 	// --------------------------------------------------------------------
