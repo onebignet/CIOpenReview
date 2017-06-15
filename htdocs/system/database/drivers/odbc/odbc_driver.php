@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.3.0
@@ -168,7 +168,7 @@ class CI_DB_odbc_driver extends CI_DB_driver
         $ml = strlen($this->bind_marker);
 
         // Make sure not to replace a chunk inside a string that happens to match the bind marker
-        if ($c = preg_match_all("/'[^']*'/i", $sql, $matches)) {
+        if ($c = preg_match_all("/'[^']*'|\"[^\"]*\"/i", $sql, $matches)) {
             $c = preg_match_all('/' . preg_quote($this->bind_marker, '/') . '/i',
                 str_replace($matches[0],
                     str_replace($this->bind_marker, str_repeat(' ', $ml), $matches[0]),
@@ -218,7 +218,7 @@ class CI_DB_odbc_driver extends CI_DB_driver
 	 */
     public function insert_id()
 	{
-        return ($this->db->db_debug) ? $this->db->display_error('db_unsupported_feature') : FALSE;
+        return ($this->db_debug) ? $this->display_error('db_unsupported_feature') : FALSE;
     }
 
     // --------------------------------------------------------------------
@@ -227,7 +227,7 @@ class CI_DB_odbc_driver extends CI_DB_driver
      * Error
      *
      * Returns an array containing code and message of the last
-     * database error that has occured.
+     * database error that has occurred.
      *
      * @return    array
      */
@@ -249,7 +249,7 @@ class CI_DB_odbc_driver extends CI_DB_driver
         if (!isset($this->odbc_result))
 		{
             return odbc_exec($this->conn_id, $sql);
-		} elseif ($this->odbc_result === FALSE) {
+        } elseif ($this->odbc_result === FALSE) {
             return FALSE;
         }
 
@@ -274,7 +274,7 @@ class CI_DB_odbc_driver extends CI_DB_driver
 	 */
 	public function is_write_type($sql)
 	{
-		if (preg_match('#^(INSERT|UPDATE).*RETURNING\s.+(\,\s?.+)*$#i', $sql))
+        if (preg_match('#^(INSERT|UPDATE).*RETURNING\s.+(\,\s?.+)*$#is', $sql))
 		{
 			return FALSE;
 		}
@@ -331,14 +331,14 @@ class CI_DB_odbc_driver extends CI_DB_driver
 	// --------------------------------------------------------------------
 
 	/**
-     * Platform-dependant string escape
+     * Platform-dependent string escape
      *
      * @param    string
      * @return    string
      */
     protected function _escape_str($str)
     {
-        $this->db->display_error('db_unsupported_feature');
+        $this->display_error('db_unsupported_feature');
     }
 
     // --------------------------------------------------------------------
