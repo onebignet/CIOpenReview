@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
@@ -50,27 +50,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class CI_Output {
 
+    /**
+     * mbstring.func_overload flag
+     *
+     * @var    bool
+     */
+    protected static $func_overload;
 	/**
 	 * Final output string
 	 *
 	 * @var	string
 	 */
 	public $final_output;
-
 	/**
 	 * Cache expiration time
 	 *
 	 * @var	int
 	 */
 	public $cache_expiration = 0;
-
 	/**
 	 * List of server headers
 	 *
 	 * @var	array
 	 */
 	public $headers = array();
-
 	/**
 	 * List of mime types
 	 *
@@ -131,6 +134,8 @@ class CI_Output {
 			&& config_item('compress_output') === TRUE
 			&& extension_loaded('zlib')
 		);
+
+        isset(self::$func_overload) OR self::$func_overload = (extension_loaded('mbstring') && ini_get('mbstring.func_overload'));
 
 		// Get mime types for later
 		$this->mimes =& get_mimes();
@@ -281,7 +286,7 @@ class CI_Output {
             if (is_array($cache_query_string))
 			{
                 $uri .= '?' . http_build_query(array_intersect_key($_GET, array_flip($cache_query_string)));
-			} else {
+            } else {
                 $uri .= '?' . $_SERVER['QUERY_STRING'];
             }
 		}
@@ -326,7 +331,7 @@ class CI_Output {
         }
 
         // Display the cache
-        $this->_display(substr($cache, strlen($match[0])));
+        $this->_display(self::substr($cache, self::strlen($match[0])));
         log_message('debug', 'Cache file is current. Sending it to browser.');
         return TRUE;
 	}
@@ -351,7 +356,7 @@ class CI_Output {
 		{
             $this->set_status_header(304);
             exit;
-		} else
+        } else
 		{
             header('Pragma: public');
             header('Cache-Control: max-age=' . $max_age . ', public');
@@ -501,13 +506,13 @@ class CI_Output {
 				if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
 				{
 					header('Content-Encoding: gzip');
-					header('Content-Length: '.strlen($output));
+                    header('Content-Length: ' . self::strlen($output));
 				}
 				else
 				{
 					// User agent doesn't support gzip compression,
 					// so we'll have to decompress our cache
-					$output = gzinflate(substr($output, 10, -8));
+                    $output = gzinflate(self::substr($output, 10, -8));
 				}
 			}
 
@@ -622,9 +627,9 @@ class CI_Output {
 
 			$output = $cache_info.'ENDCI--->'.$output;
 
-			for ($written = 0, $length = strlen($output); $written < $length; $written += $result)
+            for ($written = 0, $length = self::strlen($output); $written < $length; $written += $result)
 			{
-				if (($result = fwrite($fp, substr($output, $written))) === FALSE)
+                if (($result = fwrite($fp, self::substr($output, $written))) === FALSE)
 				{
 					break;
 				}
@@ -676,15 +681,55 @@ class CI_Output {
             return NULL;
         }
 
-        for ($i = 0, $c = count($headers); $i < $c; $i++)
+        // Count backwards, in order to get the last matching header
+        for ($c = count($headers) - 1; $c > -1; $c--)
 		{
-            if (strncasecmp($header, $headers[$i], $l = strlen($header)) === 0)
+            if (strncasecmp($header, $headers[$c], $l = self::strlen($header)) === 0)
 			{
-                return trim(substr($headers[$i], $l + 1));
+                return trim(self::substr($headers[$c], $l + 1));
 			}
 		}
 
         return NULL;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Byte-safe strlen()
+     *
+     * @param    string $str
+     * @return    int
+     */
+    protected static function strlen($str)
+    {
+        return (self::$func_overload)
+            ? mb_strlen($str, '8bit')
+            : strlen($str);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Byte-safe substr()
+     *
+     * @param    string $str
+     * @param    int $start
+     * @param    int $length
+     * @return    string
+     */
+    protected static function substr($str, $start, $length = NULL)
+    {
+        if (self::$func_overload) {
+            // mb_substr($str, $start, null, '8bit') returns an empty
+            // string on PHP 5.3
+            isset($length) OR $length = ($start >= 0 ? self::strlen($str) - $start : -$start);
+            return mb_substr($str, $start, $length, '8bit');
+        }
+
+        return isset($length)
+            ? substr($str, $start, $length)
+            : substr($str, $start);
     }
 
     // --------------------------------------------------------------------
@@ -776,5 +821,4 @@ class CI_Output {
 
 		return TRUE;
 	}
-
 }

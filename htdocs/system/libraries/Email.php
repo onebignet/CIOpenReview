@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
@@ -50,83 +50,78 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class CI_Email {
 
+    /**
+     * mbstring.func_overload flag
+     *
+     * @var    bool
+     */
+    protected static $func_overload;
 	/**
 	 * Used as the User-Agent and X-Mailer headers' value.
 	 *
 	 * @var	string
 	 */
-	public $useragent	= 'CodeIgniter';
-
-	/**
+    public $useragent = 'CodeIgniter';    // Sendmail path
+    /**
 	 * Path to the Sendmail binary.
 	 *
 	 * @var	string
 	 */
-	public $mailpath	= '/usr/sbin/sendmail';	// Sendmail path
-
-	/**
+    public $mailpath = '/usr/sbin/sendmail';        // mail/sendmail/smtp
+    /**
 	 * Which method to use for sending e-mails.
 	 *
 	 * @var	string	'mail', 'sendmail' or 'smtp'
 	 */
-	public $protocol	= 'mail';		// mail/sendmail/smtp
-
+    public $protocol = 'mail';
 	/**
 	 * STMP Server host
 	 *
 	 * @var	string
 	 */
 	public $smtp_host	= '';
-
 	/**
 	 * SMTP Username
 	 *
 	 * @var	string
 	 */
 	public $smtp_user	= '';
-
 	/**
 	 * SMTP Password
 	 *
 	 * @var	string
 	 */
 	public $smtp_pass	= '';
-
 	/**
 	 * SMTP Server port
 	 *
 	 * @var	int
 	 */
 	public $smtp_port	= 25;
-
 	/**
 	 * SMTP connection timeout in seconds
 	 *
 	 * @var	int
 	 */
 	public $smtp_timeout	= 5;
-
 	/**
 	 * SMTP persistent connection
 	 *
 	 * @var	bool
 	 */
 	public $smtp_keepalive	= FALSE;
-
 	/**
 	 * SMTP Encryption
 	 *
 	 * @var	string	empty, 'tls' or 'ssl'
 	 */
 	public $smtp_crypto	= '';
-
 	/**
 	 * Whether to apply word-wrapping to the message body.
 	 *
 	 * @var	bool
 	 */
 	public $wordwrap	= TRUE;
-
 	/**
 	 * Number of characters to wrap at.
 	 *
@@ -134,51 +129,44 @@ class CI_Email {
 	 * @var	int
 	 */
 	public $wrapchars	= 76;
-
 	/**
 	 * Message format.
 	 *
 	 * @var	string	'text' or 'html'
 	 */
 	public $mailtype	= 'text';
-
 	/**
 	 * Character set (default: utf-8)
 	 *
 	 * @var	string
 	 */
     public $charset = 'UTF-8';
-
 	/**
 	 * Alternative message (for HTML messages only)
 	 *
 	 * @var	string
 	 */
 	public $alt_message	= '';
-
 	/**
 	 * Whether to validate e-mail addresses.
 	 *
 	 * @var	bool
 	 */
-	public $validate	= FALSE;
-
-	/**
+    public $validate = FALSE;            // Default priority (1 - 5)
+    /**
 	 * X-Priority header value.
 	 *
 	 * @var	int	1-5
 	 */
-	public $priority	= 3;			// Default priority (1 - 5)
-
-	/**
+    public $priority = 3;            // Default newline. "\r\n" or "\n" (Use "\r\n" to comply with RFC 822)
+    /**
 	 * Newline character sequence.
 	 * Use "\r\n" to comply with RFC 822.
 	 *
 	 * @link	http://www.ietf.org/rfc/rfc822.txt
 	 * @var	string	"\r\n" or "\n"
 	 */
-	public $newline		= "\n";			// Default newline. "\r\n" or "\n" (Use "\r\n" to comply with RFC 822)
-
+    public $newline = "\n";
 	/**
 	 * CRLF character sequence
 	 *
@@ -192,14 +180,12 @@ class CI_Email {
 	 * @var	string
 	 */
 	public $crlf		= "\n";
-
 	/**
 	 * Whether to use Delivery Status Notification.
 	 *
 	 * @var	bool
 	 */
 	public $dsn		= FALSE;
-
 	/**
 	 * Whether to send multipart alternatives.
 	 * Yahoo! doesn't seem to like these.
@@ -207,7 +193,6 @@ class CI_Email {
 	 * @var	bool
 	 */
 	public $send_multipart	= TRUE;
-
 	/**
 	 * Whether to send messages to BCC recipients in batches.
 	 *
@@ -215,6 +200,7 @@ class CI_Email {
 	 */
 	public $bcc_batch_mode	= FALSE;
 
+    // --------------------------------------------------------------------
 	/**
 	 * BCC Batch max number size.
 	 *
@@ -222,72 +208,60 @@ class CI_Email {
 	 * @var	int
 	 */
 	public $bcc_batch_size	= 200;
-
-	// --------------------------------------------------------------------
-
 	/**
 	 * Whether PHP is running in safe mode. Initialized by the class constructor.
 	 *
 	 * @var	bool
 	 */
 	protected $_safe_mode		= FALSE;
-
 	/**
 	 * Subject header
 	 *
 	 * @var	string
 	 */
 	protected $_subject		= '';
-
 	/**
 	 * Message body
 	 *
 	 * @var	string
 	 */
 	protected $_body		= '';
-
 	/**
 	 * Final message body to be sent.
 	 *
 	 * @var	string
 	 */
 	protected $_finalbody		= '';
-
 	/**
 	 * Final headers to send
 	 *
 	 * @var	string
 	 */
 	protected $_header_str		= '';
-
 	/**
 	 * SMTP Connection socket placeholder
 	 *
 	 * @var	resource
 	 */
 	protected $_smtp_connect	= '';
-
 	/**
 	 * Mail encoding
 	 *
 	 * @var	string	'8bit' or '7bit'
 	 */
 	protected $_encoding		= '8bit';
-
 	/**
 	 * Whether to perform SMTP authentication
 	 *
 	 * @var	bool
 	 */
 	protected $_smtp_auth		= FALSE;
-
 	/**
 	 * Whether to send a Reply-To header
 	 *
 	 * @var	bool
 	 */
 	protected $_replyto_flag	= FALSE;
-
 	/**
 	 * Debug messages
 	 *
@@ -295,42 +269,36 @@ class CI_Email {
 	 * @var	string
 	 */
 	protected $_debug_msg		= array();
-
 	/**
 	 * Recipients
 	 *
 	 * @var	string[]
 	 */
 	protected $_recipients		= array();
-
 	/**
 	 * CC Recipients
 	 *
 	 * @var	string[]
 	 */
 	protected $_cc_array		= array();
-
 	/**
 	 * BCC Recipients
 	 *
 	 * @var	string[]
 	 */
 	protected $_bcc_array		= array();
-
 	/**
 	 * Message headers
 	 *
 	 * @var	string[]
 	 */
 	protected $_headers		= array();
-
 	/**
 	 * Attachment data
 	 *
 	 * @var	array
 	 */
 	protected $_attachments		= array();
-
 	/**
 	 * Valid $protocol values
 	 *
@@ -338,7 +306,6 @@ class CI_Email {
 	 * @var	string[]
 	 */
 	protected $_protocols		= array('mail', 'sendmail', 'smtp');
-
 	/**
 	 * Base charsets
 	 *
@@ -348,7 +315,6 @@ class CI_Email {
 	 * @var	string[]
 	 */
 	protected $_base_charsets	= array('us-ascii', 'iso-2022-');
-
 	/**
 	 * Bit depths
 	 *
@@ -358,7 +324,6 @@ class CI_Email {
 	 * @var	string[]
 	 */
 	protected $_bit_depths		= array('7bit', '8bit');
-
 	/**
 	 * $priority translations
 	 *
@@ -389,6 +354,8 @@ class CI_Email {
 		$this->charset = config_item('charset');
         $this->initialize($config);
 		$this->_safe_mode = ( ! is_php('5.4') && ini_get('safe_mode'));
+
+        isset(self::$func_overload) OR self::$func_overload = (extension_loaded('mbstring') && ini_get('mbstring.func_overload'));
 
 		log_message('info', 'Email Class Initialized');
 	}
@@ -449,7 +416,6 @@ class CI_Email {
 		$this->_headers		= array();
 		$this->_debug_msg	= array();
 
-		$this->set_header('User-Agent', $this->useragent);
 		$this->set_header('Date', $this->_set_date());
 
 		if ($clear_attachments !== FALSE)
@@ -599,10 +565,49 @@ class CI_Email {
 	{
         if (function_exists('idn_to_ascii') && $atpos = strpos($email, '@'))
 		{
-            $email = substr($email, 0, ++$atpos) . idn_to_ascii(substr($email, $atpos));
+            $email = self::substr($email, 0, ++$atpos) . idn_to_ascii(self::substr($email, $atpos));
 		}
 
         return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Byte-safe substr()
+     *
+     * @param    string $str
+     * @param    int $start
+     * @param    int $length
+     * @return    string
+     */
+    protected static function substr($str, $start, $length = NULL)
+    {
+        if (self::$func_overload) {
+            // mb_substr($str, $start, null, '8bit') returns an empty
+            // string on PHP 5.3
+            isset($length) OR $length = ($start >= 0 ? self::strlen($str) - $start : -$start);
+            return mb_substr($str, $start, $length, '8bit');
+        }
+
+        return isset($length)
+            ? substr($str, $start, $length)
+            : substr($str, $start);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Byte-safe strlen()
+     *
+     * @param    string $str
+     * @return    int
+     */
+    protected static function strlen($str)
+    {
+        return (self::$func_overload)
+            ? mb_strlen($str, '8bit')
+            : strlen($str);
     }
 
     // --------------------------------------------------------------------
@@ -663,31 +668,31 @@ class CI_Email {
                     // iconv_mime_encode() will always put a header field name.
                     // We've passed it an empty one, but it still prepends our
                     // encoded string with ': ', so we need to strip it.
-                    return substr($output, 2);
+                    return self::substr($output, 2);
                 }
 
                 $chars = iconv_strlen($str, 'UTF-8');
-			} elseif (MB_ENABLED === TRUE)
+            } elseif (MB_ENABLED === TRUE)
 			{
                 $chars = mb_strlen($str, 'UTF-8');
 			}
 		}
 
         // We might already have this set for UTF-8
-        isset($chars) OR $chars = strlen($str);
+        isset($chars) OR $chars = self::strlen($str);
 
         $output = '=?' . $this->charset . '?Q?';
-        for ($i = 0, $length = strlen($output); $i < $chars; $i++) {
+        for ($i = 0, $length = self::strlen($output); $i < $chars; $i++) {
             $chr = ($this->charset === 'UTF-8' && ICONV_ENABLED === TRUE)
                 ? '=' . implode('=', str_split(strtoupper(bin2hex(iconv_substr($str, $i, 1, $this->charset))), 2))
                 : '=' . strtoupper(bin2hex($str[$i]));
 
             // RFC 2045 sets a limit of 76 characters per line.
             // We'll append ?= to the end of each line though.
-            if ($length + ($l = strlen($chr)) > 74) {
+            if ($length + ($l = self::strlen($chr)) > 74) {
                 $output .= '?=' . $this->crlf // EOL
                     . ' =?' . $this->charset . '?Q?' . $chr; // New line
-                $length = 6 + strlen($this->charset) + $l; // Reset the length for the new line
+                $length = 6 + self::strlen($this->charset) + $l; // Reset the length for the new line
             } else {
                 $output .= $chr;
                 $length += $l;
@@ -1149,10 +1154,11 @@ class CI_Email {
 	/**
      * Build final headers
 	 *
-	 * @return	string
+     * @return    void
 	 */
     protected function _build_headers()
 	{
+        $this->set_header('User-Agent', $this->useragent);
         $this->set_header('X-Sender', $this->clean_email($this->_headers['From']));
         $this->set_header('X-Mailer', $this->useragent);
         $this->set_header('X-Priority', $this->_priorities[$this->priority]);
@@ -1193,13 +1199,13 @@ class CI_Email {
             }
 
             if ($i === $float) {
-                $chunk[] = substr($set, 1);
+                $chunk[] = self::substr($set, 1);
                 $float += $this->bcc_batch_size;
                 $set = '';
             }
 
             if ($i === $c - 1) {
-                $chunk[] = substr($set, 1);
+                $chunk[] = self::substr($set, 1);
             }
 		}
 
@@ -1342,7 +1348,7 @@ class CI_Email {
                     $this->_header_str .= $hdr;
                 }
 
-                strlen($body) && $body .= $this->newline . $this->newline;
+                self::strlen($body) && $body .= $this->newline . $this->newline;
                 $body .= $this->_get_mime_message() . $this->newline . $this->newline
                     . '--' . $last_boundary . $this->newline
 
@@ -1430,7 +1436,7 @@ class CI_Email {
 		{
 			// Is the line within the allowed character count?
 			// If so we'll join it to the output and continue
-			if (mb_strlen($line) <= $charlim)
+            if (self::strlen($line) <= $charlim)
 			{
 				$output .= $line.$this->newline;
 				continue;
@@ -1446,10 +1452,9 @@ class CI_Email {
 				}
 
 				// Trim the word down
-				$temp .= mb_substr($line, 0, $charlim - 1);
-				$line = mb_substr($line, $charlim - 1);
-			}
-			while (mb_strlen($line) > $charlim);
+                $temp .= self::substr($line, 0, $charlim - 1);
+                $line = self::substr($line, $charlim - 1);
+			} while (self::strlen($line) > $charlim);
 
 			// If $temp contains data it means we had to split up an over-length
 			// word into smaller chunks so we'll add it back to our current line
@@ -1522,7 +1527,7 @@ class CI_Email {
         if ($this->mailtype === 'html')
 		{
             return empty($this->_attachments) ? 'html' : 'html-attach';
-		} elseif ($this->mailtype === 'text' && !empty($this->_attachments)) {
+        } elseif ($this->mailtype === 'text' && !empty($this->_attachments)) {
             return 'plain-attach';
         } else {
             return 'plain';
@@ -1651,14 +1656,7 @@ class CI_Email {
 		// which only works with "\n".
 		if ($this->crlf === "\r\n")
 		{
-			if (is_php('5.3'))
-			{
-				return quoted_printable_encode($str);
-			}
-			elseif (function_exists('imap_8bit'))
-			{
-				return imap_8bit($str);
-			}
+            return quoted_printable_encode($str);
 		}
 
 		// Reduce multiple spaces & remove nulls
@@ -1675,7 +1673,7 @@ class CI_Email {
 
 		foreach (explode("\n", $str) as $line)
 		{
-			$length = strlen($line);
+            $length = self::strlen($line);
 			$temp = '';
 
 			// Loop through each character in the line to add soft-wrap
@@ -1710,7 +1708,7 @@ class CI_Email {
 
 				// If we're at the character limit, add the line to the output,
 				// reset our temp variable, and keep on chuggin'
-				if ((strlen($temp) + strlen($char)) >= 76)
+                if ((self::strlen($temp) + self::strlen($char)) >= 76)
 				{
 					$output .= $temp.$escape.$this->crlf;
 					$temp = '';
@@ -1725,7 +1723,7 @@ class CI_Email {
 		}
 
 		// get rid of extra CRLF tacked onto the end
-		return substr($output, 0, strlen($this->crlf) * -1);
+        return self::substr($output, 0, self::strlen($this->crlf) * -1);
 	}
 
 	// --------------------------------------------------------------------
@@ -1755,7 +1753,8 @@ class CI_Email {
                 . 'Content-Type: ' . $this->_attachments[$i]['type'] . '; name="' . $name . '"' . $this->newline
                 . 'Content-Disposition: ' . $this->_attachments[$i]['disposition'] . ';' . $this->newline
                 . 'Content-Transfer-Encoding: base64' . $this->newline
-                . (empty($this->_attachments[$i]['cid']) ? '' : 'Content-ID: <' . $this->_attachments[$i]['cid'] . '>' . $this->newline . $this->newline)
+                . (empty($this->_attachments[$i]['cid']) ? '' : 'Content-ID: <' . $this->_attachments[$i]['cid'] . '>' . $this->newline)
+                . $this->newline
                 . $this->_attachments[$i]['content'] . $this->newline;
 		}
 
@@ -1897,7 +1896,11 @@ class CI_Email {
 			$this->_recipients = implode(', ', $this->_recipients);
 		}
 
-		if ($this->_safe_mode === TRUE)
+        // _validate_email_for_shell() below accepts by reference,
+        // so this needs to be assigned to a variable
+        $from = $this->clean_email($this->_headers['Return-Path']);
+
+        if ($this->_safe_mode === TRUE || !$this->_validate_email_for_shell($from))
 		{
 			return mail($this->_recipients, $this->_subject, $this->_finalbody, $this->_header_str);
 		}
@@ -1905,11 +1908,37 @@ class CI_Email {
 		{
 			// most documentation of sendmail using the "-f" flag lacks a space after it, however
 			// we've encountered servers that seem to require it to be in place.
-			return mail($this->_recipients, $this->_subject, $this->_finalbody, $this->_header_str, '-f '.$this->clean_email($this->_headers['Return-Path']));
+            return mail($this->_recipients, $this->_subject, $this->_finalbody, $this->_header_str, '-f ' . $from);
 		}
 	}
 
 	// --------------------------------------------------------------------
+
+    /**
+     * Validate email for shell
+     *
+     * Applies stricter, shell-safe validation to email addresses.
+     * Introduced to prevent RCE via sendmail's -f option.
+     *
+     * @see    https://github.com/bcit-ci/CodeIgniter/issues/4963
+     * @see    https://gist.github.com/Zenexer/40d02da5e07f151adeaeeaa11af9ab36
+     * @license    https://creativecommons.org/publicdomain/zero/1.0/	CC0 1.0, Public Domain
+     *
+     * Credits for the base concept go to Paul Buonopane <paul@namepros.com>
+     *
+     * @param    string $email
+     * @return    bool
+     */
+    protected function _validate_email_for_shell(&$email)
+    {
+        if (function_exists('idn_to_ascii') && $atpos = strpos($email, '@')) {
+            $email = self::substr($email, 0, ++$atpos) . idn_to_ascii(self::substr($email, $atpos));
+        }
+
+        return (filter_var($email, FILTER_VALIDATE_EMAIL) === $email && preg_match('#\A[a-z0-9._+-]+@[a-z0-9.-]{1,253}\z#i', $email));
+    }
+
+    // --------------------------------------------------------------------
 
 	/**
 	 * Send using Sendmail
@@ -1918,13 +1947,19 @@ class CI_Email {
 	 */
 	protected function _send_with_sendmail()
 	{
+        // _validate_email_for_shell() below accepts by reference,
+        // so this needs to be assigned to a variable
+        $from = $this->clean_email($this->_headers['From']);
+        if ($this->_validate_email_for_shell($from)) {
+            $from = '-f ' . $from;
+        } else {
+            $from = '';
+        }
+
 		// is popen() enabled?
-		if ( ! function_usable('popen')
-			OR FALSE === ($fp = @popen(
-						$this->mailpath.' -oi -f '.$this->clean_email($this->_headers['From']).' -t'
-						, 'w'))
-		) // server probably has popen disabled, so nothing we can do to get a verbose error.
+        if (!function_usable('popen') OR FALSE === ($fp = @popen($this->mailpath . ' -oi ' . $from . ' -t', 'w')))
 		{
+            // server probably has popen disabled, so nothing we can do to get a verbose error.
 			return FALSE;
 		}
 
@@ -2104,7 +2139,7 @@ class CI_Email {
 	 *
 	 * @param	string
 	 * @param	string
-	 * @return	string
+     * @return    bool
 	 */
 	protected function _send_command($cmd, $data = '')
 	{
@@ -2167,7 +2202,7 @@ class CI_Email {
 
 		$this->_debug_msg[] = '<pre>'.$cmd.': '.$reply.'</pre>';
 
-		if ((int) substr($reply, 0, 3) !== $resp)
+        if ((int)self::substr($reply, 0, 3) !== $resp)
 		{
 			$this->_set_error_message('lang:email_smtp_error', $reply);
 			return FALSE;
@@ -2192,9 +2227,9 @@ class CI_Email {
 	protected function _send_data($data)
 	{
 		$data .= $this->newline;
-		for ($written = $timestamp = 0, $length = strlen($data); $written < $length; $written += $result)
+        for ($written = $timestamp = 0, $length = self::strlen($data); $written < $length; $written += $result)
 		{
-			if (($result = fwrite($this->_smtp_connect, substr($data, $written))) === FALSE)
+            if (($result = fwrite($this->_smtp_connect, self::substr($data, $written))) === FALSE)
 			{
 				break;
 			}
@@ -2278,7 +2313,7 @@ class CI_Email {
         if (strpos($reply, '503') === 0)    // Already authenticated
 		{
             return TRUE;
-		} elseif (strpos($reply, '334') !== 0)
+        } elseif (strpos($reply, '334') !== 0)
 		{
             $this->_set_error_message('lang:email_failed_smtp_login', $reply);
             return FALSE;
