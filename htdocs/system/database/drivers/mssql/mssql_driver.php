@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.3.0
@@ -158,6 +158,7 @@ class CI_DB_mssql_driver extends CI_DB {
 		if (mssql_select_db('['.$database.']', $this->conn_id))
 		{
 			$this->database = $database;
+            $this->data_cache = array();
 			return TRUE;
 		}
 
@@ -167,82 +168,139 @@ class CI_DB_mssql_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Execute the query
+     * Affected Rows
 	 *
-	 * @param	string	$sql	an SQL query
-	 * @return	mixed	resource if rows are returned, bool otherwise
+     * @return    int
 	 */
-	protected function _execute($sql)
+    public function affected_rows()
 	{
-		return mssql_query($sql, $this->conn_id);
+        return mssql_rows_affected($this->conn_id);
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Begin Transaction
+     * Insert ID
 	 *
-	 * @return	bool
+     * Returns the last id created in the Identity column.
+     *
+     * @return    string
 	 */
-	protected function _trans_begin()
+    public function insert_id()
 	{
-		return $this->simple_query('BEGIN TRAN');
+        $query = version_compare($this->version(), '8', '>=')
+            ? 'SELECT SCOPE_IDENTITY() AS last_id'
+            : 'SELECT @@IDENTITY AS last_id';
+
+        $query = $this->query($query);
+        $query = $query->row();
+        return $query->last_id;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Commit Transaction
+     * Returns an object with field data
 	 *
-	 * @return	bool
+     * @param    string $table
+     * @return    array
 	 */
-	protected function _trans_commit()
+    public function field_data($table)
 	{
-		return $this->simple_query('COMMIT TRAN');
+        $sql = 'SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, COLUMN_DEFAULT
+			FROM INFORMATION_SCHEMA.Columns
+			WHERE UPPER(TABLE_NAME) = ' . $this->escape(strtoupper($table));
+
+        if (($query = $this->query($sql)) === FALSE) {
+            return FALSE;
+        }
+        $query = $query->result_object();
+
+        $retval = array();
+        for ($i = 0, $c = count($query); $i < $c; $i++) {
+            $retval[$i] = new stdClass();
+            $retval[$i]->name = $query[$i]->COLUMN_NAME;
+            $retval[$i]->type = $query[$i]->DATA_TYPE;
+            $retval[$i]->max_length = ($query[$i]->CHARACTER_MAXIMUM_LENGTH > 0) ? $query[$i]->CHARACTER_MAXIMUM_LENGTH : $query[$i]->NUMERIC_PRECISION;
+            $retval[$i]->default = $query[$i]->COLUMN_DEFAULT;
+        }
+
+        return $retval;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Rollback Transaction
+     * Error
 	 *
-	 * @return	bool
+     * Returns an array containing code and message of the last
+     * database error that has occurred.
+     *
+     * @return    array
 	 */
-	protected function _trans_rollback()
+    public function error()
 	{
-		return $this->simple_query('ROLLBACK TRAN');
+        // We need this because the error info is discarded by the
+        // server the first time you request it, and query() already
+        // calls error() once for logging purposes when a query fails.
+        static $error = array('code' => 0, 'message' => NULL);
+
+        $message = mssql_get_last_message();
+        if (!empty($message)) {
+            $error['code'] = $this->query('SELECT @@ERROR AS code')->row()->code;
+            $error['message'] = $message;
+        }
+
+        return $error;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Affected Rows
+     * Execute the query
 	 *
-	 * @return	int
+     * @param    string $sql an SQL query
+     * @return    mixed    resource if rows are returned, bool otherwise
 	 */
-	public function affected_rows()
+    protected function _execute($sql)
 	{
-		return mssql_rows_affected($this->conn_id);
+        return mssql_query($sql, $this->conn_id);
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Insert ID
+     * Begin Transaction
 	 *
-	 * Returns the last id created in the Identity column.
-	 *
-	 * @return	string
-	 */
-	public function insert_id()
-	{
-		$query = version_compare($this->version(), '8', '>=')
-			? 'SELECT SCOPE_IDENTITY() AS last_id'
-			: 'SELECT @@IDENTITY AS last_id';
+     * @return    bool
+     */
+    protected function _trans_begin()
+    {
+        return $this->simple_query('BEGIN TRAN');
+    }
 
-		$query = $this->query($query);
-		$query = $query->row();
-		return $query->last_id;
+    // --------------------------------------------------------------------
+
+    /**
+     * Commit Transaction
+	 *
+     * @return    bool
+	 */
+    protected function _trans_commit()
+	{
+        return $this->simple_query('COMMIT TRAN');
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Rollback Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_rollback()
+    {
+        return $this->simple_query('ROLLBACK TRAN');
 	}
 
 	// --------------------------------------------------------------------
@@ -310,66 +368,6 @@ class CI_DB_mssql_driver extends CI_DB {
 		return 'SELECT COLUMN_NAME
 			FROM INFORMATION_SCHEMA.Columns
 			WHERE UPPER(TABLE_NAME) = '.$this->escape(strtoupper($table));
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Returns an object with field data
-	 *
-	 * @param	string	$table
-	 * @return	array
-	 */
-	public function field_data($table)
-	{
-		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, COLUMN_DEFAULT
-			FROM INFORMATION_SCHEMA.Columns
-			WHERE UPPER(TABLE_NAME) = '.$this->escape(strtoupper($table));
-
-		if (($query = $this->query($sql)) === FALSE)
-		{
-			return FALSE;
-		}
-		$query = $query->result_object();
-
-		$retval = array();
-		for ($i = 0, $c = count($query); $i < $c; $i++)
-		{
-			$retval[$i]			= new stdClass();
-			$retval[$i]->name		= $query[$i]->COLUMN_NAME;
-			$retval[$i]->type		= $query[$i]->DATA_TYPE;
-			$retval[$i]->max_length		= ($query[$i]->CHARACTER_MAXIMUM_LENGTH > 0) ? $query[$i]->CHARACTER_MAXIMUM_LENGTH : $query[$i]->NUMERIC_PRECISION;
-			$retval[$i]->default		= $query[$i]->COLUMN_DEFAULT;
-		}
-
-		return $retval;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Error
-	 *
-	 * Returns an array containing code and message of the last
-	 * database error that has occured.
-	 *
-	 * @return	array
-	 */
-	public function error()
-	{
-		// We need this because the error info is discarded by the
-		// server the first time you request it, and query() already
-		// calls error() once for logging purposes when a query fails.
-		static $error = array('code' => 0, 'message' => NULL);
-
-		$message = mssql_get_last_message();
-		if ( ! empty($message))
-		{
-			$error['code']    = $this->query('SELECT @@ERROR AS code')->row()->code;
-			$error['message'] = $message;
-		}
-
-		return $error;
 	}
 
 	// --------------------------------------------------------------------
@@ -499,7 +497,7 @@ class CI_DB_mssql_driver extends CI_DB {
 			return parent::_insert_batch($table, $keys, $values);
 		}
 
-		return ($this->db->db_debug) ? $this->db->display_error('db_unsupported_feature') : FALSE;
+        return ($this->db_debug) ? $this->display_error('db_unsupported_feature') : FALSE;
 	}
 
 	// --------------------------------------------------------------------

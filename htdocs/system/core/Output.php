@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
@@ -50,77 +50,74 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class CI_Output {
 
+    /**
+     * mbstring.func_overload flag
+     *
+     * @var    bool
+     */
+    protected static $func_overload;
 	/**
 	 * Final output string
 	 *
 	 * @var	string
 	 */
 	public $final_output;
-
 	/**
 	 * Cache expiration time
 	 *
 	 * @var	int
 	 */
 	public $cache_expiration = 0;
-
 	/**
 	 * List of server headers
 	 *
 	 * @var	array
 	 */
 	public $headers = array();
-
 	/**
 	 * List of mime types
 	 *
 	 * @var	array
 	 */
 	public $mimes =	array();
-
 	/**
-	 * Mime-type for the current page
+     * Enable Profiler flag
 	 *
-	 * @var	string
+     * @var    bool
 	 */
-	protected $mime_type = 'text/html';
-
+    public $enable_profiler = FALSE;
 	/**
-	 * Enable Profiler flag
+     * Parse markers flag
 	 *
+     * Whether or not to parse variables like {elapsed_time} and {memory_usage}.
+     *
 	 * @var	bool
 	 */
-	public $enable_profiler = FALSE;
-
+    public $parse_exec_vars = TRUE;
 	/**
+     * Mime-type for the current page
+     *
+     * @var    string
+     */
+    protected $mime_type = 'text/html';
+    /**
 	 * php.ini zlib.output_compression flag
 	 *
 	 * @var	bool
 	 */
 	protected $_zlib_oc = FALSE;
-
 	/**
 	 * CI output compression flag
 	 *
 	 * @var	bool
 	 */
 	protected $_compress_output = FALSE;
-
 	/**
 	 * List of profiler sections
 	 *
 	 * @var	array
 	 */
 	protected $_profiler_sections =	array();
-
-	/**
-	 * Parse markers flag
-	 *
-	 * Whether or not to parse variables like {elapsed_time} and {memory_usage}.
-	 *
-	 * @var	bool
-	 */
-	public $parse_exec_vars = TRUE;
 
 	/**
 	 * Class constructor
@@ -137,6 +134,8 @@ class CI_Output {
 			&& config_item('compress_output') === TRUE
 			&& extension_loaded('zlib')
 		);
+
+        isset(self::$func_overload) OR self::$func_overload = (extension_loaded('mbstring') && ini_get('mbstring.func_overload'));
 
 		// Get mime types for later
 		$this->mimes =& get_mimes();
@@ -193,124 +192,177 @@ class CI_Output {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Set Header
+     * Get Current Content-Type Header
 	 *
-	 * Lets you set a server header which will be sent with the final output.
-	 *
-	 * Note: If a file is cached, headers will not be sent.
-	 * @todo	We need to figure out how to permit headers to be cached.
-	 *
-	 * @param	string	$header		Header
-	 * @param	bool	$replace	Whether to replace the old header value, if already set
-	 * @return	CI_Output
+     * @return    string    'text/html', if not already set
 	 */
-	public function set_header($header, $replace = TRUE)
+    public function get_content_type()
 	{
-		// If zlib.output_compression is enabled it will compress the output,
-		// but it will not modify the content-length header to compensate for
-		// the reduction, causing the browser to hang waiting for more data.
-		// We'll just skip content-length in those cases.
-		if ($this->_zlib_oc && strncasecmp($header, 'content-length', 14) === 0)
+        for ($i = 0, $c = count($this->headers); $i < $c; $i++)
 		{
-			return $this;
+            if (sscanf($this->headers[$i][0], 'Content-Type: %[^;]', $content_type) === 1) {
+                return $content_type;
+            }
 		}
 
-		$this->headers[] = array($header, $replace);
+        return 'text/html';
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+     * Enable/disable Profiler
+	 *
+     * @param    bool $val TRUE to enable or FALSE to disable
+	 * @return	CI_Output
+	 */
+    public function enable_profiler($val = TRUE)
+	{
+        $this->enable_profiler = is_bool($val) ? $val : TRUE;
+        return $this;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Set Profiler Sections
+     *
+     * Allows override of default/config settings for
+     * Profiler section display.
+     *
+     * @param    array $sections Profiler sections
+     * @return    CI_Output
+     */
+    public function set_profiler_sections($sections)
+    {
+        if (isset($sections['query_toggle_count'])) {
+            $this->_profiler_sections['query_toggle_count'] = (int)$sections['query_toggle_count'];
+            unset($sections['query_toggle_count']);
+		}
+
+        foreach ($sections as $section => $enable)
+		{
+            $this->_profiler_sections[$section] = ($enable !== FALSE);
+		}
+
+        return $this;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Set Cache
+     *
+     * @param    int $time Cache expiration time in minutes
+     * @return    CI_Output
+     */
+    public function cache($time)
+    {
+        $this->cache_expiration = is_numeric($time) ? $time : 0;
 		return $this;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Set Content-Type Header
+     * Update/serve cached output
 	 *
-	 * @param	string	$mime_type	Extension of the file we're outputting
-	 * @param	string	$charset	Character set (default: NULL)
-	 * @return	CI_Output
+     * @uses    CI_Config
+     * @uses    CI_URI
+     *
+     * @param    object &$CFG CI_Config class instance
+     * @param    object &$URI CI_URI class instance
+     * @return    bool    TRUE on success or FALSE on failure
 	 */
-	public function set_content_type($mime_type, $charset = NULL)
+    public function _display_cache(&$CFG, &$URI)
 	{
-		if (strpos($mime_type, '/') === FALSE)
-		{
-			$extension = ltrim($mime_type, '.');
+        $cache_path = ($CFG->item('cache_path') === '') ? APPPATH . 'cache/' : $CFG->item('cache_path');
 
-			// Is this extension supported?
-			if (isset($this->mimes[$extension]))
+        // Build the file path. The file name is an MD5 hash of the full URI
+        $uri = $CFG->item('base_url') . $CFG->item('index_page') . $URI->uri_string;
+
+        if (($cache_query_string = $CFG->item('cache_query_string')) && !empty($_SERVER['QUERY_STRING']))
+		{
+            if (is_array($cache_query_string))
 			{
-				$mime_type =& $this->mimes[$extension];
-
-				if (is_array($mime_type))
-				{
-					$mime_type = current($mime_type);
-				}
-			}
+                $uri .= '?' . http_build_query(array_intersect_key($_GET, array_flip($cache_query_string)));
+            } else {
+                $uri .= '?' . $_SERVER['QUERY_STRING'];
+            }
 		}
 
-		$this->mime_type = $mime_type;
+        $filepath = $cache_path . md5($uri);
 
-		if (empty($charset))
-		{
-			$charset = config_item('charset');
-		}
+        if (!file_exists($filepath) OR !$fp = @fopen($filepath, 'rb')) {
+            return FALSE;
+        }
 
-		$header = 'Content-Type: '.$mime_type
-			.(empty($charset) ? '' : '; charset='.$charset);
+        flock($fp, LOCK_SH);
 
-		$this->headers[] = array($header, TRUE);
-		return $this;
+        $cache = (filesize($filepath) > 0) ? fread($fp, filesize($filepath)) : '';
+
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        // Look for embedded serialized file info.
+        if (!preg_match('/^(.*)ENDCI--->/', $cache, $match)) {
+            return FALSE;
+        }
+
+        $cache_info = unserialize($match[1]);
+        $expire = $cache_info['expire'];
+
+        $last_modified = filemtime($filepath);
+
+        // Has the file expired?
+        if ($_SERVER['REQUEST_TIME'] >= $expire && is_really_writable($cache_path)) {
+            // If so we'll delete it.
+            @unlink($filepath);
+            log_message('debug', 'Cache file has expired. File deleted.');
+            return FALSE;
+        } else {
+            // Or else send the HTTP cache control headers.
+            $this->set_cache_header($last_modified, $expire);
+        }
+
+        // Add headers from cache file.
+        foreach ($cache_info['headers'] as $header) {
+            $this->set_header($header[0], $header[1]);
+        }
+
+        // Display the cache
+        $this->_display(self::substr($cache, self::strlen($match[0])));
+        log_message('debug', 'Cache file is current. Sending it to browser.');
+        return TRUE;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Get Current Content-Type Header
+     * Set Cache Header
 	 *
-	 * @return	string	'text/html', if not already set
+     * Set the HTTP headers to match the server-side file cache settings
+     * in order to reduce bandwidth.
+     *
+     * @param    int $last_modified Timestamp of when the page was last modified
+     * @param    int $expiration Timestamp of when should the requested page expire from cache
+     * @return    void
 	 */
-	public function get_content_type()
+    public function set_cache_header($last_modified, $expiration)
 	{
-		for ($i = 0, $c = count($this->headers); $i < $c; $i++)
+        $max_age = $expiration - $_SERVER['REQUEST_TIME'];
+
+        if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $last_modified <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']))
 		{
-			if (sscanf($this->headers[$i][0], 'Content-Type: %[^;]', $content_type) === 1)
-			{
-				return $content_type;
-			}
-		}
-
-		return 'text/html';
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Get Header
-	 *
-	 * @param	string	$header_name
-	 * @return	string
-	 */
-	public function get_header($header)
-	{
-		// Combine headers already sent with our batched headers
-		$headers = array_merge(
-			// We only need [x][0] from our multi-dimensional array
-			array_map('array_shift', $this->headers),
-			headers_list()
-		);
-
-		if (empty($headers) OR empty($header))
+            $this->set_status_header(304);
+            exit;
+        } else
 		{
-			return NULL;
+            header('Pragma: public');
+            header('Cache-Control: max-age=' . $max_age . ', public');
+            header('Expires: ' . gmdate('D, d M Y H:i:s', $expiration) . ' GMT');
+            header('Last-modified: ' . gmdate('D, d M Y H:i:s', $last_modified) . ' GMT');
 		}
-
-		for ($i = 0, $c = count($headers); $i < $c; $i++)
-		{
-			if (strncasecmp($header, $headers[$i], $l = strlen($header)) === 0)
-			{
-				return trim(substr($headers[$i], $l+1));
-			}
-		}
-
-		return NULL;
 	}
 
 	// --------------------------------------------------------------------
@@ -334,55 +386,29 @@ class CI_Output {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Enable/disable Profiler
+     * Set Header
 	 *
-	 * @param	bool	$val	TRUE to enable or FALSE to disable
+     * Lets you set a server header which will be sent with the final output.
+	 *
+     * Note: If a file is cached, headers will not be sent.
+     * @todo    We need to figure out how to permit headers to be cached.
+	 *
+     * @param    string $header Header
+     * @param    bool $replace Whether to replace the old header value, if already set
 	 * @return	CI_Output
 	 */
-	public function enable_profiler($val = TRUE)
+    public function set_header($header, $replace = TRUE)
 	{
-		$this->enable_profiler = is_bool($val) ? $val : TRUE;
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set Profiler Sections
-	 *
-	 * Allows override of default/config settings for
-	 * Profiler section display.
-	 *
-	 * @param	array	$sections	Profiler sections
-	 * @return	CI_Output
-	 */
-	public function set_profiler_sections($sections)
-	{
-		if (isset($sections['query_toggle_count']))
+        // If zlib.output_compression is enabled it will compress the output,
+        // but it will not modify the content-length header to compensate for
+        // the reduction, causing the browser to hang waiting for more data.
+        // We'll just skip content-length in those cases.
+        if ($this->_zlib_oc && strncasecmp($header, 'content-length', 14) === 0)
 		{
-			$this->_profiler_sections['query_toggle_count'] = (int) $sections['query_toggle_count'];
-			unset($sections['query_toggle_count']);
+            return $this;
 		}
 
-		foreach ($sections as $section => $enable)
-		{
-			$this->_profiler_sections[$section] = ($enable !== FALSE);
-		}
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set Cache
-	 *
-	 * @param	int	$time	Cache expiration time in minutes
-	 * @return	CI_Output
-	 */
-	public function cache($time)
-	{
-		$this->cache_expiration = is_numeric($time) ? $time : 0;
+        $this->headers[] = array($header, $replace);
 		return $this;
 	}
 
@@ -480,13 +506,13 @@ class CI_Output {
 				if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
 				{
 					header('Content-Encoding: gzip');
-					header('Content-Length: '.strlen($output));
+                    header('Content-Length: ' . self::strlen($output));
 				}
 				else
 				{
 					// User agent doesn't support gzip compression,
 					// so we'll have to decompress our cache
-					$output = gzinflate(substr($output, 10, -8));
+                    $output = gzinflate(self::substr($output, 10, -8));
 				}
 			}
 
@@ -601,9 +627,9 @@ class CI_Output {
 
 			$output = $cache_info.'ENDCI--->'.$output;
 
-			for ($written = 0, $length = strlen($output); $written < $length; $written += $result)
+            for ($written = 0, $length = self::strlen($output); $written < $length; $written += $result)
 			{
-				if (($result = fwrite($fp, substr($output, $written))) === FALSE)
+                if (($result = fwrite($fp, self::substr($output, $written))) === FALSE)
 				{
 					break;
 				}
@@ -637,83 +663,112 @@ class CI_Output {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Update/serve cached output
+     * Get Header
 	 *
-	 * @uses	CI_Config
-	 * @uses	CI_URI
-	 *
-	 * @param	object	&$CFG	CI_Config class instance
-	 * @param	object	&$URI	CI_URI class instance
-	 * @return	bool	TRUE on success or FALSE on failure
+     * @param    string $header
+     * @return    string
 	 */
-	public function _display_cache(&$CFG, &$URI)
+    public function get_header($header)
 	{
-		$cache_path = ($CFG->item('cache_path') === '') ? APPPATH.'cache/' : $CFG->item('cache_path');
+        // Combine headers already sent with our batched headers
+        $headers = array_merge(
+        // We only need [x][0] from our multi-dimensional array
+            array_map('array_shift', $this->headers),
+            headers_list()
+        );
 
-		// Build the file path. The file name is an MD5 hash of the full URI
-		$uri = $CFG->item('base_url').$CFG->item('index_page').$URI->uri_string;
+        if (empty($headers) OR empty($header)) {
+            return NULL;
+        }
 
-		if (($cache_query_string = $CFG->item('cache_query_string')) && ! empty($_SERVER['QUERY_STRING']))
+        // Count backwards, in order to get the last matching header
+        for ($c = count($headers) - 1; $c > -1; $c--)
 		{
-			if (is_array($cache_query_string))
+            if (strncasecmp($header, $headers[$c], $l = self::strlen($header)) === 0)
 			{
-				$uri .= '?'.http_build_query(array_intersect_key($_GET, array_flip($cache_query_string)));
-			}
-			else
-			{
-				$uri .= '?'.$_SERVER['QUERY_STRING'];
+                return trim(self::substr($headers[$c], $l + 1));
 			}
 		}
 
-		$filepath = $cache_path.md5($uri);
+        return NULL;
+    }
 
-		if ( ! file_exists($filepath) OR ! $fp = @fopen($filepath, 'rb'))
+    // --------------------------------------------------------------------
+
+    /**
+     * Byte-safe strlen()
+     *
+     * @param    string $str
+     * @return    int
+     */
+    protected static function strlen($str)
+    {
+        return (self::$func_overload)
+            ? mb_strlen($str, '8bit')
+            : strlen($str);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Byte-safe substr()
+     *
+     * @param    string $str
+     * @param    int $start
+     * @param    int $length
+     * @return    string
+     */
+    protected static function substr($str, $start, $length = NULL)
+    {
+        if (self::$func_overload) {
+            // mb_substr($str, $start, null, '8bit') returns an empty
+            // string on PHP 5.3
+            isset($length) OR $length = ($start >= 0 ? self::strlen($str) - $start : -$start);
+            return mb_substr($str, $start, $length, '8bit');
+        }
+
+        return isset($length)
+            ? substr($str, $start, $length)
+            : substr($str, $start);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Set Content-Type Header
+     *
+     * @param    string $mime_type Extension of the file we're outputting
+     * @param    string $charset Character set (default: NULL)
+     * @return    CI_Output
+     */
+    public function set_content_type($mime_type, $charset = NULL)
+    {
+        if (strpos($mime_type, '/') === FALSE)
 		{
-			return FALSE;
+            $extension = ltrim($mime_type, '.');
+
+            // Is this extension supported?
+            if (isset($this->mimes[$extension])) {
+                $mime_type =& $this->mimes[$extension];
+
+                if (is_array($mime_type)) {
+                    $mime_type = current($mime_type);
+                }
+            }
 		}
 
-		flock($fp, LOCK_SH);
+        $this->mime_type = $mime_type;
 
-		$cache = (filesize($filepath) > 0) ? fread($fp, filesize($filepath)) : '';
-
-		flock($fp, LOCK_UN);
-		fclose($fp);
-
-		// Look for embedded serialized file info.
-		if ( ! preg_match('/^(.*)ENDCI--->/', $cache, $match))
+        if (empty($charset))
 		{
-			return FALSE;
+            $charset = config_item('charset');
 		}
 
-		$cache_info = unserialize($match[1]);
-		$expire = $cache_info['expire'];
+        $header = 'Content-Type: ' . $mime_type
+            . (empty($charset) ? '' : '; charset=' . $charset);
 
-		$last_modified = filemtime($filepath);
-
-		// Has the file expired?
-		if ($_SERVER['REQUEST_TIME'] >= $expire && is_really_writable($cache_path))
-		{
-			// If so we'll delete it.
-			@unlink($filepath);
-			log_message('debug', 'Cache file has expired. File deleted.');
-			return FALSE;
-		}
-		else
-		{
-			// Or else send the HTTP cache control headers.
-			$this->set_cache_header($last_modified, $expire);
-		}
-
-		// Add headers from cache file.
-		foreach ($cache_info['headers'] as $header)
-		{
-			$this->set_header($header[0], $header[1]);
-		}
-
-		// Display the cache
-		$this->_display(substr($cache, strlen($match[0])));
-		log_message('debug', 'Cache file is current. Sending it to browser.');
-		return TRUE;
+        $this->headers[] = array($header, TRUE);
+        return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -766,35 +821,4 @@ class CI_Output {
 
 		return TRUE;
 	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set Cache Header
-	 *
-	 * Set the HTTP headers to match the server-side file cache settings
-	 * in order to reduce bandwidth.
-	 *
-	 * @param	int	$last_modified	Timestamp of when the page was last modified
-	 * @param	int	$expiration	Timestamp of when should the requested page expire from cache
-	 * @return	void
-	 */
-	public function set_cache_header($last_modified, $expiration)
-	{
-		$max_age = $expiration - $_SERVER['REQUEST_TIME'];
-
-		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $last_modified <= strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']))
-		{
-			$this->set_status_header(304);
-			exit;
-		}
-		else
-		{
-			header('Pragma: public');
-			header('Cache-Control: max-age='.$max_age.', public');
-			header('Expires: '.gmdate('D, d M Y H:i:s', $expiration).' GMT');
-			header('Last-modified: '.gmdate('D, d M Y H:i:s', $last_modified).' GMT');
-		}
-	}
-
 }

@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
@@ -176,6 +176,56 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	// ------------------------------------------------------------------------
 
 	/**
+     * Get lock
+     *
+     * Acquires an (emulated) lock.
+     *
+     * @param    string $session_id Session ID
+     * @return    bool
+     */
+    protected function _get_lock($session_id)
+    {
+        // PHP 7 reuses the SessionHandler object on regeneration,
+        // so we need to check here if the lock key is for the
+        // correct session ID.
+        if ($this->_lock_key === $this->_key_prefix . $session_id . ':lock') {
+            if (!$this->_memcached->replace($this->_lock_key, time(), 300)) {
+                return ($this->_memcached->getResultCode() === Memcached::RES_NOTFOUND)
+                    ? $this->_memcached->set($this->_lock_key, time(), 300)
+                    : FALSE;
+            }
+        }
+
+        // 30 attempts to obtain a lock, in case another request already has it
+        $lock_key = $this->_key_prefix . $session_id . ':lock';
+        $attempt = 0;
+        do {
+            if ($this->_memcached->get($lock_key)) {
+                sleep(1);
+                continue;
+            }
+
+            if (!$this->_memcached->set($lock_key, time(), 300)) {
+                log_message('error', 'Session: Error while trying to obtain lock for ' . $this->_key_prefix . $session_id);
+                return FALSE;
+            }
+
+            $this->_lock_key = $lock_key;
+            break;
+        } while (++$attempt < 30);
+
+        if ($attempt === 30) {
+            log_message('error', 'Session: Unable to obtain lock for ' . $this->_key_prefix . $session_id . ' after 30 attempts, aborting.');
+            return FALSE;
+        }
+
+        $this->_lock = TRUE;
+        return TRUE;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Write
 	 *
 	 * Writes (create / update) session data
@@ -186,7 +236,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 */
 	public function write($session_id, $session_data)
 	{
-		if ( ! isset($this->_memcached))
+        if (!isset($this->_memcached, $this->_lock_key))
 		{
 			return $this->_fail();
 		}
@@ -202,32 +252,21 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 			$this->_session_id = $session_id;
 		}
 
-		if (isset($this->_lock_key))
-		{
-			$key = $this->_key_prefix.$session_id;
+        $key = $this->_key_prefix . $session_id;
 
-			$this->_memcached->replace($this->_lock_key, time(), 300);
-			if ($this->_fingerprint !== ($fingerprint = md5($session_data)))
-			{
-				if (
-					$this->_memcached->replace($key, $session_data, $this->_config['expiration'])
-					OR ($this->_memcached->getResultCode() === Memcached::RES_NOTFOUND && $this->_memcached->set($key, $session_data, $this->_config['expiration']))
-				)
-				{
-					$this->_fingerprint = $fingerprint;
-					return $this->_success;
-				}
+        $this->_memcached->replace($this->_lock_key, time(), 300);
+        if ($this->_fingerprint !== ($fingerprint = md5($session_data))) {
+            if ($this->_memcached->set($key, $session_data, $this->_config['expiration'])) {
+                $this->_fingerprint = $fingerprint;
+                return $this->_success;
+            }
 
-				return $this->_fail();
-			}
-
-			if (
-				$this->_memcached->touch($key, $this->_config['expiration'])
-				OR ($this->_memcached->getResultCode() === Memcached::RES_NOTFOUND && $this->_memcached->set($key, $session_data, $this->_config['expiration']))
-			)
-			{
-				return $this->_success;
-			}
+            return $this->_fail();
+        } elseif (
+            $this->_memcached->touch($key, $this->_config['expiration'])
+            OR ($this->_memcached->getResultCode() === Memcached::RES_NOTFOUND && $this->_memcached->set($key, $session_data, $this->_config['expiration']))
+        ) {
+            return $this->_success;
 		}
 
 		return $this->_fail();
@@ -236,6 +275,30 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	// ------------------------------------------------------------------------
 
 	/**
+     * Release lock
+     *
+     * Releases a previously acquired lock
+     *
+     * @return    bool
+     */
+    protected function _release_lock()
+    {
+        if (isset($this->_memcached, $this->_lock_key) && $this->_lock) {
+            if (!$this->_memcached->delete($this->_lock_key) && $this->_memcached->getResultCode() !== Memcached::RES_NOTFOUND) {
+                log_message('error', 'Session: Error while trying to free lock for ' . $this->_lock_key);
+                return FALSE;
+            }
+
+            $this->_lock_key = NULL;
+            $this->_lock = FALSE;
+        }
+
+        return TRUE;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Close
 	 *
 	 * Releases locks and closes connection.
@@ -295,88 +358,5 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	{
 		// Not necessary, Memcached takes care of that.
 		return $this->_success;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Get lock
-	 *
-	 * Acquires an (emulated) lock.
-	 *
-	 * @param	string	$session_id	Session ID
-	 * @return	bool
-	 */
-	protected function _get_lock($session_id)
-	{
-		// PHP 7 reuses the SessionHandler object on regeneration,
-		// so we need to check here if the lock key is for the
-		// correct session ID.
-		if ($this->_lock_key === $this->_key_prefix.$session_id.':lock')
-		{
-			if ( ! $this->_memcached->replace($this->_lock_key, time(), 300))
-			{
-				return ($this->_memcached->getResultCode() === Memcached::RES_NOTFOUND)
-					? $this->_memcached->set($this->_lock_key, time(), 300)
-					: FALSE;
-			}
-		}
-
-		// 30 attempts to obtain a lock, in case another request already has it
-		$lock_key = $this->_key_prefix.$session_id.':lock';
-		$attempt = 0;
-		do
-		{
-			if ($this->_memcached->get($lock_key))
-			{
-				sleep(1);
-				continue;
-			}
-
-			if ( ! $this->_memcached->set($lock_key, time(), 300))
-			{
-				log_message('error', 'Session: Error while trying to obtain lock for '.$this->_key_prefix.$session_id);
-				return FALSE;
-			}
-
-			$this->_lock_key = $lock_key;
-			break;
-		}
-		while (++$attempt < 30);
-
-		if ($attempt === 30)
-		{
-			log_message('error', 'Session: Unable to obtain lock for '.$this->_key_prefix.$session_id.' after 30 attempts, aborting.');
-			return FALSE;
-		}
-
-		$this->_lock = TRUE;
-		return TRUE;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Release lock
-	 *
-	 * Releases a previously acquired lock
-	 *
-	 * @return	bool
-	 */
-	protected function _release_lock()
-	{
-		if (isset($this->_memcached, $this->_lock_key) && $this->_lock)
-		{
-			if ( ! $this->_memcached->delete($this->_lock_key) && $this->_memcached->getResultCode() !== Memcached::RES_NOTFOUND)
-			{
-				log_message('error', 'Session: Error while trying to free lock for '.$this->_lock_key);
-				return FALSE;
-			}
-
-			$this->_lock_key = NULL;
-			$this->_lock = FALSE;
-		}
-
-		return TRUE;
 	}
 }

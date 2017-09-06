@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.3.1
@@ -161,6 +161,32 @@ class CI_Table {
 	// --------------------------------------------------------------------
 
 	/**
+     * Prep Args
+     *
+     * Ensures a standard associative array format for all cell data
+     *
+     * @param    array
+     * @return    array
+     */
+    protected function _prep_args($args)
+    {
+        // If there is no $args[0], skip this and treat as an associative array
+        // This can happen if there is only a single key, for example this is passed to table->generate
+        // array(array('foo'=>'bar'))
+        if (isset($args[0]) && count($args) === 1 && is_array($args[0]) && !isset($args[0]['data'])) {
+            $args = $args[0];
+        }
+
+        foreach ($args as $key => $val) {
+            is_array($val) OR $args[$key] = array('data' => $val);
+        }
+
+        return $args;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * Set columns. Takes a one-dimensional array as input and creates
 	 * a multi-dimensional array with a depth equal to the number of
 	 * columns. This allows a single array with many elements to be
@@ -241,34 +267,6 @@ class CI_Table {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Prep Args
-	 *
-	 * Ensures a standard associative array format for all cell data
-	 *
-	 * @param	array
-	 * @return	array
-	 */
-	protected function _prep_args($args)
-	{
-		// If there is no $args[0], skip this and treat as an associative array
-		// This can happen if there is only a single key, for example this is passed to table->generate
-		// array(array('foo'=>'bar'))
-		if (isset($args[0]) && count($args) === 1 && is_array($args[0]) && ! isset($args[0]['data']))
-		{
-			$args = $args[0];
-		}
-
-		foreach ($args as $key => $val)
-		{
-			is_array($val) OR $args[$key] = array('data' => $val);
-		}
-
-		return $args;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Add a table caption
 	 *
 	 * @param	string	$caption
@@ -277,6 +275,7 @@ class CI_Table {
 	public function set_caption($caption)
 	{
 		$this->caption = $caption;
+        return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -417,21 +416,6 @@ class CI_Table {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Clears the table arrays.  Useful if multiple tables are being generated
-	 *
-	 * @return	CI_Table
-	 */
-	public function clear()
-	{
-		$this->rows = array();
-		$this->heading = array();
-		$this->auto_heading = TRUE;
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Set table data from a database result object
 	 *
 	 * @param	CI_DB_result	$db_result	Database result object
@@ -532,6 +516,21 @@ class CI_Table {
 
 			'table_close'		=> '</table>'
 		);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Clears the table arrays.  Useful if multiple tables are being generated
+     *
+     * @return    CI_Table
+     */
+    public function clear()
+    {
+        $this->rows = array();
+        $this->heading = array();
+        $this->auto_heading = TRUE;
+        return $this;
 	}
 
 }

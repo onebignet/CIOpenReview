@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
@@ -54,48 +54,48 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class CI_Zip {
 
+    /**
+     * mbstring.func_overload flag
+     *
+     * @var    bool
+     */
+    protected static $func_overload;
 	/**
 	 * Zip data in string form
 	 *
 	 * @var string
 	 */
 	public $zipdata = '';
-
 	/**
 	 * Zip data for a directory in string form
 	 *
 	 * @var string
 	 */
 	public $directory = '';
-
 	/**
 	 * Number of files/folder in zip file
 	 *
 	 * @var int
 	 */
 	public $entries = 0;
-
 	/**
 	 * Number of files in zip
 	 *
 	 * @var int
 	 */
 	public $file_num = 0;
-
 	/**
 	 * relative offset of local header
 	 *
 	 * @var int
 	 */
 	public $offset = 0;
-
 	/**
 	 * Reference to time at init
 	 *
 	 * @var int
 	 */
 	public $now;
-
 	/**
 	 * The level of compression
 	 *
@@ -112,6 +112,8 @@ class CI_Zip {
 	 */
 	public function __construct()
 	{
+        isset(self::$func_overload) OR self::$func_overload = (extension_loaded('mbstring') && ini_get('mbstring.func_overload'));
+
 		$this->now = time();
 		log_message('info', 'Zip Compression Class Initialized');
 	}
@@ -182,7 +184,7 @@ class CI_Zip {
 			.pack('V', 0) // crc32
 			.pack('V', 0) // compressed filesize
 			.pack('V', 0) // uncompressed filesize
-			.pack('v', strlen($dir)) // length of pathname
+            . pack('v', self::strlen($dir)) // length of pathname
 			.pack('v', 0) // extra field length
 			.$dir
 			// below is "data descriptor" segment
@@ -197,7 +199,7 @@ class CI_Zip {
 			.pack('V',0) // crc32
 			.pack('V',0) // compressed filesize
 			.pack('V',0) // uncompressed filesize
-			.pack('v', strlen($dir)) // length of pathname
+            . pack('v', self::strlen($dir)) // length of pathname
 			.pack('v', 0) // extra field length
 			.pack('v', 0) // file comment length
 			.pack('v', 0) // disk number start
@@ -206,13 +208,57 @@ class CI_Zip {
 			.pack('V', $this->offset) // relative offset of local header
 			.$dir;
 
-		$this->offset = strlen($this->zipdata);
+        $this->offset = self::strlen($this->zipdata);
 		$this->entries++;
 	}
 
 	// --------------------------------------------------------------------
 
+    /**
+     * Byte-safe strlen()
+     *
+     * @param    string $str
+     * @return    int
+     */
+    protected static function strlen($str)
+    {
+        return (self::$func_overload)
+            ? mb_strlen($str, '8bit')
+            : strlen($str);
+    }
+
+    // --------------------------------------------------------------------
+
 	/**
+     * Read the contents of a file and add it to the zip
+     *
+     * @param    string $path
+     * @param    bool $archive_filepath
+     * @return    bool
+     */
+    public function read_file($path, $archive_filepath = FALSE)
+    {
+        if (file_exists($path) && FALSE !== ($data = file_get_contents($path))) {
+            if (is_string($archive_filepath)) {
+                $name = str_replace('\\', '/', $archive_filepath);
+            } else {
+                $name = str_replace('\\', '/', $path);
+
+                if ($archive_filepath === FALSE) {
+                    $name = preg_replace('|.*/(.+)|', '\\1', $name);
+                }
+            }
+
+            $this->add_data($name, $data);
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * Add Data to Zip
 	 *
 	 * Lets you add files to the archive. If the path is included
@@ -240,7 +286,7 @@ class CI_Zip {
 		}
 	}
 
-	// --------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
 	/**
 	 * Add Data to Zip
@@ -255,10 +301,10 @@ class CI_Zip {
 	{
 		$filepath = str_replace('\\', '/', $filepath);
 
-		$uncompressed_size = strlen($data);
+        $uncompressed_size = self::strlen($data);
 		$crc32  = crc32($data);
-		$gzdata = substr(gzcompress($data, $this->compression_level), 2, -4);
-		$compressed_size = strlen($gzdata);
+        $gzdata = self::substr(gzcompress($data, $this->compression_level), 2, -4);
+        $compressed_size = self::strlen($gzdata);
 
 		$this->zipdata .=
 			"\x50\x4b\x03\x04\x14\x00\x00\x00\x08\x00"
@@ -267,7 +313,7 @@ class CI_Zip {
 			.pack('V', $crc32)
 			.pack('V', $compressed_size)
 			.pack('V', $uncompressed_size)
-			.pack('v', strlen($filepath)) // length of filename
+            . pack('v', self::strlen($filepath)) // length of filename
 			.pack('v', 0) // extra field length
 			.$filepath
 			.$gzdata; // "file data" segment
@@ -279,7 +325,7 @@ class CI_Zip {
 			.pack('V', $crc32)
 			.pack('V', $compressed_size)
 			.pack('V', $uncompressed_size)
-			.pack('v', strlen($filepath)) // length of filename
+            . pack('v', self::strlen($filepath)) // length of filename
 			.pack('v', 0) // extra field length
 			.pack('v', 0) // file comment length
 			.pack('v', 0) // disk number start
@@ -288,46 +334,36 @@ class CI_Zip {
 			.pack('V', $this->offset) // relative offset of local header
 			.$filepath;
 
-		$this->offset = strlen($this->zipdata);
+        $this->offset = self::strlen($this->zipdata);
 		$this->entries++;
 		$this->file_num++;
 	}
 
-	// --------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
-	/**
-	 * Read the contents of a file and add it to the zip
-	 *
-	 * @param	string	$path
-	 * @param	bool	$archive_filepath
-	 * @return	bool
-	 */
-	public function read_file($path, $archive_filepath = FALSE)
-	{
-		if (file_exists($path) && FALSE !== ($data = file_get_contents($path)))
-		{
-			if (is_string($archive_filepath))
-			{
-				$name = str_replace('\\', '/', $archive_filepath);
-			}
-			else
-			{
-				$name = str_replace('\\', '/', $path);
+    /**
+     * Byte-safe substr()
+     *
+     * @param    string $str
+     * @param    int $start
+     * @param    int $length
+     * @return    string
+     */
+    protected static function substr($str, $start, $length = NULL)
+    {
+        if (self::$func_overload) {
+            // mb_substr($str, $start, null, '8bit') returns an empty
+            // string on PHP 5.3
+            isset($length) OR $length = ($start >= 0 ? self::strlen($str) - $start : -$start);
+            return mb_substr($str, $start, $length, '8bit');
+        }
 
-				if ($archive_filepath === FALSE)
-				{
-					$name = preg_replace('|.*/(.+)|', '\\1', $name);
-				}
-			}
+        return isset($length)
+            ? substr($str, $start, $length)
+            : substr($str, $start);
+    }
 
-			$this->add_data($name, $data);
-			return TRUE;
-		}
-
-		return FALSE;
-	}
-
-	// ------------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
 	/**
 	 * Read a directory and add it to the zip.
@@ -385,30 +421,6 @@ class CI_Zip {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Get the Zip file
-	 *
-	 * @return	string	(binary encoded)
-	 */
-	public function get_zip()
-	{
-		// Is there any data to return?
-		if ($this->entries === 0)
-		{
-			return FALSE;
-		}
-
-		return $this->zipdata
-			.$this->directory."\x50\x4b\x05\x06\x00\x00\x00\x00"
-			.pack('v', $this->entries) // total # of entries "on this disk"
-			.pack('v', $this->entries) // total # of entries overall
-			.pack('V', strlen($this->directory)) // size of central dir
-			.pack('V', strlen($this->zipdata)) // offset to start of central dir
-			."\x00\x00"; // .zip file comment length
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Write File to the specified directory
 	 *
 	 * Lets you write a file
@@ -425,9 +437,9 @@ class CI_Zip {
 
 		flock($fp, LOCK_EX);
 
-		for ($result = $written = 0, $data = $this->get_zip(), $length = strlen($data); $written < $length; $written += $result)
+        for ($result = $written = 0, $data = $this->get_zip(), $length = self::strlen($data); $written < $length; $written += $result)
 		{
-			if (($result = fwrite($fp, substr($data, $written))) === FALSE)
+            if (($result = fwrite($fp, self::substr($data, $written))) === FALSE)
 			{
 				break;
 			}
@@ -437,6 +449,29 @@ class CI_Zip {
 		fclose($fp);
 
 		return is_int($result);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Get the Zip file
+     *
+     * @return    string    (binary encoded)
+     */
+    public function get_zip()
+    {
+        // Is there any data to return?
+        if ($this->entries === 0) {
+            return FALSE;
+        }
+
+        return $this->zipdata
+            . $this->directory . "\x50\x4b\x05\x06\x00\x00\x00\x00"
+            . pack('v', $this->entries) // total # of entries "on this disk"
+            . pack('v', $this->entries) // total # of entries overall
+            . pack('V', self::strlen($this->directory)) // size of central dir
+            . pack('V', self::strlen($this->zipdata)) // offset to start of central dir
+            . "\x00\x00"; // .zip file comment length
 	}
 
 	// --------------------------------------------------------------------
@@ -480,5 +515,4 @@ class CI_Zip {
 		$this->offset = 0;
 		return $this;
 	}
-
 }

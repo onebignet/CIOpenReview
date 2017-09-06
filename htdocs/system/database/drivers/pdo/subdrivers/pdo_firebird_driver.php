@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
@@ -107,44 +107,6 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Show table query
-	 *
-	 * Generates a platform-specific query string so that the table names can be fetched
-	 *
-	 * @param	bool	$prefix_limit
-	 * @return	string
-	 */
-	protected function _list_tables($prefix_limit = FALSE)
-	{
-		$sql = 'SELECT "RDB$RELATION_NAME" FROM "RDB$RELATIONS" WHERE "RDB$RELATION_NAME" NOT LIKE \'RDB$%\' AND "RDB$RELATION_NAME" NOT LIKE \'MON$%\'';
-
-		if ($prefix_limit === TRUE && $this->dbprefix !== '')
-		{
-			return $sql.' AND "RDB$RELATION_NAME" LIKE \''.$this->escape_like_str($this->dbprefix)."%' "
-				.sprintf($this->_like_escape_str, $this->_like_escape_chr);
-		}
-
-		return $sql;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Show column query
-	 *
-	 * Generates a platform-specific query string so that the column names can be fetched
-	 *
-	 * @param	string	$table
-	 * @return	string
-	 */
-	protected function _list_columns($table = '')
-	{
-		return 'SELECT "RDB$FIELD_NAME" FROM "RDB$RELATION_FIELDS" WHERE "RDB$RELATION_NAME" = '.$this->escape($table);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Returns an object with field data
 	 *
 	 * @param	string	$table
@@ -180,6 +142,43 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver {
 		return (($query = $this->query($sql)) !== FALSE)
 			? $query->result_object()
 			: FALSE;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Show table query
+     *
+     * Generates a platform-specific query string so that the table names can be fetched
+     *
+     * @param    bool $prefix_limit
+     * @return    string
+     */
+    protected function _list_tables($prefix_limit = FALSE)
+    {
+        $sql = 'SELECT "RDB$RELATION_NAME" FROM "RDB$RELATIONS" WHERE "RDB$RELATION_NAME" NOT LIKE \'RDB$%\' AND "RDB$RELATION_NAME" NOT LIKE \'MON$%\'';
+
+        if ($prefix_limit === TRUE && $this->dbprefix !== '') {
+            return $sql . ' AND "RDB$RELATION_NAME" LIKE \'' . $this->escape_like_str($this->dbprefix) . "%' "
+                . sprintf($this->_like_escape_str, $this->_like_escape_chr);
+        }
+
+        return $sql;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Show column query
+     *
+     * Generates a platform-specific query string so that the column names can be fetched
+     *
+     * @param    string $table
+     * @return    string
+     */
+    protected function _list_columns($table = '')
+    {
+        return 'SELECT "RDB$FIELD_NAME" FROM "RDB$RELATION_FIELDS" WHERE "RDB$RELATION_NAME" = ' . $this->escape($table);
 	}
 
 	// --------------------------------------------------------------------
@@ -260,4 +259,20 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver {
 		return preg_replace('`SELECT`i', 'SELECT '.$select, $sql);
 	}
 
+    // --------------------------------------------------------------------
+
+    /**
+     * Insert batch statement
+     *
+     * Generates a platform-specific insert string from the supplied data.
+     *
+     * @param    string $table Table name
+     * @param    array $keys INSERT keys
+     * @param    array $values INSERT values
+     * @return    string|bool
+     */
+    protected function _insert_batch($table, $keys, $values)
+    {
+        return ($this->db_debug) ? $this->display_error('db_unsupported_feature') : FALSE;
+    }
 }

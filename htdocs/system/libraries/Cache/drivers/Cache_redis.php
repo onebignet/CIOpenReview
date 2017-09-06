@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
@@ -144,21 +144,13 @@ class CI_Cache_redis extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Get cache
+     * Check if Redis driver is supported
 	 *
-	 * @param	string	$key	Cache ID
-	 * @return	mixed
+     * @return    bool
 	 */
-	public function get($key)
+    public function is_supported()
 	{
-		$value = $this->_redis->get($key);
-
-		if ($value !== FALSE && isset($this->_serialized[$key]))
-		{
-			return unserialize($value);
-		}
-
-		return $value;
+        return extension_loaded('redis');
 	}
 
 	// ------------------------------------------------------------------------
@@ -300,13 +292,20 @@ class CI_Cache_redis extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Check if Redis driver is supported
+     * Get cache
 	 *
-	 * @return	bool
+     * @param    string $key Cache ID
+     * @return    mixed
 	 */
-	public function is_supported()
+    public function get($key)
 	{
-		return extension_loaded('redis');
+        $value = $this->_redis->get($key);
+
+        if ($value !== FALSE && isset($this->_serialized[$key])) {
+            return unserialize($value);
+        }
+
+        return $value;
 	}
 
 	// ------------------------------------------------------------------------

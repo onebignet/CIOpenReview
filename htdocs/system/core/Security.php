@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
@@ -133,15 +133,16 @@ class CI_Security {
 	 * @var	array
 	 */
 	protected $_never_allowed_str =	array(
-		'document.cookie'	=> '[removed]',
-		'document.write'	=> '[removed]',
-		'.parentNode'		=> '[removed]',
-		'.innerHTML'		=> '[removed]',
-		'-moz-binding'		=> '[removed]',
-		'<!--'				=> '&lt;!--',
-		'-->'				=> '--&gt;',
-		'<![CDATA['			=> '&lt;![CDATA[',
-		'<comment>'			=> '&lt;comment&gt;'
+        'document.cookie' => '[removed]',
+        'document.write' => '[removed]',
+        '.parentNode' => '[removed]',
+        '.innerHTML' => '[removed]',
+        '-moz-binding' => '[removed]',
+        '<!--' => '&lt;!--',
+        '-->' => '--&gt;',
+        '<![CDATA[' => '&lt;![CDATA[',
+        '<comment>' => '&lt;comment&gt;',
+        '<%' => '&lt;&#37;'
 	);
 
 	/**
@@ -198,6 +199,84 @@ class CI_Security {
 	// --------------------------------------------------------------------
 
 	/**
+     * Set CSRF Hash and Cookie
+     *
+     * @return    string
+     */
+    protected function _csrf_set_hash()
+    {
+        if ($this->_csrf_hash === NULL) {
+            // If the cookie exists we will use its value.
+            // We don't necessarily want to regenerate it with
+            // each page load since a page could contain embedded
+            // sub-pages causing this feature to fail
+            if (isset($_COOKIE[$this->_csrf_cookie_name]) && is_string($_COOKIE[$this->_csrf_cookie_name])
+                && preg_match('#^[0-9a-f]{32}$#iS', $_COOKIE[$this->_csrf_cookie_name]) === 1
+            ) {
+                return $this->_csrf_hash = $_COOKIE[$this->_csrf_cookie_name];
+            }
+
+            $rand = $this->get_random_bytes(16);
+            $this->_csrf_hash = ($rand === FALSE)
+                ? md5(uniqid(mt_rand(), TRUE))
+                : bin2hex($rand);
+        }
+
+        return $this->_csrf_hash;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Get random bytes
+     *
+     * @param    int $length Output length
+     * @return    string
+     */
+    public function get_random_bytes($length)
+    {
+        if (empty($length) OR !ctype_digit((string)$length)) {
+            return FALSE;
+        }
+
+        if (function_exists('random_bytes')) {
+            try {
+                // The cast is required to avoid TypeError
+                return random_bytes((int)$length);
+            } catch (Exception $e) {
+                // If random_bytes() can't do the job, we can't either ...
+                // There's no point in using fallbacks.
+                log_message('error', $e->getMessage());
+                return FALSE;
+            }
+        }
+
+        // Unfortunately, none of the following PRNGs is guaranteed to exist ...
+        if (defined('MCRYPT_DEV_URANDOM') && ($output = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM)) !== FALSE) {
+            return $output;
+        }
+
+
+        if (is_readable('/dev/urandom') && ($fp = fopen('/dev/urandom', 'rb')) !== FALSE) {
+            // Try not to waste entropy ...
+            is_php('5.4') && stream_set_chunk_size($fp, $length);
+            $output = fread($fp, $length);
+            fclose($fp);
+            if ($output !== FALSE) {
+                return $output;
+            }
+        }
+
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            return openssl_random_pseudo_bytes($length);
+        }
+
+        return FALSE;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * CSRF Verify
 	 *
 	 * @return	CI_Security
@@ -223,14 +302,11 @@ class CI_Security {
 			}
 		}
 
-		// Do the tokens exist in both the _POST and _COOKIE arrays?
-		if ( ! isset($_POST[$this->_csrf_token_name], $_COOKIE[$this->_csrf_cookie_name])
-			OR $_POST[$this->_csrf_token_name] !== $_COOKIE[$this->_csrf_cookie_name]) // Do the tokens match?
-		{
-			$this->csrf_show_error();
-		}
+        // Check CSRF token validity, but don't error on mismatch just yet - we'll want to regenerate
+        $valid = isset($_POST[$this->_csrf_token_name], $_COOKIE[$this->_csrf_cookie_name])
+            && hash_equals($_POST[$this->_csrf_token_name], $_COOKIE[$this->_csrf_cookie_name]);
 
-		// We kill this since we're done and we don't want to polute the _POST array
+        // We kill this since we're done and we don't want to pollute the _POST array
 		unset($_POST[$this->_csrf_token_name]);
 
 		// Regenerate on every submission?
@@ -243,6 +319,10 @@ class CI_Security {
 
 		$this->_csrf_set_hash();
 		$this->csrf_set_cookie();
+
+        if ($valid !== TRUE) {
+            $this->csrf_show_error();
+        }
 
 		log_message('info', 'CSRF token verified');
 		return $this;
@@ -351,9 +431,9 @@ class CI_Security {
 		// Is the string an array?
 		if (is_array($str))
 		{
-			while (list($key) = each($str))
+            foreach ($str as $key => &$value)
 			{
-				$str[$key] = $this->xss_clean($str[$key]);
+                $str[$key] = $this->xss_clean($value);
 			}
 
 			return $str;
@@ -371,11 +451,14 @@ class CI_Security {
 		 *
 		 * Note: Use rawurldecode() so it does not remove plus signs
 		 */
-		do
-		{
-			$str = rawurldecode($str);
+        if (stripos($str, '%') !== false) {
+            do {
+                $oldstr = $str;
+                $str = rawurldecode($str);
+                $str = preg_replace_callback('#%(?:\s*[0-9a-f]){2,}#i', array($this, '_urldecodespaces'), $str);
+            } while ($oldstr !== $str);
+            unset($oldstr);
 		}
-		while (preg_match('/%[0-9a-f]{2,}/i', $str));
 
 		/*
 		 * Convert character entities to ASCII
@@ -466,7 +549,7 @@ class CI_Security {
 
 			if (preg_match('/<a/i', $str))
 			{
-				$str = preg_replace_callback('#<a[^a-z0-9>]+([^>]*?)(?:>|$)#si', array($this, '_js_link_removal'), $str);
+                $str = preg_replace_callback('#<a(?:rea)?[^a-z0-9>]+([^>]*?)(?:>|$)#si', array($this, '_js_link_removal'), $str);
 			}
 
 			if (preg_match('/<img/i', $str))
@@ -492,7 +575,7 @@ class CI_Security {
 		 * Becomes: &lt;blink&gt;
 		 */
 		$pattern = '#'
-			.'<((?<slash>/*\s*)(?<tagName>[a-z0-9]+)(?=[^a-z0-9]|$)' // tag start and name, followed by a non-tag character
+            . '<((?<slash>/*\s*)((?<tagName>[a-z0-9]+)(?=[^a-z0-9]|$)|.+)' // tag start and name, followed by a non-tag character
 			.'[^\s\042\047a-z0-9>/=]*' // a valid attribute character immediately after the tag would count as a separator
 			// optional attributes
 			.'(?<attributes>(?:[\s\042\047/=]*' // non-attribute characters, excluding > (tag close) for obvious reasons
@@ -558,166 +641,21 @@ class CI_Security {
 	// --------------------------------------------------------------------
 
 	/**
-	 * XSS Hash
+     * Do Never Allowed
 	 *
-	 * Generates the XSS hash if needed and returns it.
-	 *
-	 * @see		CI_Security::$_xss_hash
-	 * @return	string	XSS hash
+     * @used-by    CI_Security::xss_clean()
+     * @param    string
+     * @return    string
 	 */
-	public function xss_hash()
+    protected function _do_never_allowed($str)
 	{
-		if ($this->_xss_hash === NULL)
+        $str = str_replace(array_keys($this->_never_allowed_str), $this->_never_allowed_str, $str);
+
+        foreach ($this->_never_allowed_regex as $regex)
 		{
-			$rand = $this->get_random_bytes(16);
-			$this->_xss_hash = ($rand === FALSE)
-				? md5(uniqid(mt_rand(), TRUE))
-				: bin2hex($rand);
+            $str = preg_replace('#' . $regex . '#is', '[removed]', $str);
 		}
 
-		return $this->_xss_hash;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Get random bytes
-	 *
-	 * @param	int	$length	Output length
-	 * @return	string
-	 */
-	public function get_random_bytes($length)
-	{
-		if (empty($length) OR ! ctype_digit((string) $length))
-		{
-			return FALSE;
-		}
-
-		if (function_exists('random_bytes'))
-		{
-			try
-			{
-				// The cast is required to avoid TypeError
-				return random_bytes((int) $length);
-			}
-			catch (Exception $e)
-			{
-				// If random_bytes() can't do the job, we can't either ...
-				// There's no point in using fallbacks.
-				log_message('error', $e->getMessage());
-				return FALSE;
-			}
-		}
-
-		// Unfortunately, none of the following PRNGs is guaranteed to exist ...
-		if (defined('MCRYPT_DEV_URANDOM') && ($output = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM)) !== FALSE)
-		{
-			return $output;
-		}
-
-
-		if (is_readable('/dev/urandom') && ($fp = fopen('/dev/urandom', 'rb')) !== FALSE)
-		{
-			// Try not to waste entropy ...
-			is_php('5.4') && stream_set_chunk_size($fp, $length);
-			$output = fread($fp, $length);
-			fclose($fp);
-			if ($output !== FALSE)
-			{
-				return $output;
-			}
-		}
-
-		if (function_exists('openssl_random_pseudo_bytes'))
-		{
-			return openssl_random_pseudo_bytes($length);
-		}
-
-		return FALSE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * HTML Entities Decode
-	 *
-	 * A replacement for html_entity_decode()
-	 *
-	 * The reason we are not using html_entity_decode() by itself is because
-	 * while it is not technically correct to leave out the semicolon
-	 * at the end of an entity most browsers will still interpret the entity
-	 * correctly. html_entity_decode() does not convert entities without
-	 * semicolons, so we are left with our own little solution here. Bummer.
-	 *
-	 * @link	http://php.net/html-entity-decode
-	 *
-	 * @param	string	$str		Input
-	 * @param	string	$charset	Character set
-	 * @return	string
-	 */
-	public function entity_decode($str, $charset = NULL)
-	{
-		if (strpos($str, '&') === FALSE)
-		{
-			return $str;
-		}
-
-		static $_entities;
-
-		isset($charset) OR $charset = $this->charset;
-		$flag = is_php('5.4')
-			? ENT_COMPAT | ENT_HTML5
-			: ENT_COMPAT;
-
-		do
-		{
-			$str_compare = $str;
-
-			// Decode standard entities, avoiding false positives
-			if (preg_match_all('/&[a-z]{2,}(?![a-z;])/i', $str, $matches))
-			{
-				if ( ! isset($_entities))
-				{
-					$_entities = array_map(
-						'strtolower',
-						is_php('5.3.4')
-							? get_html_translation_table(HTML_ENTITIES, $flag, $charset)
-							: get_html_translation_table(HTML_ENTITIES, $flag)
-					);
-
-					// If we're not on PHP 5.4+, add the possibly dangerous HTML 5
-					// entities to the array manually
-					if ($flag === ENT_COMPAT)
-					{
-						$_entities[':'] = '&colon;';
-						$_entities['('] = '&lpar;';
-						$_entities[')'] = '&rpar;';
-						$_entities["\n"] = '&newline;';
-						$_entities["\t"] = '&tab;';
-					}
-				}
-
-				$replace = array();
-				$matches = array_unique(array_map('strtolower', $matches[0]));
-				foreach ($matches as &$match)
-				{
-					if (($char = array_search($match.';', $_entities, TRUE)) !== FALSE)
-					{
-						$replace[$match] = $char;
-					}
-				}
-
-				$str = str_ireplace(array_keys($replace), array_values($replace), $str);
-			}
-
-			// Decode numeric & UTF16 two byte entities
-			$str = html_entity_decode(
-				preg_replace('/(&#(?:x0*[0-9a-f]{2,5}(?![0-9a-f;])|(?:0*\d{2,4}(?![0-9;]))))/iS', '$1;', $str),
-				$flag,
-				$charset
-			);
-		}
-		while ($str_compare !== $str);
 		return $str;
 	}
 
@@ -774,6 +712,24 @@ class CI_Security {
 
 	// ----------------------------------------------------------------
 
+    /**
+     * URL-decode taking spaces into account
+     *
+     * @see        https://github.com/bcit-ci/CodeIgniter/issues/4877
+     * @param    array $matches
+     * @return    string
+     */
+    protected function _urldecodespaces($matches)
+    {
+        $input = $matches[0];
+        $nospaces = preg_replace('#\s+#', '', $input);
+        return ($nospaces === $input)
+            ? $input
+            : rawurldecode($nospaces);
+    }
+
+    // ----------------------------------------------------------------
+
 	/**
 	 * Compact Exploded Words
 	 *
@@ -803,7 +759,7 @@ class CI_Security {
 	protected function _sanitize_naughty_html($matches)
 	{
 		static $naughty_tags    = array(
-			'alert', 'prompt', 'confirm', 'applet', 'audio', 'basefont', 'base', 'behavior', 'bgsound',
+            'alert', 'area', 'prompt', 'confirm', 'applet', 'audio', 'basefont', 'base', 'behavior', 'bgsound',
 			'blink', 'body', 'embed', 'expression', 'form', 'frameset', 'frame', 'head', 'html', 'ilayer',
 			'iframe', 'input', 'button', 'select', 'isindex', 'layer', 'link', 'meta', 'keygen', 'object',
 			'plaintext', 'style', 'script', 'textarea', 'title', 'math', 'video', 'svg', 'xml', 'xss'
@@ -842,7 +798,7 @@ class CI_Security {
 			// Each iteration filters a single attribute
 			do
 			{
-				// Strip any non-alpha characters that may preceed an attribute.
+                // Strip any non-alpha characters that may precede an attribute.
 				// Browsers often parse these incorrectly and that has been a
 				// of numerous XSS issues we've had.
 				$matches['attributes'] = preg_replace('#^[^a-z]+#i', '', $matches['attributes']);
@@ -900,7 +856,7 @@ class CI_Security {
 		return str_replace(
 			$match[1],
 			preg_replace(
-				'#href=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;)|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|data\s*:)#si',
+                '#href=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;)|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|d\s*a\s*t\s*a\s*:)#si',
 				'',
 				$this->_filter_attributes($match[1])
 			),
@@ -911,6 +867,30 @@ class CI_Security {
 	// --------------------------------------------------------------------
 
 	/**
+     * Filter Attributes
+     *
+     * Filters tag attributes for consistency and safety.
+     *
+     * @used-by    CI_Security::_js_img_removal()
+     * @used-by    CI_Security::_js_link_removal()
+     * @param    string $str
+     * @return    string
+     */
+    protected function _filter_attributes($str)
+    {
+        $out = '';
+        if (preg_match_all('#\s*[a-z\-]+\s*=\s*(\042|\047)([^\\1]*?)\\1#is', $str, $matches)) {
+            foreach ($matches[0] as $match) {
+                $out .= preg_replace('#/\*.*?\*/#s', '', $match);
+            }
+        }
+
+        return $out;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * JS Image Removal
 	 *
 	 * Callback method for xss_clean() to sanitize image tags.
@@ -953,32 +933,6 @@ class CI_Security {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Filter Attributes
-	 *
-	 * Filters tag attributes for consistency and safety.
-	 *
-	 * @used-by	CI_Security::_js_img_removal()
-	 * @used-by	CI_Security::_js_link_removal()
-	 * @param	string	$str
-	 * @return	string
-	 */
-	protected function _filter_attributes($str)
-	{
-		$out = '';
-		if (preg_match_all('#\s*[a-z\-]+\s*=\s*(\042|\047)([^\\1]*?)\\1#is', $str, $matches))
-		{
-			foreach ($matches[0] as $match)
-			{
-				$out .= preg_replace('#/\*.*?\*/#s', '', $match);
-			}
-		}
-
-		return $out;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * HTML Entity Decode Callback
 	 *
 	 * @used-by	CI_Security::xss_clean()
@@ -1002,52 +956,101 @@ class CI_Security {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Do Never Allowed
+     * XSS Hash
 	 *
-	 * @used-by	CI_Security::xss_clean()
-	 * @param 	string
-	 * @return 	string
+     * Generates the XSS hash if needed and returns it.
+     *
+     * @see        CI_Security::$_xss_hash
+     * @return    string    XSS hash
 	 */
-	protected function _do_never_allowed($str)
+    public function xss_hash()
 	{
-		$str = str_replace(array_keys($this->_never_allowed_str), $this->_never_allowed_str, $str);
-
-		foreach ($this->_never_allowed_regex as $regex)
+        if ($this->_xss_hash === NULL)
 		{
-			$str = preg_replace('#'.$regex.'#is', '[removed]', $str);
+            $rand = $this->get_random_bytes(16);
+            $this->_xss_hash = ($rand === FALSE)
+                ? md5(uniqid(mt_rand(), TRUE))
+                : bin2hex($rand);
 		}
 
-		return $str;
+        return $this->_xss_hash;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Set CSRF Hash and Cookie
+     * HTML Entities Decode
 	 *
+     * A replacement for html_entity_decode()
+     *
+     * The reason we are not using html_entity_decode() by itself is because
+     * while it is not technically correct to leave out the semicolon
+     * at the end of an entity most browsers will still interpret the entity
+     * correctly. html_entity_decode() does not convert entities without
+     * semicolons, so we are left with our own little solution here. Bummer.
+     *
+     * @link    http://php.net/html-entity-decode
+     *
+     * @param    string $str Input
+     * @param    string $charset Character set
 	 * @return	string
 	 */
-	protected function _csrf_set_hash()
+    public function entity_decode($str, $charset = NULL)
 	{
-		if ($this->_csrf_hash === NULL)
+        if (strpos($str, '&') === FALSE)
 		{
-			// If the cookie exists we will use its value.
-			// We don't necessarily want to regenerate it with
-			// each page load since a page could contain embedded
-			// sub-pages causing this feature to fail
-			if (isset($_COOKIE[$this->_csrf_cookie_name]) && is_string($_COOKIE[$this->_csrf_cookie_name])
-				&& preg_match('#^[0-9a-f]{32}$#iS', $_COOKIE[$this->_csrf_cookie_name]) === 1)
-			{
-				return $this->_csrf_hash = $_COOKIE[$this->_csrf_cookie_name];
+            return $str;
+        }
+
+        static $_entities;
+
+        isset($charset) OR $charset = $this->charset;
+        $flag = is_php('5.4')
+            ? ENT_COMPAT | ENT_HTML5
+            : ENT_COMPAT;
+
+        if (!isset($_entities)) {
+            $_entities = array_map('strtolower', get_html_translation_table(HTML_ENTITIES, $flag, $charset));
+
+            // If we're not on PHP 5.4+, add the possibly dangerous HTML 5
+            // entities to the array manually
+            if ($flag === ENT_COMPAT) {
+                $_entities[':'] = '&colon;';
+                $_entities['('] = '&lpar;';
+                $_entities[')'] = '&rpar;';
+                $_entities["\n"] = '&NewLine;';
+                $_entities["\t"] = '&Tab;';
+            }
+        }
+
+        do {
+            $str_compare = $str;
+
+            // Decode standard entities, avoiding false positives
+            if (preg_match_all('/&[a-z]{2,}(?![a-z;])/i', $str, $matches)) {
+                $replace = array();
+                $matches = array_unique(array_map('strtolower', $matches[0]));
+                foreach ($matches as &$match) {
+                    if (($char = array_search($match . ';', $_entities, TRUE)) !== FALSE) {
+                        $replace[$match] = $char;
+                    }
+                }
+
+                $str = str_replace(array_keys($replace), array_values($replace), $str);
 			}
 
-			$rand = $this->get_random_bytes(16);
-			$this->_csrf_hash = ($rand === FALSE)
-				? md5(uniqid(mt_rand(), TRUE))
-				: bin2hex($rand);
-		}
+            // Decode numeric & UTF16 two byte entities
+            $str = html_entity_decode(
+                preg_replace('/(&#(?:x0*[0-9a-f]{2,5}(?![0-9a-f;])|(?:0*\d{2,4}(?![0-9;]))))/iS', '$1;', $str),
+                $flag,
+                $charset
+            );
 
-		return $this->_csrf_hash;
+            if ($flag === ENT_COMPAT) {
+                $str = str_replace(array_values($_entities), array_keys($_entities), $str);
+            }
+        } while ($str_compare !== $str);
+        return $str;
 	}
 
 }

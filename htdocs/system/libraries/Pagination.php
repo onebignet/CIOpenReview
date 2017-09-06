@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
@@ -49,6 +49,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class CI_Pagination {
 
 	/**
+     * Items per page
+     *
+     * @var    int
+     */
+    public $per_page = 10;
+    /**
+     * Current page
+     *
+     * @var    int
+     */
+    public $cur_page = 0;
+    /**
 	 * Base URL
 	 *
 	 * The page that we're linking to
@@ -56,28 +68,24 @@ class CI_Pagination {
 	 * @var	string
 	 */
 	protected $base_url		= '';
-
 	/**
 	 * Prefix
 	 *
 	 * @var	string
 	 */
 	protected $prefix = '';
-
 	/**
 	 * Suffix
 	 *
 	 * @var	string
 	 */
 	protected $suffix = '';
-
 	/**
 	 * Total number of items
 	 *
 	 * @var	int
 	 */
 	protected $total_rows = 0;
-
 	/**
 	 * Number of links to show
 	 *
@@ -87,21 +95,6 @@ class CI_Pagination {
 	 * @var	int
 	 */
 	protected $num_links = 2;
-
-	/**
-	 * Items per page
-	 *
-	 * @var	int
-	 */
-	public $per_page = 10;
-
-	/**
-	 * Current page
-	 *
-	 * @var	int
-	 */
-	public $cur_page = 0;
-
 	/**
 	 * Use page numbers flag
 	 *
@@ -392,6 +385,28 @@ class CI_Pagination {
 	// --------------------------------------------------------------------
 
 	/**
+     * Parse attributes
+     *
+     * @param    array $attributes
+     * @return    void
+     */
+    protected function _parse_attributes($attributes)
+    {
+        isset($attributes['rel']) OR $attributes['rel'] = TRUE;
+        $this->_link_types = ($attributes['rel'])
+            ? array('start' => 'start', 'prev' => 'prev', 'next' => 'next')
+            : array();
+        unset($attributes['rel']);
+
+        $this->_attributes = '';
+        foreach ($attributes as $key => $value) {
+            $this->_attributes .= ' ' . $key . '="' . $value . '"';
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * Generate the pagination links
 	 *
 	 * @return	string
@@ -428,7 +443,7 @@ class CI_Pagination {
 		{
 			$get = $this->CI->input->get();
 
-			// Unset the controll, method, old-school routing options
+            // Unset the control, method, old-school routing options
 			unset($get['c'], $get['m'], $get[$this->query_string_segment]);
 		}
 		else
@@ -653,29 +668,6 @@ class CI_Pagination {
 
 		// Add the wrapper HTML if exists
 		return $this->full_tag_open.$output.$this->full_tag_close;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Parse attributes
-	 *
-	 * @param	array	$attributes
-	 * @return	void
-	 */
-	protected function _parse_attributes($attributes)
-	{
-		isset($attributes['rel']) OR $attributes['rel'] = TRUE;
-		$this->_link_types = ($attributes['rel'])
-			? array('start' => 'start', 'prev' => 'prev', 'next' => 'next')
-			: array();
-		unset($attributes['rel']);
-
-		$this->_attributes = '';
-		foreach ($attributes as $key => $value)
-		{
-			$this->_attributes .= ' '.$key.'="'.$value.'"';
-		}
 	}
 
 	// --------------------------------------------------------------------

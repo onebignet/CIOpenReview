@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
@@ -148,81 +148,153 @@ class CI_DB_result {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Query result. Acts as a wrapper function for the following functions.
+     * Query result. "array" version.
 	 *
-	 * @param	string	$type	'object', 'array' or a custom class name
 	 * @return	array
 	 */
-	public function result($type = 'object')
+    public function result_array()
 	{
-		if ($type === 'array')
+        if (count($this->result_array) > 0)
 		{
-			return $this->result_array();
+            return $this->result_array;
 		}
-		elseif ($type === 'object')
+
+        // In the event that query caching is on, the result_id variable
+        // will not be a valid resource so we'll simply return an empty
+        // array.
+        if (!$this->result_id OR $this->num_rows === 0)
 		{
-			return $this->result_object();
+            return array();
 		}
-		else
+
+        if (($c = count($this->result_object)) > 0)
 		{
-			return $this->custom_result_object($type);
+            for ($i = 0; $i < $c; $i++) {
+                $this->result_array[$i] = (array)$this->result_object[$i];
+            }
+
+            return $this->result_array;
 		}
+
+        is_null($this->row_data) OR $this->data_seek(0);
+        while ($row = $this->_fetch_assoc()) {
+            $this->result_array[] = $row;
+        }
+
+        return $this->result_array;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Custom query result.
+     * Data Seek
 	 *
-	 * @param	string	$class_name
+     * Moves the internal pointer to the desired offset. We call
+     * this internally before fetching results to make sure the
+     * result set starts at zero.
+     *
+     * Overridden by driver result classes.
+     *
+     * @param    int $n
+     * @return    bool
+     */
+    public function data_seek($n = 0)
+    {
+        return FALSE;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Result - associative array
+     *
+     * Returns the result set as an array.
+     *
+     * Overridden by driver result classes.
+     *
 	 * @return	array
 	 */
-	public function custom_result_object($class_name)
+    protected function _fetch_assoc()
 	{
-		if (isset($this->custom_result_object[$class_name]))
-		{
-			return $this->custom_result_object[$class_name];
-		}
-		elseif ( ! $this->result_id OR $this->num_rows === 0)
-		{
-			return array();
-		}
+        return array();
+    }
 
-		// Don't fetch the result set again if we already have it
-		$_data = NULL;
-		if (($c = count($this->result_array)) > 0)
-		{
-			$_data = 'result_array';
-		}
-		elseif (($c = count($this->result_object)) > 0)
-		{
-			$_data = 'result_object';
-		}
+    // --------------------------------------------------------------------
 
-		if ($_data !== NULL)
+    /**
+     * Row
+     *
+     * A wrapper method.
+     *
+     * @param    mixed $n
+     * @param    string $type 'object' or 'array'
+     * @return    mixed
+     */
+    public function row($n = 0, $type = 'object')
+    {
+        if (!is_numeric($n))
 		{
-			for ($i = 0; $i < $c; $i++)
-			{
-				$this->custom_result_object[$class_name][$i] = new $class_name();
+            // We cache the row data for subsequent uses
+            is_array($this->row_data) OR $this->row_data = $this->row_array(0);
 
-				foreach ($this->{$_data}[$i] as $key => $value)
-				{
-					$this->custom_result_object[$class_name][$i]->$key = $value;
-				}
-			}
+            // array_key_exists() instead of isset() to allow for NULL values
+            if (empty($this->row_data) OR !array_key_exists($n, $this->row_data)) {
+                return NULL;
+            }
 
-			return $this->custom_result_object[$class_name];
+            return $this->row_data[$n];
 		}
 
-		is_null($this->row_data) OR $this->data_seek(0);
-		$this->custom_result_object[$class_name] = array();
+        if ($type === 'object') return $this->row_object($n);
+        elseif ($type === 'array') return $this->row_array($n);
+        else return $this->custom_row_object($n, $type);
+    }
 
-		while ($row = $this->_fetch_object($class_name))
+    // --------------------------------------------------------------------
+
+    /**
+     * Returns a single result row - array version
+     *
+     * @param    int $n
+     * @return    array
+     */
+    public function row_array($n = 0)
+    {
+        $result = $this->result_array();
+        if (count($result) === 0)
 		{
-			$this->custom_result_object[$class_name][] = $row;
+            return NULL;
 		}
 
-		return $this->custom_result_object[$class_name];
+        if ($n !== $this->current_row && isset($result[$n]))
+		{
+            $this->current_row = $n;
+		}
+
+        return $result[$this->current_row];
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Returns a single result row - object version
+     *
+     * @param    int $n
+     * @return    object
+     */
+    public function row_object($n = 0)
+    {
+        $result = $this->result_object();
+        if (count($result) === 0) {
+            return NULL;
+		}
+
+        if ($n !== $this->current_row && isset($result[$n]))
+		{
+            $this->current_row = $n;
+		}
+
+        return $result[$this->current_row];
 	}
 
 	// --------------------------------------------------------------------
@@ -269,74 +341,91 @@ class CI_DB_result {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Query result. "array" version.
+     * Result - object
 	 *
-	 * @return	array
+     * Returns the result set as an object.
+     *
+     * Overridden by driver result classes.
+     *
+     * @param    string $class_name
+     * @return    object
 	 */
-	public function result_array()
+    protected function _fetch_object($class_name = 'stdClass')
 	{
-		if (count($this->result_array) > 0)
-		{
-			return $this->result_array;
+        return new $class_name();
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Returns a single result row - custom object version
+     *
+     * @param    int $n
+     * @param    string $type
+     * @return    object
+     */
+    public function custom_row_object($n, $type)
+    {
+        isset($this->custom_result_object[$type]) OR $this->custom_result_object($type);
+
+        if (count($this->custom_result_object[$type]) === 0) {
+            return NULL;
 		}
 
-		// In the event that query caching is on, the result_id variable
-		// will not be a valid resource so we'll simply return an empty
-		// array.
-		if ( ! $this->result_id OR $this->num_rows === 0)
+        if ($n !== $this->current_row && isset($this->custom_result_object[$type][$n]))
 		{
-			return array();
+            $this->current_row = $n;
 		}
 
-		if (($c = count($this->result_object)) > 0)
-		{
-			for ($i = 0; $i < $c; $i++)
-			{
-				$this->result_array[$i] = (array) $this->result_object[$i];
-			}
-
-			return $this->result_array;
-		}
-
-		is_null($this->row_data) OR $this->data_seek(0);
-		while ($row = $this->_fetch_assoc())
-		{
-			$this->result_array[] = $row;
-		}
-
-		return $this->result_array;
+        return $this->custom_result_object[$type][$this->current_row];
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Row
+     * Custom query result.
 	 *
-	 * A wrapper method.
-	 *
-	 * @param	mixed	$n
-	 * @param	string	$type	'object' or 'array'
-	 * @return	mixed
+     * @param    string $class_name
+     * @return    array
 	 */
-	public function row($n = 0, $type = 'object')
+    public function custom_result_object($class_name)
 	{
-		if ( ! is_numeric($n))
+        if (isset($this->custom_result_object[$class_name]))
 		{
-			// We cache the row data for subsequent uses
-			is_array($this->row_data) OR $this->row_data = $this->row_array(0);
+            return $this->custom_result_object[$class_name];
+        } elseif (!$this->result_id OR $this->num_rows === 0) {
+            return array();
+        }
 
-			// array_key_exists() instead of isset() to allow for NULL values
-			if (empty($this->row_data) OR ! array_key_exists($n, $this->row_data))
+        // Don't fetch the result set again if we already have it
+        $_data = NULL;
+        if (($c = count($this->result_array)) > 0) {
+            $_data = 'result_array';
+        } elseif (($c = count($this->result_object)) > 0) {
+            $_data = 'result_object';
+        }
+
+        if ($_data !== NULL) {
+            for ($i = 0; $i < $c; $i++)
 			{
-				return NULL;
+                $this->custom_result_object[$class_name][$i] = new $class_name();
+
+                foreach ($this->{$_data}[$i] as $key => $value) {
+                    $this->custom_result_object[$class_name][$i]->$key = $value;
+                }
 			}
 
-			return $this->row_data[$n];
+            return $this->custom_result_object[$class_name];
 		}
 
-		if ($type === 'object') return $this->row_object($n);
-		elseif ($type === 'array') return $this->row_array($n);
-		else return $this->custom_row_object($n, $type);
+        is_null($this->row_data) OR $this->data_seek(0);
+        $this->custom_result_object[$class_name] = array();
+
+        while ($row = $this->_fetch_object($class_name)) {
+            $this->custom_result_object[$class_name][] = $row;
+        }
+
+        return $this->custom_result_object[$class_name];
 	}
 
 	// --------------------------------------------------------------------
@@ -374,104 +463,64 @@ class CI_DB_result {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Returns a single result row - custom object version
+     * Returns the "first" row
 	 *
-	 * @param	int	$n
 	 * @param	string	$type
-	 * @return	object
+     * @return    mixed
 	 */
-	public function custom_row_object($n, $type)
+    public function first_row($type = 'object')
 	{
-		isset($this->custom_result_object[$type]) OR $this->custom_result_object($type);
-
-		if (count($this->custom_result_object[$type]) === 0)
-		{
-			return NULL;
-		}
-
-		if ($n !== $this->current_row && isset($this->custom_result_object[$type][$n]))
-		{
-			$this->current_row = $n;
-		}
-
-		return $this->custom_result_object[$type][$this->current_row];
+        $result = $this->result($type);
+        return (count($result) === 0) ? NULL : $result[0];
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Returns a single result row - object version
+     * Query result. Acts as a wrapper function for the following functions.
 	 *
-	 * @param	int	$n
-	 * @return	object
+     * @param    string $type 'object', 'array' or a custom class name
+     * @return    array
 	 */
-	public function row_object($n = 0)
+    public function result($type = 'object')
 	{
-		$result = $this->result_object();
-		if (count($result) === 0)
+        if ($type === 'array')
 		{
-			return NULL;
-		}
-
-		if ($n !== $this->current_row && isset($result[$n]))
+            return $this->result_array();
+        } elseif ($type === 'object')
 		{
-			$this->current_row = $n;
+            return $this->result_object();
+        } else
+		{
+            return $this->custom_result_object($type);
 		}
-
-		return $result[$this->current_row];
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Returns a single result row - array version
-	 *
-	 * @param	int	$n
-	 * @return	array
-	 */
-	public function row_array($n = 0)
-	{
-		$result = $this->result_array();
-		if (count($result) === 0)
-		{
-			return NULL;
-		}
-
-		if ($n !== $this->current_row && isset($result[$n]))
-		{
-			$this->current_row = $n;
-		}
-
-		return $result[$this->current_row];
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Returns the "first" row
+     * Returns the "last" row
 	 *
 	 * @param	string	$type
 	 * @return	mixed
 	 */
-	public function first_row($type = 'object')
+    public function last_row($type = 'object')
 	{
 		$result = $this->result($type);
-		return (count($result) === 0) ? NULL : $result[0];
+        return (count($result) === 0) ? NULL : $result[count($result) - 1];
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Returns the "last" row
-	 *
-	 * @param	string	$type
-	 * @return	mixed
+     * The following methods are normally overloaded by the identically named
+     * methods in the platform-specific driver -- except when query caching
+     * is used. When caching is enabled we do not load the other driver.
+     * These functions are primarily here to prevent undefined function errors
+     * when a cached result object is in use. They are not otherwise fully
+     * operational due to the unavailability of the database resource IDs with
+     * cached results.
 	 */
-	public function last_row($type = 'object')
-	{
-		$result = $this->result($type);
-		return (count($result) === 0) ? NULL : $result[count($result) - 1];
-	}
 
 	// --------------------------------------------------------------------
 
@@ -542,18 +591,6 @@ class CI_DB_result {
 	// --------------------------------------------------------------------
 
 	/**
-	 * The following methods are normally overloaded by the identically named
-	 * methods in the platform-specific driver -- except when query caching
-	 * is used. When caching is enabled we do not load the other driver.
-	 * These functions are primarily here to prevent undefined function errors
-	 * when a cached result object is in use. They are not otherwise fully
-	 * operational due to the unavailability of the database resource IDs with
-	 * cached results.
-	 */
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Number of fields in the result set
 	 *
 	 * Overridden by driver result classes.
@@ -609,58 +646,6 @@ class CI_DB_result {
 	public function free_result()
 	{
 		$this->result_id = FALSE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Data Seek
-	 *
-	 * Moves the internal pointer to the desired offset. We call
-	 * this internally before fetching results to make sure the
-	 * result set starts at zero.
-	 *
-	 * Overridden by driver result classes.
-	 *
-	 * @param	int	$n
-	 * @return	bool
-	 */
-	public function data_seek($n = 0)
-	{
-		return FALSE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Result - associative array
-	 *
-	 * Returns the result set as an array.
-	 *
-	 * Overridden by driver result classes.
-	 *
-	 * @return	array
-	 */
-	protected function _fetch_assoc()
-	{
-		return array();
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Result - object
-	 *
-	 * Returns the result set as an object.
-	 *
-	 * Overridden by driver result classes.
-	 *
-	 * @param	string	$class_name
-	 * @return	object
-	 */
-	protected function _fetch_object($class_name = 'stdClass')
-	{
-		return array();
 	}
 
 }

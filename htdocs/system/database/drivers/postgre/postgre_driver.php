@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.3.0
@@ -130,9 +130,9 @@ class CI_DB_postgre_driver extends CI_DB {
 		 */
 		foreach (array('connect_timeout', 'options', 'sslmode', 'service') as $key)
 		{
-			if (isset($this->$key) && is_string($this->key) && $this->key !== '')
+            if (isset($this->$key) && is_string($this->$key) && $this->$key !== '')
 			{
-				$this->dsn .= $key."='".$this->key."' ";
+                $this->dsn .= $key . "='" . $this->$key . "' ";
 			}
 		}
 
@@ -190,19 +190,6 @@ class CI_DB_postgre_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Set client character set
-	 *
-	 * @param	string	$charset
-	 * @return	bool
-	 */
-	protected function _db_set_charset($charset)
-	{
-		return (pg_set_client_encoding($this->conn_id, $charset) === 0);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Database version number
 	 *
 	 * @return	string
@@ -232,55 +219,6 @@ class CI_DB_postgre_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Execute the query
-	 *
-	 * @param	string	$sql	an SQL query
-	 * @return	resource
-	 */
-	protected function _execute($sql)
-	{
-		return pg_query($this->conn_id, $sql);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Begin Transaction
-	 *
-	 * @return	bool
-	 */
-	protected function _trans_begin()
-	{
-		return (bool) pg_query($this->conn_id, 'BEGIN');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Commit Transaction
-	 *
-	 * @return	bool
-	 */
-	protected function _trans_commit()
-	{
-		return (bool) pg_query($this->conn_id, 'COMMIT');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Rollback Transaction
-	 *
-	 * @return	bool
-	 */
-	protected function _trans_rollback()
-	{
-		return (bool) pg_query($this->conn_id, 'ROLLBACK');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Determines if a query is a "write" type.
 	 *
 	 * @param	string	An SQL query string
@@ -288,49 +226,12 @@ class CI_DB_postgre_driver extends CI_DB {
 	 */
 	public function is_write_type($sql)
 	{
-		if (preg_match('#^(INSERT|UPDATE).*RETURNING\s.+(\,\s?.+)*$#i', $sql))
+        if (preg_match('#^(INSERT|UPDATE).*RETURNING\s.+(\,\s?.+)*$#is', $sql))
 		{
 			return FALSE;
 		}
 
 		return parent::is_write_type($sql);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Platform-dependant string escape
-	 *
-	 * @param	string
-	 * @return	string
-	 */
-	protected function _escape_str($str)
-	{
-		return pg_escape_string($this->conn_id, $str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * "Smart" Escape String
-	 *
-	 * Escapes data based on type
-	 *
-	 * @param	string	$str
-	 * @return	mixed
-	 */
-	public function escape($str)
-	{
-		if (is_php('5.4.4') && (is_string($str) OR (is_object($str) && method_exists($str, '__toString'))))
-		{
-			return pg_escape_literal($this->conn_id, $str);
-		}
-		elseif (is_bool($str))
-		{
-			return ($str) ? 'TRUE' : 'FALSE';
-		}
-
-		return parent::escape($str);
 	}
 
 	// --------------------------------------------------------------------
@@ -394,47 +295,6 @@ class CI_DB_postgre_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Show table query
-	 *
-	 * Generates a platform-specific query string so that the table names can be fetched
-	 *
-	 * @param	bool	$prefix_limit
-	 * @return	string
-	 */
-	protected function _list_tables($prefix_limit = FALSE)
-	{
-		$sql = 'SELECT "table_name" FROM "information_schema"."tables" WHERE "table_schema" = \''.$this->schema."'";
-
-		if ($prefix_limit !== FALSE && $this->dbprefix !== '')
-		{
-			return $sql.' AND "table_name" LIKE \''
-				.$this->escape_like_str($this->dbprefix)."%' "
-				.sprintf($this->_like_escape_str, $this->_like_escape_chr);
-		}
-
-		return $sql;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * List column query
-	 *
-	 * Generates a platform-specific query string so that the column names can be fetched
-	 *
-	 * @param	string	$table
-	 * @return	string
-	 */
-	protected function _list_columns($table = '')
-	{
-		return 'SELECT "column_name"
-			FROM "information_schema"."columns"
-			WHERE LOWER("table_name") = '.$this->escape(strtolower($table));
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Returns an object with field data
 	 *
 	 * @param	string	$table
@@ -471,7 +331,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 * Error
 	 *
 	 * Returns an array containing code and message of the last
-	 * database error that has occured.
+     * database error that has occurred.
 	 *
 	 * @return	array
 	 */
@@ -513,6 +373,142 @@ class CI_DB_postgre_driver extends CI_DB {
 		}
 
 		return parent::order_by($orderby, $direction, $escape);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Set client character set
+     *
+     * @param    string $charset
+     * @return    bool
+     */
+    protected function _db_set_charset($charset)
+    {
+        return (pg_set_client_encoding($this->conn_id, $charset) === 0);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Execute the query
+     *
+     * @param    string $sql an SQL query
+     * @return    resource
+     */
+    protected function _execute($sql)
+    {
+        return pg_query($this->conn_id, $sql);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Begin Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_begin()
+    {
+        return (bool)pg_query($this->conn_id, 'BEGIN');
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Commit Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_commit()
+    {
+        return (bool)pg_query($this->conn_id, 'COMMIT');
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Rollback Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_rollback()
+    {
+        return (bool)pg_query($this->conn_id, 'ROLLBACK');
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Platform-dependent string escape
+     *
+     * @param    string
+     * @return    string
+     */
+    protected function _escape_str($str)
+    {
+        return pg_escape_string($this->conn_id, $str);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Show table query
+     *
+     * Generates a platform-specific query string so that the table names can be fetched
+     *
+     * @param    bool $prefix_limit
+     * @return    string
+     */
+    protected function _list_tables($prefix_limit = FALSE)
+    {
+        $sql = 'SELECT "table_name" FROM "information_schema"."tables" WHERE "table_schema" = \'' . $this->schema . "'";
+
+        if ($prefix_limit !== FALSE && $this->dbprefix !== '') {
+            return $sql . ' AND "table_name" LIKE \''
+                . $this->escape_like_str($this->dbprefix) . "%' "
+                . sprintf($this->_like_escape_str, $this->_like_escape_chr);
+        }
+
+        return $sql;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * List column query
+     *
+     * Generates a platform-specific query string so that the column names can be fetched
+     *
+     * @param    string $table
+     * @return    string
+     */
+    protected function _list_columns($table = '')
+    {
+        return 'SELECT "column_name"
+			FROM "information_schema"."columns"
+			WHERE LOWER("table_name") = ' . $this->escape(strtolower($table));
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * "Smart" Escape String
+     *
+     * Escapes data based on type
+     *
+     * @param    string $str
+     * @return    mixed
+     */
+    public function escape($str)
+    {
+        if (is_php('5.4.4') && (is_string($str) OR (is_object($str) && method_exists($str, '__toString')))) {
+            return pg_escape_literal($this->conn_id, $str);
+        } elseif (is_bool($str)) {
+            return ($str) ? 'TRUE' : 'FALSE';
+        }
+
+        return parent::escape($str);
 	}
 
 	// --------------------------------------------------------------------
@@ -550,13 +546,13 @@ class CI_DB_postgre_driver extends CI_DB {
 		$ids = array();
 		foreach ($values as $key => $val)
 		{
-			$ids[] = $val[$index];
+            $ids[] = $val[$index]['value'];
 
 			foreach (array_keys($val) as $field)
 			{
 				if ($field !== $index)
 				{
-					$final[$field][] = 'WHEN '.$val[$index].' THEN '.$val[$field];
+                    $final[$val[$field]['field']][] = 'WHEN ' . $val[$index]['value'] . ' THEN ' . $val[$field]['value'];
 				}
 			}
 		}
@@ -564,12 +560,12 @@ class CI_DB_postgre_driver extends CI_DB {
 		$cases = '';
 		foreach ($final as $k => $v)
 		{
-			$cases .= $k.' = (CASE '.$index."\n"
+            $cases .= $k . ' = (CASE ' . $val[$index]['field'] . "\n"
 				.implode("\n", $v)."\n"
 				.'ELSE '.$k.' END), ';
 		}
 
-		$this->where($index.' IN('.implode(',', $ids).')', NULL, FALSE);
+        $this->where($val[$index]['field'] . ' IN(' . implode(',', $ids) . ')', NULL, FALSE);
 
 		return 'UPDATE '.$table.' SET '.substr($cases, 0, -2).$this->_compile_wh('qb_where');
 	}

@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 2.0.0
@@ -49,6 +49,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class CI_Cache extends CI_Driver_Library {
 
 	/**
+     * Cache key prefix
+     *
+     * @var    string
+     */
+    public $key_prefix = '';
+    /**
 	 * Valid cache drivers
 	 *
 	 * @var array
@@ -61,34 +67,24 @@ class CI_Cache extends CI_Driver_Library {
 		'redis',
 		'wincache'
 	);
-
 	/**
 	 * Path of cache files (if file-based cache)
 	 *
 	 * @var string
 	 */
 	protected $_cache_path = NULL;
-
 	/**
 	 * Reference to the driver
 	 *
 	 * @var mixed
 	 */
 	protected $_adapter = 'dummy';
-
 	/**
 	 * Fallback driver
 	 *
 	 * @var string
 	 */
 	protected $_backup_driver = 'dummy';
-
-	/**
-	 * Cache key prefix
-	 *
-	 * @var	string
-	 */
-	public $key_prefix = '';
 
 	/**
 	 * Constructor
@@ -125,6 +121,25 @@ class CI_Cache extends CI_Driver_Library {
 	// ------------------------------------------------------------------------
 
 	/**
+     * Is the requested driver supported in this environment?
+     *
+     * @param    string $driver The driver to test
+     * @return    array
+     */
+    public function is_supported($driver)
+    {
+        static $support;
+
+        if (!isset($support, $support[$driver])) {
+            $support[$driver] = $this->{$driver}->is_supported();
+        }
+
+        return $support[$driver];
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Get
 	 *
 	 * Look for a value in the cache. If it exists, return the data
@@ -231,25 +246,5 @@ class CI_Cache extends CI_Driver_Library {
 	public function get_metadata($id)
 	{
 		return $this->{$this->_adapter}->get_metadata($this->key_prefix.$id);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Is the requested driver supported in this environment?
-	 *
-	 * @param	string	$driver	The driver to test
-	 * @return	array
-	 */
-	public function is_supported($driver)
-	{
-		static $support;
-
-		if ( ! isset($support, $support[$driver]))
-		{
-			$support[$driver] = $this->{$driver}->is_supported();
-		}
-
-		return $support[$driver];
 	}
 }

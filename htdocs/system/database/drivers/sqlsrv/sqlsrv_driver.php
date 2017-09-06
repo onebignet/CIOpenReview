@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 2.0.3
@@ -171,6 +171,7 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 		if ($this->_execute('USE '.$this->escape_identifiers($database)))
 		{
 			$this->database = $database;
+            $this->data_cache = array();
 			return TRUE;
 		}
 
@@ -190,42 +191,6 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 		return ($this->scrollable === FALSE OR $this->is_write_type($sql))
 			? sqlsrv_query($this->conn_id, $sql)
 			: sqlsrv_query($this->conn_id, $sql, NULL, array('Scrollable' => $this->scrollable));
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Begin Transaction
-	 *
-	 * @return	bool
-	 */
-	protected function _trans_begin()
-	{
-		return sqlsrv_begin_transaction($this->conn_id);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Commit Transaction
-	 *
-	 * @return	bool
-	 */
-	protected function _trans_commit()
-	{
-		return sqlsrv_commit($this->conn_id);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Rollback Transaction
-	 *
-	 * @return	bool
-	 */
-	protected function _trans_rollback()
-	{
-		return sqlsrv_rollback($this->conn_id);
 	}
 
 	// --------------------------------------------------------------------
@@ -252,70 +217,6 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 	public function insert_id()
 	{
 		return $this->query('SELECT SCOPE_IDENTITY() AS insert_id')->row()->insert_id;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Database version number
-	 *
-	 * @return	string
-	 */
-	public function version()
-	{
-		if (isset($this->data_cache['version']))
-		{
-			return $this->data_cache['version'];
-		}
-
-		if ( ! $this->conn_id OR ($info = sqlsrv_server_info($this->conn_id)) === FALSE)
-		{
-			return FALSE;
-		}
-
-		return $this->data_cache['version'] = $info['SQLServerVersion'];
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * List table query
-	 *
-	 * Generates a platform-specific query string so that the table names can be fetched
-	 *
-	 * @param	bool
-	 * @return	string	$prefix_limit
-	 */
-	protected function _list_tables($prefix_limit = FALSE)
-	{
-		$sql = 'SELECT '.$this->escape_identifiers('name')
-			.' FROM '.$this->escape_identifiers('sysobjects')
-			.' WHERE '.$this->escape_identifiers('type')." = 'U'";
-
-		if ($prefix_limit === TRUE && $this->dbprefix !== '')
-		{
-			$sql .= ' AND '.$this->escape_identifiers('name')." LIKE '".$this->escape_like_str($this->dbprefix)."%' "
-				.sprintf($this->_escape_like_str, $this->_escape_like_chr);
-		}
-
-		return $sql.' ORDER BY '.$this->escape_identifiers('name');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * List column query
-	 *
-	 * Generates a platform-specific query string so that the column names can be fetched
-	 *
-	 * @param	string	$table
-	 * @return	string
-	 */
-	protected function _list_columns($table = '')
-	{
-		return 'SELECT COLUMN_NAME
-			FROM INFORMATION_SCHEMA.Columns
-			WHERE UPPER(TABLE_NAME) = '.$this->escape(strtoupper($table));
 	}
 
 	// --------------------------------------------------------------------
@@ -357,7 +258,7 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 	 * Error
 	 *
 	 * Returns an array containing code and message of the last
-	 * database error that has occured.
+     * database error that has occurred.
 	 *
 	 * @return	array
 	 */
@@ -392,6 +293,83 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
+     * Begin Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_begin()
+    {
+        return sqlsrv_begin_transaction($this->conn_id);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Commit Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_commit()
+    {
+        return sqlsrv_commit($this->conn_id);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Rollback Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_rollback()
+    {
+        return sqlsrv_rollback($this->conn_id);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * List table query
+     *
+     * Generates a platform-specific query string so that the table names can be fetched
+     *
+     * @param    bool
+     * @return    string    $prefix_limit
+     */
+    protected function _list_tables($prefix_limit = FALSE)
+    {
+        $sql = 'SELECT ' . $this->escape_identifiers('name')
+            . ' FROM ' . $this->escape_identifiers('sysobjects')
+            . ' WHERE ' . $this->escape_identifiers('type') . " = 'U'";
+
+        if ($prefix_limit === TRUE && $this->dbprefix !== '') {
+            $sql .= ' AND ' . $this->escape_identifiers('name') . " LIKE '" . $this->escape_like_str($this->dbprefix) . "%' "
+                . sprintf($this->_escape_like_str, $this->_escape_like_chr);
+        }
+
+        return $sql . ' ORDER BY ' . $this->escape_identifiers('name');
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * List column query
+     *
+     * Generates a platform-specific query string so that the column names can be fetched
+     *
+     * @param    string $table
+     * @return    string
+     */
+    protected function _list_columns($table = '')
+    {
+        return 'SELECT COLUMN_NAME
+			FROM INFORMATION_SCHEMA.Columns
+			WHERE UPPER(TABLE_NAME) = ' . $this->escape(strtoupper($table));
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * Update statement
 	 *
 	 * Generates a platform-specific update string from the supplied data
@@ -502,6 +480,26 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 		}
 
 		return preg_replace('/(^\SELECT (DISTINCT)?)/i','\\1 TOP '.$limit.' ', $sql);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Database version number
+     *
+     * @return    string
+     */
+    public function version()
+    {
+        if (isset($this->data_cache['version'])) {
+            return $this->data_cache['version'];
+        }
+
+        if (!$this->conn_id OR ($info = sqlsrv_server_info($this->conn_id)) === FALSE) {
+            return FALSE;
+        }
+
+        return $this->data_cache['version'] = $info['SQLServerVersion'];
 	}
 
 	// --------------------------------------------------------------------
@@ -524,7 +522,7 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 			return parent::_insert_batch($table, $keys, $values);
 		}
 
-		return ($this->db->db_debug) ? $this->db->display_error('db_unsupported_feature') : FALSE;
+        return ($this->db_debug) ? $this->display_error('db_unsupported_feature') : FALSE;
 	}
 
 	// --------------------------------------------------------------------

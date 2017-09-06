@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.3.0
@@ -105,6 +105,79 @@ class CI_DB_sqlite_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
+     * Affected Rows
+     *
+     * @return    int
+     */
+    public function affected_rows()
+    {
+        return sqlite_changes($this->conn_id);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Insert ID
+     *
+     * @return    int
+     */
+    public function insert_id()
+    {
+        return sqlite_last_insert_rowid($this->conn_id);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Returns an object with field data
+     *
+     * @param    string $table
+     * @return    array
+     */
+    public function field_data($table)
+    {
+        if (($query = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, TRUE, NULL, FALSE) . ')')) === FALSE) {
+            return FALSE;
+        }
+
+        $query = $query->result_array();
+        if (empty($query)) {
+            return FALSE;
+        }
+
+        $retval = array();
+        for ($i = 0, $c = count($query); $i < $c; $i++) {
+            $retval[$i] = new stdClass();
+            $retval[$i]->name = $query[$i]['name'];
+            $retval[$i]->type = $query[$i]['type'];
+            $retval[$i]->max_length = NULL;
+            $retval[$i]->default = $query[$i]['dflt_value'];
+            $retval[$i]->primary_key = isset($query[$i]['pk']) ? (int)$query[$i]['pk'] : 0;
+        }
+
+        return $retval;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Error
+     *
+     * Returns an array containing code and message of the last
+     * database error that has occured.
+     *
+     * @return    array
+     */
+    public function error()
+    {
+        $error = array('code' => sqlite_last_error($this->conn_id));
+        $error['message'] = sqlite_error_string($error['code']);
+        return $error;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * Execute the query
 	 *
 	 * @param	string	$sql	an SQL query
@@ -169,30 +242,6 @@ class CI_DB_sqlite_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Affected Rows
-	 *
-	 * @return	int
-	 */
-	public function affected_rows()
-	{
-		return sqlite_changes($this->conn_id);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Insert ID
-	 *
-	 * @return	int
-	 */
-	public function insert_id()
-	{
-		return sqlite_last_insert_rowid($this->conn_id);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * List table query
 	 *
 	 * Generates a platform-specific query string so that the table names can be fetched
@@ -226,58 +275,6 @@ class CI_DB_sqlite_driver extends CI_DB {
 	{
 		// Not supported
 		return FALSE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Returns an object with field data
-	 *
-	 * @param	string	$table
-	 * @return	array
-	 */
-	public function field_data($table)
-	{
-		if (($query = $this->query('PRAGMA TABLE_INFO('.$this->protect_identifiers($table, TRUE, NULL, FALSE).')')) === FALSE)
-		{
-			return FALSE;
-		}
-
-		$query = $query->result_array();
-		if (empty($query))
-		{
-			return FALSE;
-		}
-
-		$retval = array();
-		for ($i = 0, $c = count($query); $i < $c; $i++)
-		{
-			$retval[$i]			= new stdClass();
-			$retval[$i]->name		= $query[$i]['name'];
-			$retval[$i]->type		= $query[$i]['type'];
-			$retval[$i]->max_length		= NULL;
-			$retval[$i]->default		= $query[$i]['dflt_value'];
-			$retval[$i]->primary_key	= isset($query[$i]['pk']) ? (int) $query[$i]['pk'] : 0;
-		}
-
-		return $retval;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Error
-	 *
-	 * Returns an array containing code and message of the last
-	 * database error that has occured.
-	 *
-	 * @return	array
-	 */
-	public function error()
-	{
-		$error = array('code' => sqlite_last_error($this->conn_id));
-		$error['message'] = sqlite_error_string($error['code']);
-		return $error;
 	}
 
 	// --------------------------------------------------------------------

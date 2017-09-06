@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
@@ -189,6 +189,54 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 	// ------------------------------------------------------------------------
 
 	/**
+     * Get lock
+     *
+     * Acquires an (emulated) lock.
+     *
+     * @param    string $session_id Session ID
+     * @return    bool
+     */
+    protected function _get_lock($session_id)
+    {
+        // PHP 7 reuses the SessionHandler object on regeneration,
+        // so we need to check here if the lock key is for the
+        // correct session ID.
+        if ($this->_lock_key === $this->_key_prefix . $session_id . ':lock') {
+            return $this->_redis->setTimeout($this->_lock_key, 300);
+        }
+
+        // 30 attempts to obtain a lock, in case another request already has it
+        $lock_key = $this->_key_prefix . $session_id . ':lock';
+        $attempt = 0;
+        do {
+            if (($ttl = $this->_redis->ttl($lock_key)) > 0) {
+                sleep(1);
+                continue;
+            }
+
+            if (!$this->_redis->setex($lock_key, 300, time())) {
+                log_message('error', 'Session: Error while trying to obtain lock for ' . $this->_key_prefix . $session_id);
+                return FALSE;
+            }
+
+            $this->_lock_key = $lock_key;
+            break;
+        } while (++$attempt < 30);
+
+        if ($attempt === 30) {
+            log_message('error', 'Session: Unable to obtain lock for ' . $this->_key_prefix . $session_id . ' after 30 attempts, aborting.');
+            return FALSE;
+        } elseif ($ttl === -1) {
+            log_message('debug', 'Session: Lock for ' . $this->_key_prefix . $session_id . ' had no TTL, overriding.');
+        }
+
+        $this->_lock = TRUE;
+        return TRUE;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Write
 	 *
 	 * Writes (create / update) session data
@@ -199,7 +247,7 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 	 */
 	public function write($session_id, $session_data)
 	{
-		if ( ! isset($this->_redis))
+        if (!isset($this->_redis, $this->_lock_key))
 		{
 			return $this->_fail();
 		}
@@ -215,32 +263,49 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 			$this->_session_id = $session_id;
 		}
 
-		if (isset($this->_lock_key))
-		{
-			$this->_redis->setTimeout($this->_lock_key, 300);
-			if ($this->_fingerprint !== ($fingerprint = md5($session_data)) OR $this->_key_exists === FALSE)
-			{
-				if ($this->_redis->set($this->_key_prefix.$session_id, $session_data, $this->_config['expiration']))
-				{
-					$this->_fingerprint = $fingerprint;
-					$this->_key_exists = TRUE;
-					return $this->_success;
-				}
+        $this->_redis->setTimeout($this->_lock_key, 300);
+        if ($this->_fingerprint !== ($fingerprint = md5($session_data)) OR $this->_key_exists === FALSE) {
+            if ($this->_redis->set($this->_key_prefix . $session_id, $session_data, $this->_config['expiration'])) {
+                $this->_fingerprint = $fingerprint;
+                $this->_key_exists = TRUE;
+                return $this->_success;
+            }
 
-				return $this->_fail();
-			}
+            return $this->_fail();
+        }
 
-			return ($this->_redis->setTimeout($this->_key_prefix.$session_id, $this->_config['expiration']))
-				? $this->_success
-				: $this->_fail();
-		}
-
-		return $this->_fail();
-	}
+        return ($this->_redis->setTimeout($this->_key_prefix . $session_id, $this->_config['expiration']))
+            ? $this->_success
+            : $this->_fail();
+    }
 
 	// ------------------------------------------------------------------------
 
 	/**
+     * Release lock
+     *
+     * Releases a previously acquired lock
+     *
+     * @return    bool
+     */
+    protected function _release_lock()
+    {
+        if (isset($this->_redis, $this->_lock_key) && $this->_lock) {
+            if (!$this->_redis->delete($this->_lock_key)) {
+                log_message('error', 'Session: Error while trying to free lock for ' . $this->_lock_key);
+                return FALSE;
+            }
+
+            $this->_lock_key = NULL;
+            $this->_lock = FALSE;
+        }
+
+        return TRUE;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
 	 * Close
 	 *
 	 * Releases locks and closes connection.
@@ -255,7 +320,7 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 				if ($this->_redis->ping() === '+PONG')
 				{
 					$this->_release_lock();
-					if ($this->_redis->close() === $this->_failure)
+                    if ($this->_redis->close() === FALSE)
 					{
 						return $this->_fail();
 					}
@@ -313,88 +378,6 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 	{
 		// Not necessary, Redis takes care of that.
 		return $this->_success;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Get lock
-	 *
-	 * Acquires an (emulated) lock.
-	 *
-	 * @param	string	$session_id	Session ID
-	 * @return	bool
-	 */
-	protected function _get_lock($session_id)
-	{
-		// PHP 7 reuses the SessionHandler object on regeneration,
-		// so we need to check here if the lock key is for the
-		// correct session ID.
-		if ($this->_lock_key === $this->_key_prefix.$session_id.':lock')
-		{
-			return $this->_redis->setTimeout($this->_lock_key, 300);
-		}
-
-		// 30 attempts to obtain a lock, in case another request already has it
-		$lock_key = $this->_key_prefix.$session_id.':lock';
-		$attempt = 0;
-		do
-		{
-			if (($ttl = $this->_redis->ttl($lock_key)) > 0)
-			{
-				sleep(1);
-				continue;
-			}
-
-			if ( ! $this->_redis->setex($lock_key, 300, time()))
-			{
-				log_message('error', 'Session: Error while trying to obtain lock for '.$this->_key_prefix.$session_id);
-				return FALSE;
-			}
-
-			$this->_lock_key = $lock_key;
-			break;
-		}
-		while (++$attempt < 30);
-
-		if ($attempt === 30)
-		{
-			log_message('error', 'Session: Unable to obtain lock for '.$this->_key_prefix.$session_id.' after 30 attempts, aborting.');
-			return FALSE;
-		}
-		elseif ($ttl === -1)
-		{
-			log_message('debug', 'Session: Lock for '.$this->_key_prefix.$session_id.' had no TTL, overriding.');
-		}
-
-		$this->_lock = TRUE;
-		return TRUE;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Release lock
-	 *
-	 * Releases a previously acquired lock
-	 *
-	 * @return	bool
-	 */
-	protected function _release_lock()
-	{
-		if (isset($this->_redis, $this->_lock_key) && $this->_lock)
-		{
-			if ( ! $this->_redis->delete($this->_lock_key))
-			{
-				log_message('error', 'Session: Error while trying to free lock for '.$this->_lock_key);
-				return FALSE;
-			}
-
-			$this->_lock_key = NULL;
-			$this->_lock = FALSE;
-		}
-
-		return TRUE;
 	}
 
 }

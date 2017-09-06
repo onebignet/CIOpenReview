@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
@@ -105,8 +105,7 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 			empty($this->port) OR $this->dsn .= ';port='.$this->port;
 			empty($this->database) OR $this->dsn .= ';dbname='.$this->database;
 			empty($this->char_set) OR $this->dsn .= ';charset='.$this->char_set;
-		}
-		elseif ( ! empty($this->char_set) && strpos($this->dsn, 'charset=', 6) === FALSE && is_php('5.3.6'))
+		} elseif (!empty($this->char_set) && strpos($this->dsn, 'charset=', 6) === FALSE)
 		{
 			$this->dsn .= ';charset='.$this->char_set;
 		}
@@ -122,17 +121,6 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 	 */
 	public function db_connect($persistent = FALSE)
 	{
-		/* Prior to PHP 5.3.6, even if the charset was supplied in the DSN
-		 * on connect - it was ignored. This is a work-around for the issue.
-		 *
-		 * Reference: http://www.php.net/manual/en/ref.pdo-mysql.connection.php
-		 */
-		if ( ! is_php('5.3.6') && ! empty($this->char_set))
-		{
-			$this->options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES '.$this->char_set
-				.(empty($this->dbcollat) ? '' : ' COLLATE '.$this->dbcollat);
-		}
-
 		if (isset($this->stricton))
 		{
 			if ($this->stricton)
@@ -169,8 +157,7 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 			$this->options[PDO::MYSQL_ATTR_COMPRESS] = TRUE;
 		}
 
-		// SSL support was added to PDO_MYSQL in PHP 5.3.7
-		if (is_array($this->encrypt) && is_php('5.3.7'))
+        if (is_array($this->encrypt))
 		{
 			$ssl = array();
 			empty($this->encrypt['ssl_key'])    OR $ssl[PDO::MYSQL_ATTR_SSL_KEY]    = $this->encrypt['ssl_key'];
@@ -194,7 +181,7 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 		{
 			$message = 'PDO_MYSQL was configured for an SSL connection, but got an unencrypted connection instead!';
 			log_message('error', $message);
-			return ($this->db->db_debug) ? $this->db->display_error($message, '', TRUE) : FALSE;
+            return ($this->db_debug) ? $this->display_error($message, '', TRUE) : FALSE;
 		}
 
 		return $pdo;
@@ -218,6 +205,7 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 		if (FALSE !== $this->simple_query('USE '.$this->escape_identifiers($database)))
 		{
 			$this->database = $database;
+            $this->data_cache = array();
 			return TRUE;
 		}
 
@@ -227,6 +215,85 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 	// --------------------------------------------------------------------
 
 	/**
+     * Returns an object with field data
+     *
+     * @param    string $table
+     * @return    array
+     */
+    public function field_data($table)
+    {
+        if (($query = $this->query('SHOW COLUMNS FROM ' . $this->protect_identifiers($table, TRUE, NULL, FALSE))) === FALSE) {
+            return FALSE;
+        }
+        $query = $query->result_object();
+
+        $retval = array();
+        for ($i = 0, $c = count($query); $i < $c; $i++) {
+            $retval[$i] = new stdClass();
+            $retval[$i]->name = $query[$i]->Field;
+
+            sscanf($query[$i]->Type, '%[a-z](%d)',
+                $retval[$i]->type,
+                $retval[$i]->max_length
+            );
+
+            $retval[$i]->default = $query[$i]->Default;
+            $retval[$i]->primary_key = (int)($query[$i]->Key === 'PRI');
+        }
+
+        return $retval;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Begin Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_begin()
+    {
+        $this->conn_id->setAttribute(PDO::ATTR_AUTOCOMMIT, FALSE);
+        return $this->conn_id->beginTransaction();
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Commit Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_commit()
+    {
+        if ($this->conn_id->commit()) {
+            $this->conn_id->setAttribute(PDO::ATTR_AUTOCOMMIT, TRUE);
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Rollback Transaction
+     *
+     * @return    bool
+     */
+    protected function _trans_rollback()
+    {
+        if ($this->conn_id->rollBack()) {
+            $this->conn_id->setAttribute(PDO::ATTR_AUTOCOMMIT, TRUE);
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
 	 * Show table query
 	 *
 	 * Generates a platform-specific query string so that the table names can be fetched
@@ -259,40 +326,6 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 	protected function _list_columns($table = '')
 	{
 		return 'SHOW COLUMNS FROM '.$this->protect_identifiers($table, TRUE, NULL, FALSE);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Returns an object with field data
-	 *
-	 * @param	string	$table
-	 * @return	array
-	 */
-	public function field_data($table)
-	{
-		if (($query = $this->query('SHOW COLUMNS FROM '.$this->protect_identifiers($table, TRUE, NULL, FALSE))) === FALSE)
-		{
-			return FALSE;
-		}
-		$query = $query->result_object();
-
-		$retval = array();
-		for ($i = 0, $c = count($query); $i < $c; $i++)
-		{
-			$retval[$i]			= new stdClass();
-			$retval[$i]->name		= $query[$i]->Field;
-
-			sscanf($query[$i]->Type, '%[a-z](%d)',
-				$retval[$i]->type,
-				$retval[$i]->max_length
-			);
-
-			$retval[$i]->default		= $query[$i]->Default;
-			$retval[$i]->primary_key	= (int) ($query[$i]->Key === 'PRI');
-		}
-
-		return $retval;
 	}
 
 	// --------------------------------------------------------------------
