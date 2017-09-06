@@ -5,7 +5,7 @@
  *
  * @author  : Washington Botelho
  * @doc     : http://wbotelhos.com/raty
- * @version : 2.7.0
+ * @version : 2.7.1
  *
  */
 
@@ -59,7 +59,7 @@
         },
 
         _adjustCallback: function () {
-            var options = ['number', 'readOnly', 'score', 'scoreName', 'target'];
+            var options = ['number', 'readOnly', 'score', 'scoreName', 'target', 'path'];
 
             for (var i = 0; i < options.length; i++) {
                 if (typeof this.opt[options[i]] === 'function') {
@@ -235,7 +235,8 @@
         },
 
         _bindOver: function () {
-            var that = this,
+            var
+                that = this,
                 action = that.opt.half ? 'mousemove.raty' : 'mouseover.raty';
 
             that.stars.on(action, function (evt) {
@@ -288,7 +289,8 @@
         },
 
         _createCancel: function () {
-            var icon = this.opt.path + this.opt.cancelOff,
+            var
+                icon = this.opt.path + this.opt.cancelOff,
                 cancel = $('<' + this.opt.starType + ' />', {
                     title: this.opt.cancelHint,
                     'class': this.opt.cancelClass
@@ -672,7 +674,7 @@
 
                 if (self.data('readonly') !== readonly) {
                     if (readonly) {
-                        self.off('.raty').children('img').off('.raty');
+                        self.off('.raty').children(this.opt.starType).off('.raty');
 
                         methods._lock.call(this);
                     } else {

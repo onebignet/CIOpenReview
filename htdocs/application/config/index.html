@@ -4,8 +4,30 @@
     <title>403 Forbidden</title>
 </head>
 <body>
-
 <p>Directory access is forbidden.</p>
-
+<a href="{DetailPageURL}"><strong>{title}</strong></a>
+<br>
+[SPEC:MediumImage]<img style="float:left;margin:0 5px 5px 0;" src="|URL|"/>[/SPEC:MediumImage]
+[WHILE:EditorialReviews]
+<p>
+    <strong>|Source|</strong>
+    <br>|Content| </p>[/WHILE:EditorialReviews]
+[SPEC:LowestNewPrice]Price: |FormattedPrice|[/SPEC:LowestNewPrice]
+<div style="clear:both;">
+    <ul>
+        [ALL:Feature]
+        <li>|Feature|</li>
+        [/ALL:Feature]
+    </ul>
+</div>
+<br>
+<br>
+<div>
+    <a href="{DetailPageURL}"><img src="https://images-na.ssl-images-amazon.com/images/G/01/associates/remote-buy-box/buy1.gif"/></a>
+</div>
+<div style="clear:both;">[ALL:MediumImage]<img style="float:left;margin:0 5px 5px 0;" src="|URL|"/>[/ALL:MediumImage]
+</div>
+<br>
+<hr>
 </body>
 </html>

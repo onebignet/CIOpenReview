@@ -31,7 +31,7 @@
 
 }}
 {{ if(isset($message)): }}
-<div class="callout callout-warning" xmlns="http://www.w3.org/1999/html">
+<div class="callout callout-warning">
     <p>{{= $message }}</p>
 </div>
 {{ endif }}

@@ -4,9 +4,7 @@
 </div>
 <h3>
     <small>{{= $site_summary_text }}</small>
-</h3>
-
-<!-- START OF CONDITIONAL 'FEATURED' SECTION -->
+</h3><!-- START OF CONDITIONAL 'FEATURED' SECTION -->
 {{ if ($featured_reviews >= $featured_minimum): }}
 <div class="panel panel-danger featured_panel">
     <div class="panel-heading">
@@ -19,7 +17,6 @@
                 <h4>
                     <i class="glyphicon glyphicon-star icon-small icon-inverse-80 _icon-circle"></i>{{= anchor('review/show/' . $featured_item->seo_title, highlight_keywords(character_limiter($featured_item->title, 40), $keywords)) }}
                 </h4>
-
                 <p>{{= character_limiter(strip_tags($featured_item->description), 180) }}</p>
                 {{= anchor('review/show/' . $featured_item->seo_title, lang('featured_more'), 'class="btn btn-success"') }}
             </div>
@@ -27,12 +24,7 @@
         {{ endforeach }}
     </div>
 </div>
-{{ endif }}
-
-
-<!-- END OF 'FEATURED' SECTION -->
-
-<!-- START OF CONDITIONAL 'LATEST' SECTION -->
+{{ endif }}<!-- END OF 'FEATURED' SECTION --><!-- START OF CONDITIONAL 'LATEST' SECTION -->
 {{ if ($latest): }}
 <div class="panel panel-default featured_panel">
     <div class="panel-heading">
@@ -45,7 +37,6 @@
             {{= $pagination }}
         </li>
         {{ foreach ($latest as $index => $latest_result): }}
-
         <!-- START OF CONDITIONAL 'ADS' SECTION -->
         {{ if ($list_ads): }}
         <!-- CHANGE THE NUMBERS IN THE NEXT LINE TO CHANGE THE POSITIONS IN THE LIST WHERE ADS APPEAR -->
@@ -77,20 +68,38 @@
         {{ endif }}                            <!-- END OF 'ADS' SECTION -->
         <!-- START OF 'REVIEW ITEM' SECTION -->
         <li class="list-group-item">
-            <h3 class="title">
-                <a href="{{= base_url('review/show/' . $latest_result->seo_title) }}">
-                    <img src="{{= $latest_result->list_thumb_url }}" class="img-polaroid">
-                </a>{{= anchor('review/show/' . $latest_result->seo_title, highlight_keywords($latest_result->title, $keywords)) }}
-                <img src="{{= template_path() . 'design/images/' . $latest_result->rating_image }}" alt=""/>
-            </h3>
-
-            <p>{{= character_limiter($latest_result->description, 300) }}</p>
-
-            <p>{{= anchor('review/show/' . $latest_result->seo_title, lang('lists_read_more'), 'class="btn btn-success"') }}</p>
+            <div class="row">
+                <div class="col-sm-8">
+                    <h3 class="title">
+                        {{= anchor('review/show/' . $latest_result->seo_title, highlight_keywords($latest_result->title, $keywords)) }}
+                    </h3>
+                    <a href="{{= base_url('review/show/' . $latest_result->seo_title) }}">
+                        <img src="{{= $latest_result->list_thumb_url }}" class="img-polaroid">
+                    </a>
+                </div>
+                <div class="col-sm-4">
+                    <h3>Ratings</h3>
+                    {{ foreach ($latest_result->rating_data as $rating): }}
+                    <div class="row">
+                        <div class="col-sm-3">
+                            {{= $rating->rating_name }}:
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="star_rating" data-score="{{=  $rating->rating_value }}"></div>
+                        </div>
+                    </div>
+                    {{ endforeach }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p>{{= character_limiter($latest_result->description, 300) }}</p>
+                    <p>{{= anchor('review/show/' . $latest_result->seo_title, lang('lists_read_more'), 'class="btn btn-success"') }}</p>
+                </div>
+            </div>
         </li>
         <!-- END OF REVIEW ITEM SECTION -->
         {{ endforeach }}
-
         <li class="list-group-item">
             {{= $pagination }}
         </li>
@@ -100,6 +109,4 @@
 <div class="alert alert-info">
     <h4 class="alert-heading">{{= lang('home_no_reviews') }}</h4>
 </div>
-{{ endif }}                                        <!-- END OF 'LATEST' SECTION -->
-
-<!-- END OF 'CONTENT' SECTION -->
+{{ endif }}                                        <!-- END OF 'LATEST' SECTION --><!-- END OF 'CONTENT' SECTION -->

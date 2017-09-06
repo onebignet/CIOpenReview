@@ -56,6 +56,7 @@ class Home extends CI_Controller
 		//define('VIEW_EXT', '.tpl');
 
 		$this->load->model('Review_model');
+		$this->load->model('Review_rating_model');
 		$this->load->model('Category_model');
 		$this->load->model('Ad_model');
 		$this->load->model('Comment_model');
@@ -84,7 +85,7 @@ class Home extends CI_Controller
 		$data['latest'] = $this->Review_model->get_latest_reviews($this->setting['perpage_site_home'], $this->uri->segment(3));
 		if ($data['latest']) {
 			foreach ($data['latest'] as $key => $review) {
-				$data['latest'][$key]->rating_image = $this->Comment_model->get_visitor_rating_for_review_by_id($data['latest'][$key]->id);
+				$data['latest'][$key]->rating_data = $this->Review_rating_model->get_review_ratings_for_review_by_id($data['latest'][$key]->id);
 			}
 		}
 		$data['categories'] = $this->Category_model->get_all_categories(0);
