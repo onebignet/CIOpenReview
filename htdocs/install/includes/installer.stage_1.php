@@ -58,8 +58,8 @@ $upload_max_filesize = ini_get('upload_max_filesize') + 0;
 <table class="table">
 	<tr><?php $installer->is_more_than("post_max_size", $post_max_size, 8, "MB"); ?></tr>
 	<tr><?php $installer->is_more_than("upload_max_filesize", $upload_max_filesize, 8, "MB"); ?></tr>
-	<tr><?php $installer->is_on_or_off("safe_mode", ini_get('safe_mode'), "OFF"); ?></tr>
-	<tr><?php $installer->is_on_or_off("register_globals", ini_get('register_globals'), "OFF"); ?></tr>
+    <tr><?php $installer->is_on_or_off("safe_mode", ini_get('safe_mode'), "OFF", 'safe_mode_enavled'); ?></tr>
+    <tr><?php $installer->is_on_or_off("register_globals", ini_get('register_globals'), "OFF", 'register_globals_enabled'); ?></tr>
 
 </table>
 
