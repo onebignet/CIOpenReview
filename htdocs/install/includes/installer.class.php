@@ -40,8 +40,8 @@ class Installer
     //Initialize some variables that will be needed
     private $minimum_php_version_code = "50204";
     private $minimum_php_version_string = "5.2.4";
-    private $build_number = "10100";
-    private $version_string = "1.1.0";
+	private $build_number = "10101";
+	private $version_string = "1.1.1";
     private $failure_codes = array(
         'php_version_fail' => "Your version of PHP is too old to be able to run CodeIgniter. You will not be able to install this script",
         'permissions_fail' => "Not all the required files and directories are writable. You will not be able to install and run the script until you have made them writable",
