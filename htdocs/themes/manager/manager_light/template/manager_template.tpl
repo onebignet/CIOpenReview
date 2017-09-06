@@ -59,7 +59,7 @@
     <![endif]-->
 
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
-    <script type="text/javascript">
+    <script language="javascript">
         tinymce.init({
             mode: "exact",
             elements: "description,pagecontent",
